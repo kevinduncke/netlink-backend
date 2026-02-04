@@ -11,13 +11,13 @@ REST API for the Netlink social platform. Built with Node.js, Express, TypeScrip
 - Cloudinary / Supabase Storage
 
 ## Project Structure
-src/
-  controllers/
-  routes/
-  middleware/
-  config/
-  utils/
-  types/
+- src/
+  - controllers/
+  - routes/
+  - middleware/
+  - config/
+  - utils/
+  - types/
 
 ## Setup
 npm install
