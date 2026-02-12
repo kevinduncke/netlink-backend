@@ -14,12 +14,15 @@ export const comparePassword = async (password: string, hash: string) => {
 };
 
 // CREATE A NEW USER.
-export const createUser = async (email: string, password: string) => {
+export const createUser = async (email: string, password: string, name: string, bio: string, avatarUrl: string) => {
     console.log('DATA: ', email, password);
     return prisma.user.create({
         data: {
             email,
             password,
+            name,
+            bio,
+            avatarUrl,
         },
     });
 };

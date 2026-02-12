@@ -8,8 +8,73 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  createdAt     DateTime  @default(now())
+
+  // Profile Section
+  name          String?
+  bio           String?
+  avatarUrl     String?
+
+  // Relations 
+  posts         Post[]
+  followers     Follow[]  @relation("followers")
+  following     Follow[]  @relation("following")
+  messages      Message[] @relation("userMessages")
+  chats         Chat[]    @relation("userChats")
+  notifications Notification[]
+}
+
+model Post {
+  id            String    @id @default(uuid())
+  content       String
+  imageUrl      String?
+  createdAt     DateTime  @default(now())
+
+  author        User      @relation(fields: [authorId], references: [id])
+  authorId      String
+}
+
+model Follow {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+
+  follower      User      @relation("followers", fields: [followerId], references: [id])
+  followerId    String
+
+  following     User      @relation("following", fields: [followingId], references: [id])
+  followingId   String
+}
+
+model Chat {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+
+  users         User[]    @relation("userChats")
+  messages      Message[]
+}
+
+model Message {
+  id            String    @id @default(uuid())
+  content       String
+  createdAt     DateTime  @default(now())
+
+  chat          Chat      @relation(fields: [chatId], references: [id])
+  chatId        String
+
+  sender        User      @relation("userMessages", fields: [senderId], references: [id])
+  senderId      String
+}
+
+model Notification {
+  id            String    @id @default(uuid())
+  type          String
+  message       String
+  createdAt     DateTime  @default(now())
+  read          Boolean   @default(false)
+
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
 }

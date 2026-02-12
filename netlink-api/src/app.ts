@@ -31,7 +31,7 @@ export const createApp = () => {
     // DATABASE TEST ROUTE
     app.get('/db-test', async (req: Request, res: Response) => {
         const users = await prisma.user.findMany();
-        res.json({ count: users.length });
+        res.json({ count: users.length, users: users[0] });
     });
 
     // JSON WEB TOKEN TEST ROUTE

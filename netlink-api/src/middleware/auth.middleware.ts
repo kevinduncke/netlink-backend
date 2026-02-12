@@ -15,8 +15,8 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     const authHeader = req.headers.authorization;
 
     // CHECK FOR BEARER TOKEN IN THE AUTHORIZATION HEADER
-    if (!authHeader?.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Missing or Invalid Authorization Header.' });
+    if (!authHeader || !authHeader?.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Authorization Header Missing or Invalid.' });
     }
 
     // EXTRACT TOKEN FROM HEADER.
@@ -25,16 +25,18 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     try {
         // CHECK IF THE TOKEN EXISTS.
         if (!token) {
-            return res.status(401).json({ message: 'Invalid or Missing Token.' });
+            return res.status(401).json({ message: 'Authorization Token Invalid or Missing.' });
         }
 
         // VERIFY TOKEN AND ATTACH PAYLOAD TO REQ.USER
         const payload = verifyToken(token);
 
+        // ATTACH USER INFO TO REQUEST OBJECT FOR USE IN CONTROLLERS..
         req.user = {
             id: payload.id,
             email: payload.email
         }
+
         next();
     } catch (err) {
         console.error(err);
