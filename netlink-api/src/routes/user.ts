@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.middleware";
-import { getUserProfile, updateUserProfile } from "../controllers/user.controller";
+import { getMyProfile, getUserProfile, updateUserProfile } from "../controllers/user.controller";
 import { getNotifications, markAsRead } from "../controllers/notification.controller";
 
 const router = Router();
@@ -13,6 +13,7 @@ router.get("/test", authenticate, (req, res) => {
 });
 
 // USER PROFILE
+router.get('/me', authenticate, getMyProfile);
 router.get('/:id', getUserProfile);
 
 // USER PROFILE UPDATE

@@ -15,7 +15,9 @@ model User {
 
   // Profile Section
   name          String?
+  username      String?   @unique
   bio           String?
+  url           String?
   avatarUrl     String?
 
   // Relations 
