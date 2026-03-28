@@ -47,16 +47,15 @@ export async function login(req: Request, res: Response) {
 // REGISTER CONTROLLER.
 export async function register(req: Request, res: Response, next: NextFunction) {
     try {
-        const { email, password } = req.body;
+        const { email, name, password } = req.body;
 
-        // DEFAULT VALUES
-        const name = '';
-        const bio = '';
-        const avatarUrl = '';
+        // DEFAULT VALUES FOR OPTIONAL FIELDS.
+        const bio = req.body.bio || '';
+        const avatarUrl = req.body.avatarUrl || '';
 
         // CHECK IF EMAIL AND PASSWORD ARE PROVIDED.
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and Password are Required!' });
+        if (!email || !name || !password) {
+            return res.status(400).json({ error: 'Email, Name, and Password are Required!' });
         }
 
         // CHECK IF USER ALREADY EXISTS
@@ -71,6 +70,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
         const hashed = await hashPassword(password);
         console.log(hashed);
         console.log('-------------------------');
+        
         // CALL TO CREATE NEW USER
         const user = await createUser(email, hashed, name, bio, avatarUrl);
 
