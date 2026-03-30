@@ -29,19 +29,32 @@ model User {
   messages      Message[] @relation("userMessages")
   chats         Chat[]    @relation("userChats")
   notifications Notification[]
+  visiblePosts  Post[]    @relation("SpecificVisibility")
+}
+
+enum PostVisibility {
+  PUBLIC
+  FOLLOWERS
+  ONLY_ME
+  SPECIFIC
 }
 
 model Post {
-  id            String    @id @default(uuid())
-  content       String
-  imageUrl      String?
-  createdAt     DateTime  @default(now())
+  id              String           @id @default(uuid())
+  content         String
+  location        String?
+  visibility      PostVisibility   @default(PUBLIC)
+  specificTo      User[]           @relation("SpecificVisibility")
+  hideLikes       Boolean          @default(false)
+  disableComments Boolean          @default(false)  
+  imageUrl        String?
+  createdAt       DateTime         @default(now())
 
-  author        User      @relation(fields: [authorId], references: [id])
-  authorId      String
+  author          User             @relation(fields: [authorId], references: [id])
+  authorId        String
 
-  likes         Like[]
-  comments      Comment[]
+  likes           Like[]
+  comments        Comment[]
 }
 
 model Like {

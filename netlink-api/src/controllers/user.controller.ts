@@ -159,3 +159,39 @@ export async function updateUserProfile(req: Request, res: Response, next: NextF
         next(error);
     }
 }
+
+export async function getListOfUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+        const query = req.query.query as string;
+
+        const userId = (req as any).user!.id;
+
+        if (!query || query.trim() === '') {
+            // RETURN EMPTY ARRAY LIST IF NO QUERY PROVIDED
+            return res.json([]);
+        }
+
+        const users = await prisma.user.findMany({
+            where: {
+                id: { not: userId },
+                OR: [
+                    { username: { contains: query, mode: 'insensitive' } },
+                    { name: { contains: query, mode: 'insensitive' } }
+                ]
+            },
+            select: {
+                id: true,
+                username: true,
+                name: true,
+                avatarUrl: true
+            },
+            take: 5 // LIMIT TO 5 RESULTS
+        });
+
+        console.log(users);
+
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
+}

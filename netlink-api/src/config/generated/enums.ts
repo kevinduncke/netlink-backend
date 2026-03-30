@@ -9,7 +9,11 @@
 * 🟢 You can import this file directly.
 */
 
+export const PostVisibility = {
+  PUBLIC: 'PUBLIC',
+  FOLLOWERS: 'FOLLOWERS',
+  ONLY_ME: 'ONLY_ME',
+  SPECIFIC: 'SPECIFIC'
+} as const
 
-
-// This file is empty because there are no enums in the schema.
-export {}
+export type PostVisibility = (typeof PostVisibility)[keyof typeof PostVisibility]
