@@ -113,3 +113,77 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
         next(error);
     }
 }
+
+export async function deletePost(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user.id;
+        const postId = req.params.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        if (!postId || typeof postId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid post ID is required.'
+            });
+        }
+
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+        });
+
+        if (!post || post.authorId !== userId) {
+            return res.status(403).json({ error: 'Not authorized to delete this post.' });
+        }
+
+        await prisma.post.delete({
+            where: { id: postId }
+        });
+
+        res.json({ success: true });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function updatePost(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user.id;
+        const postId = req.params.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        if (!postId || typeof postId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid post ID is required.'
+            });
+        }
+
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+        });
+
+        if (!post || post.authorId !== userId) {
+            return res.status(403).json({ error: 'Not authorized to update this post.' });
+        }
+
+        const updatedPost = await prisma.post.update({
+            where: { id: postId },
+            data: {
+                content: req.body.content
+            },
+        });
+
+        // RESPOND WITH UPDATED STATUS CODE
+        res.json({ success: true, post: updatedPost });
+    } catch (error) {
+        next(error);
+    }
+}
