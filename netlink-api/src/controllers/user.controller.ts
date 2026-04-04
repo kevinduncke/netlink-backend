@@ -195,3 +195,39 @@ export async function getListOfUsers(req: Request, res: Response, next: NextFunc
         next(error);
     }
 }
+
+export async function getSuggestedUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user?.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(401).json({ error: 'Unauthorized.' });
+        }
+
+        const following = await prisma.follow.findMany({
+            where: { followerId: userId },
+            select: { followingId: true }
+        });
+
+        const followingIds = following.map(f => f.followingId);
+
+        const usersToFollow = await prisma.user.findMany({
+            where: {
+                id: {
+                    notIn: [...followingIds, userId]
+                }
+            },
+            select: {
+                id: true,
+                name: true,
+                username: true,
+                avatarUrl: true
+            },
+            take: 5
+        });
+
+        res.json(usersToFollow);
+    } catch (error) {
+        next(error);
+    }
+}

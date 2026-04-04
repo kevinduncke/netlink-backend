@@ -55,6 +55,11 @@ model Post {
 
   likes           Like[]
   comments        Comment[]
+
+  isShared        Boolean          @default(false)
+  sharedFromId    String?
+  sharedFrom      Post?            @relation("SharedPost", fields: [sharedFromId], references: [id])
+  sharedPosts     Post[]           @relation("SharedPost")
 }
 
 model Like {

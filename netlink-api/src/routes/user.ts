@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.middleware";
-import { getMyProfile, getUserProfile, updateUserProfile, getListOfUsers } from "../controllers/user.controller";
+import { getMyProfile, getUserProfile, updateUserProfile, getListOfUsers, getSuggestedUsers } from "../controllers/user.controller";
 import { getNotifications, markAsRead } from "../controllers/notification.controller";
 
 const router = Router();
@@ -11,6 +11,9 @@ router.get("/test", authenticate, (req, res) => {
         user: (req as any).user
     });
 });
+
+// SUGGESTED USERS
+router.get('/suggested', authenticate, getSuggestedUsers);
 
 // SEARCH USERS
 router.get('/search', authenticate, getListOfUsers);

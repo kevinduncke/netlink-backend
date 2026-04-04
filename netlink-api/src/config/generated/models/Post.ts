@@ -34,6 +34,8 @@ export type PostMinAggregateOutputType = {
   imageUrl: string | null
   createdAt: Date | null
   authorId: string | null
+  isShared: boolean | null
+  sharedFromId: string | null
 }
 
 export type PostMaxAggregateOutputType = {
@@ -46,6 +48,8 @@ export type PostMaxAggregateOutputType = {
   imageUrl: string | null
   createdAt: Date | null
   authorId: string | null
+  isShared: boolean | null
+  sharedFromId: string | null
 }
 
 export type PostCountAggregateOutputType = {
@@ -58,6 +62,8 @@ export type PostCountAggregateOutputType = {
   imageUrl: number
   createdAt: number
   authorId: number
+  isShared: number
+  sharedFromId: number
   _all: number
 }
 
@@ -72,6 +78,8 @@ export type PostMinAggregateInputType = {
   imageUrl?: true
   createdAt?: true
   authorId?: true
+  isShared?: true
+  sharedFromId?: true
 }
 
 export type PostMaxAggregateInputType = {
@@ -84,6 +92,8 @@ export type PostMaxAggregateInputType = {
   imageUrl?: true
   createdAt?: true
   authorId?: true
+  isShared?: true
+  sharedFromId?: true
 }
 
 export type PostCountAggregateInputType = {
@@ -96,6 +106,8 @@ export type PostCountAggregateInputType = {
   imageUrl?: true
   createdAt?: true
   authorId?: true
+  isShared?: true
+  sharedFromId?: true
   _all?: true
 }
 
@@ -181,6 +193,8 @@ export type PostGroupByOutputType = {
   imageUrl: string | null
   createdAt: Date
   authorId: string
+  isShared: boolean
+  sharedFromId: string | null
   _count: PostCountAggregateOutputType | null
   _min: PostMinAggregateOutputType | null
   _max: PostMaxAggregateOutputType | null
@@ -214,10 +228,14 @@ export type PostWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"Post"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   authorId?: Prisma.StringFilter<"Post"> | string
+  isShared?: Prisma.BoolFilter<"Post"> | boolean
+  sharedFromId?: Prisma.StringNullableFilter<"Post"> | string | null
   specificTo?: Prisma.UserListRelationFilter
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   likes?: Prisma.LikeListRelationFilter
   comments?: Prisma.CommentListRelationFilter
+  sharedFrom?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
+  sharedPosts?: Prisma.PostListRelationFilter
 }
 
 export type PostOrderByWithRelationInput = {
@@ -230,10 +248,14 @@ export type PostOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
+  isShared?: Prisma.SortOrder
+  sharedFromId?: Prisma.SortOrderInput | Prisma.SortOrder
   specificTo?: Prisma.UserOrderByRelationAggregateInput
   author?: Prisma.UserOrderByWithRelationInput
   likes?: Prisma.LikeOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
+  sharedFrom?: Prisma.PostOrderByWithRelationInput
+  sharedPosts?: Prisma.PostOrderByRelationAggregateInput
 }
 
 export type PostWhereUniqueInput = Prisma.AtLeast<{
@@ -249,10 +271,14 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringNullableFilter<"Post"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   authorId?: Prisma.StringFilter<"Post"> | string
+  isShared?: Prisma.BoolFilter<"Post"> | boolean
+  sharedFromId?: Prisma.StringNullableFilter<"Post"> | string | null
   specificTo?: Prisma.UserListRelationFilter
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   likes?: Prisma.LikeListRelationFilter
   comments?: Prisma.CommentListRelationFilter
+  sharedFrom?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
+  sharedPosts?: Prisma.PostListRelationFilter
 }, "id">
 
 export type PostOrderByWithAggregationInput = {
@@ -265,6 +291,8 @@ export type PostOrderByWithAggregationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
+  isShared?: Prisma.SortOrder
+  sharedFromId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PostCountOrderByAggregateInput
   _max?: Prisma.PostMaxOrderByAggregateInput
   _min?: Prisma.PostMinOrderByAggregateInput
@@ -283,6 +311,8 @@ export type PostScalarWhereWithAggregatesInput = {
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Post"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
   authorId?: Prisma.StringWithAggregatesFilter<"Post"> | string
+  isShared?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean
+  sharedFromId?: Prisma.StringNullableWithAggregatesFilter<"Post"> | string | null
 }
 
 export type PostCreateInput = {
@@ -294,10 +324,13 @@ export type PostCreateInput = {
   disableComments?: boolean
   imageUrl?: string | null
   createdAt?: Date | string
+  isShared?: boolean
   specificTo?: Prisma.UserCreateNestedManyWithoutVisiblePostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   likes?: Prisma.LikeCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
+  sharedFrom?: Prisma.PostCreateNestedOneWithoutSharedPostsInput
+  sharedPosts?: Prisma.PostCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostUncheckedCreateInput = {
@@ -310,9 +343,12 @@ export type PostUncheckedCreateInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   authorId: string
+  isShared?: boolean
+  sharedFromId?: string | null
   specificTo?: Prisma.UserUncheckedCreateNestedManyWithoutVisiblePostsInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
+  sharedPosts?: Prisma.PostUncheckedCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostUpdateInput = {
@@ -324,10 +360,13 @@ export type PostUpdateInput = {
   disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   specificTo?: Prisma.UserUpdateManyWithoutVisiblePostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
+  sharedFrom?: Prisma.PostUpdateOneWithoutSharedPostsNestedInput
+  sharedPosts?: Prisma.PostUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostUncheckedUpdateInput = {
@@ -340,9 +379,12 @@ export type PostUncheckedUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specificTo?: Prisma.UserUncheckedUpdateManyWithoutVisiblePostsNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
+  sharedPosts?: Prisma.PostUncheckedUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostCreateManyInput = {
@@ -355,6 +397,8 @@ export type PostCreateManyInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   authorId: string
+  isShared?: boolean
+  sharedFromId?: string | null
 }
 
 export type PostUpdateManyMutationInput = {
@@ -366,6 +410,7 @@ export type PostUpdateManyMutationInput = {
   disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type PostUncheckedUpdateManyInput = {
@@ -378,6 +423,8 @@ export type PostUncheckedUpdateManyInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type PostListRelationFilter = {
@@ -390,6 +437,11 @@ export type PostOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type PostNullableScalarRelationFilter = {
+  is?: Prisma.PostWhereInput | null
+  isNot?: Prisma.PostWhereInput | null
+}
+
 export type PostCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
@@ -400,6 +452,8 @@ export type PostCountOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
+  isShared?: Prisma.SortOrder
+  sharedFromId?: Prisma.SortOrder
 }
 
 export type PostMaxOrderByAggregateInput = {
@@ -412,6 +466,8 @@ export type PostMaxOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
+  isShared?: Prisma.SortOrder
+  sharedFromId?: Prisma.SortOrder
 }
 
 export type PostMinOrderByAggregateInput = {
@@ -424,6 +480,8 @@ export type PostMinOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
+  isShared?: Prisma.SortOrder
+  sharedFromId?: Prisma.SortOrder
 }
 
 export type PostScalarRelationFilter = {
@@ -511,12 +569,70 @@ export type PostUncheckedUpdateManyWithoutSpecificToNestedInput = {
   deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
 }
 
+export type PostCreateNestedOneWithoutSharedPostsInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutSharedPostsInput, Prisma.PostUncheckedCreateWithoutSharedPostsInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutSharedPostsInput
+  connect?: Prisma.PostWhereUniqueInput
+}
+
+export type PostCreateNestedManyWithoutSharedFromInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutSharedFromInput, Prisma.PostUncheckedCreateWithoutSharedFromInput> | Prisma.PostCreateWithoutSharedFromInput[] | Prisma.PostUncheckedCreateWithoutSharedFromInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutSharedFromInput | Prisma.PostCreateOrConnectWithoutSharedFromInput[]
+  createMany?: Prisma.PostCreateManySharedFromInputEnvelope
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+}
+
+export type PostUncheckedCreateNestedManyWithoutSharedFromInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutSharedFromInput, Prisma.PostUncheckedCreateWithoutSharedFromInput> | Prisma.PostCreateWithoutSharedFromInput[] | Prisma.PostUncheckedCreateWithoutSharedFromInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutSharedFromInput | Prisma.PostCreateOrConnectWithoutSharedFromInput[]
+  createMany?: Prisma.PostCreateManySharedFromInputEnvelope
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+}
+
 export type EnumPostVisibilityFieldUpdateOperationsInput = {
   set?: $Enums.PostVisibility
 }
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type PostUpdateOneWithoutSharedPostsNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutSharedPostsInput, Prisma.PostUncheckedCreateWithoutSharedPostsInput>
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutSharedPostsInput
+  upsert?: Prisma.PostUpsertWithoutSharedPostsInput
+  disconnect?: Prisma.PostWhereInput | boolean
+  delete?: Prisma.PostWhereInput | boolean
+  connect?: Prisma.PostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutSharedPostsInput, Prisma.PostUpdateWithoutSharedPostsInput>, Prisma.PostUncheckedUpdateWithoutSharedPostsInput>
+}
+
+export type PostUpdateManyWithoutSharedFromNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutSharedFromInput, Prisma.PostUncheckedCreateWithoutSharedFromInput> | Prisma.PostCreateWithoutSharedFromInput[] | Prisma.PostUncheckedCreateWithoutSharedFromInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutSharedFromInput | Prisma.PostCreateOrConnectWithoutSharedFromInput[]
+  upsert?: Prisma.PostUpsertWithWhereUniqueWithoutSharedFromInput | Prisma.PostUpsertWithWhereUniqueWithoutSharedFromInput[]
+  createMany?: Prisma.PostCreateManySharedFromInputEnvelope
+  set?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  disconnect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  delete?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  update?: Prisma.PostUpdateWithWhereUniqueWithoutSharedFromInput | Prisma.PostUpdateWithWhereUniqueWithoutSharedFromInput[]
+  updateMany?: Prisma.PostUpdateManyWithWhereWithoutSharedFromInput | Prisma.PostUpdateManyWithWhereWithoutSharedFromInput[]
+  deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
+}
+
+export type PostUncheckedUpdateManyWithoutSharedFromNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutSharedFromInput, Prisma.PostUncheckedCreateWithoutSharedFromInput> | Prisma.PostCreateWithoutSharedFromInput[] | Prisma.PostUncheckedCreateWithoutSharedFromInput[]
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutSharedFromInput | Prisma.PostCreateOrConnectWithoutSharedFromInput[]
+  upsert?: Prisma.PostUpsertWithWhereUniqueWithoutSharedFromInput | Prisma.PostUpsertWithWhereUniqueWithoutSharedFromInput[]
+  createMany?: Prisma.PostCreateManySharedFromInputEnvelope
+  set?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  disconnect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  delete?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[]
+  update?: Prisma.PostUpdateWithWhereUniqueWithoutSharedFromInput | Prisma.PostUpdateWithWhereUniqueWithoutSharedFromInput[]
+  updateMany?: Prisma.PostUpdateManyWithWhereWithoutSharedFromInput | Prisma.PostUpdateManyWithWhereWithoutSharedFromInput[]
+  deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
 }
 
 export type PostCreateNestedOneWithoutLikesInput = {
@@ -556,9 +672,12 @@ export type PostCreateWithoutAuthorInput = {
   disableComments?: boolean
   imageUrl?: string | null
   createdAt?: Date | string
+  isShared?: boolean
   specificTo?: Prisma.UserCreateNestedManyWithoutVisiblePostsInput
   likes?: Prisma.LikeCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
+  sharedFrom?: Prisma.PostCreateNestedOneWithoutSharedPostsInput
+  sharedPosts?: Prisma.PostCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostUncheckedCreateWithoutAuthorInput = {
@@ -570,9 +689,12 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   disableComments?: boolean
   imageUrl?: string | null
   createdAt?: Date | string
+  isShared?: boolean
+  sharedFromId?: string | null
   specificTo?: Prisma.UserUncheckedCreateNestedManyWithoutVisiblePostsInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
+  sharedPosts?: Prisma.PostUncheckedCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostCreateOrConnectWithoutAuthorInput = {
@@ -594,9 +716,12 @@ export type PostCreateWithoutSpecificToInput = {
   disableComments?: boolean
   imageUrl?: string | null
   createdAt?: Date | string
+  isShared?: boolean
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   likes?: Prisma.LikeCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
+  sharedFrom?: Prisma.PostCreateNestedOneWithoutSharedPostsInput
+  sharedPosts?: Prisma.PostCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostUncheckedCreateWithoutSpecificToInput = {
@@ -609,8 +734,11 @@ export type PostUncheckedCreateWithoutSpecificToInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   authorId: string
+  isShared?: boolean
+  sharedFromId?: string | null
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
+  sharedPosts?: Prisma.PostUncheckedCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostCreateOrConnectWithoutSpecificToInput = {
@@ -647,6 +775,8 @@ export type PostScalarWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"Post"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   authorId?: Prisma.StringFilter<"Post"> | string
+  isShared?: Prisma.BoolFilter<"Post"> | boolean
+  sharedFromId?: Prisma.StringNullableFilter<"Post"> | string | null
 }
 
 export type PostUpsertWithWhereUniqueWithoutSpecificToInput = {
@@ -665,6 +795,150 @@ export type PostUpdateManyWithWhereWithoutSpecificToInput = {
   data: Prisma.XOR<Prisma.PostUpdateManyMutationInput, Prisma.PostUncheckedUpdateManyWithoutSpecificToInput>
 }
 
+export type PostCreateWithoutSharedPostsInput = {
+  id?: string
+  content: string
+  location?: string | null
+  visibility?: $Enums.PostVisibility
+  hideLikes?: boolean
+  disableComments?: boolean
+  imageUrl?: string | null
+  createdAt?: Date | string
+  isShared?: boolean
+  specificTo?: Prisma.UserCreateNestedManyWithoutVisiblePostsInput
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+  likes?: Prisma.LikeCreateNestedManyWithoutPostInput
+  comments?: Prisma.CommentCreateNestedManyWithoutPostInput
+  sharedFrom?: Prisma.PostCreateNestedOneWithoutSharedPostsInput
+}
+
+export type PostUncheckedCreateWithoutSharedPostsInput = {
+  id?: string
+  content: string
+  location?: string | null
+  visibility?: $Enums.PostVisibility
+  hideLikes?: boolean
+  disableComments?: boolean
+  imageUrl?: string | null
+  createdAt?: Date | string
+  authorId: string
+  isShared?: boolean
+  sharedFromId?: string | null
+  specificTo?: Prisma.UserUncheckedCreateNestedManyWithoutVisiblePostsInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
+}
+
+export type PostCreateOrConnectWithoutSharedPostsInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutSharedPostsInput, Prisma.PostUncheckedCreateWithoutSharedPostsInput>
+}
+
+export type PostCreateWithoutSharedFromInput = {
+  id?: string
+  content: string
+  location?: string | null
+  visibility?: $Enums.PostVisibility
+  hideLikes?: boolean
+  disableComments?: boolean
+  imageUrl?: string | null
+  createdAt?: Date | string
+  isShared?: boolean
+  specificTo?: Prisma.UserCreateNestedManyWithoutVisiblePostsInput
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+  likes?: Prisma.LikeCreateNestedManyWithoutPostInput
+  comments?: Prisma.CommentCreateNestedManyWithoutPostInput
+  sharedPosts?: Prisma.PostCreateNestedManyWithoutSharedFromInput
+}
+
+export type PostUncheckedCreateWithoutSharedFromInput = {
+  id?: string
+  content: string
+  location?: string | null
+  visibility?: $Enums.PostVisibility
+  hideLikes?: boolean
+  disableComments?: boolean
+  imageUrl?: string | null
+  createdAt?: Date | string
+  authorId: string
+  isShared?: boolean
+  specificTo?: Prisma.UserUncheckedCreateNestedManyWithoutVisiblePostsInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
+  sharedPosts?: Prisma.PostUncheckedCreateNestedManyWithoutSharedFromInput
+}
+
+export type PostCreateOrConnectWithoutSharedFromInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutSharedFromInput, Prisma.PostUncheckedCreateWithoutSharedFromInput>
+}
+
+export type PostCreateManySharedFromInputEnvelope = {
+  data: Prisma.PostCreateManySharedFromInput | Prisma.PostCreateManySharedFromInput[]
+  skipDuplicates?: boolean
+}
+
+export type PostUpsertWithoutSharedPostsInput = {
+  update: Prisma.XOR<Prisma.PostUpdateWithoutSharedPostsInput, Prisma.PostUncheckedUpdateWithoutSharedPostsInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutSharedPostsInput, Prisma.PostUncheckedCreateWithoutSharedPostsInput>
+  where?: Prisma.PostWhereInput
+}
+
+export type PostUpdateToOneWithWhereWithoutSharedPostsInput = {
+  where?: Prisma.PostWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutSharedPostsInput, Prisma.PostUncheckedUpdateWithoutSharedPostsInput>
+}
+
+export type PostUpdateWithoutSharedPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumPostVisibilityFieldUpdateOperationsInput | $Enums.PostVisibility
+  hideLikes?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  specificTo?: Prisma.UserUpdateManyWithoutVisiblePostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
+  sharedFrom?: Prisma.PostUpdateOneWithoutSharedPostsNestedInput
+}
+
+export type PostUncheckedUpdateWithoutSharedPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumPostVisibilityFieldUpdateOperationsInput | $Enums.PostVisibility
+  hideLikes?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specificTo?: Prisma.UserUncheckedUpdateManyWithoutVisiblePostsNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
+}
+
+export type PostUpsertWithWhereUniqueWithoutSharedFromInput = {
+  where: Prisma.PostWhereUniqueInput
+  update: Prisma.XOR<Prisma.PostUpdateWithoutSharedFromInput, Prisma.PostUncheckedUpdateWithoutSharedFromInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutSharedFromInput, Prisma.PostUncheckedCreateWithoutSharedFromInput>
+}
+
+export type PostUpdateWithWhereUniqueWithoutSharedFromInput = {
+  where: Prisma.PostWhereUniqueInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutSharedFromInput, Prisma.PostUncheckedUpdateWithoutSharedFromInput>
+}
+
+export type PostUpdateManyWithWhereWithoutSharedFromInput = {
+  where: Prisma.PostScalarWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateManyMutationInput, Prisma.PostUncheckedUpdateManyWithoutSharedFromInput>
+}
+
 export type PostCreateWithoutLikesInput = {
   id?: string
   content: string
@@ -674,9 +948,12 @@ export type PostCreateWithoutLikesInput = {
   disableComments?: boolean
   imageUrl?: string | null
   createdAt?: Date | string
+  isShared?: boolean
   specificTo?: Prisma.UserCreateNestedManyWithoutVisiblePostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
+  sharedFrom?: Prisma.PostCreateNestedOneWithoutSharedPostsInput
+  sharedPosts?: Prisma.PostCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostUncheckedCreateWithoutLikesInput = {
@@ -689,8 +966,11 @@ export type PostUncheckedCreateWithoutLikesInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   authorId: string
+  isShared?: boolean
+  sharedFromId?: string | null
   specificTo?: Prisma.UserUncheckedCreateNestedManyWithoutVisiblePostsInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
+  sharedPosts?: Prisma.PostUncheckedCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostCreateOrConnectWithoutLikesInput = {
@@ -718,9 +998,12 @@ export type PostUpdateWithoutLikesInput = {
   disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   specificTo?: Prisma.UserUpdateManyWithoutVisiblePostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
+  sharedFrom?: Prisma.PostUpdateOneWithoutSharedPostsNestedInput
+  sharedPosts?: Prisma.PostUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostUncheckedUpdateWithoutLikesInput = {
@@ -733,8 +1016,11 @@ export type PostUncheckedUpdateWithoutLikesInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specificTo?: Prisma.UserUncheckedUpdateManyWithoutVisiblePostsNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
+  sharedPosts?: Prisma.PostUncheckedUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostCreateWithoutCommentsInput = {
@@ -746,9 +1032,12 @@ export type PostCreateWithoutCommentsInput = {
   disableComments?: boolean
   imageUrl?: string | null
   createdAt?: Date | string
+  isShared?: boolean
   specificTo?: Prisma.UserCreateNestedManyWithoutVisiblePostsInput
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   likes?: Prisma.LikeCreateNestedManyWithoutPostInput
+  sharedFrom?: Prisma.PostCreateNestedOneWithoutSharedPostsInput
+  sharedPosts?: Prisma.PostCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostUncheckedCreateWithoutCommentsInput = {
@@ -761,8 +1050,11 @@ export type PostUncheckedCreateWithoutCommentsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   authorId: string
+  isShared?: boolean
+  sharedFromId?: string | null
   specificTo?: Prisma.UserUncheckedCreateNestedManyWithoutVisiblePostsInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
+  sharedPosts?: Prisma.PostUncheckedCreateNestedManyWithoutSharedFromInput
 }
 
 export type PostCreateOrConnectWithoutCommentsInput = {
@@ -790,9 +1082,12 @@ export type PostUpdateWithoutCommentsInput = {
   disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   specificTo?: Prisma.UserUpdateManyWithoutVisiblePostsNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
+  sharedFrom?: Prisma.PostUpdateOneWithoutSharedPostsNestedInput
+  sharedPosts?: Prisma.PostUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostUncheckedUpdateWithoutCommentsInput = {
@@ -805,8 +1100,11 @@ export type PostUncheckedUpdateWithoutCommentsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specificTo?: Prisma.UserUncheckedUpdateManyWithoutVisiblePostsNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
+  sharedPosts?: Prisma.PostUncheckedUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostCreateManyAuthorInput = {
@@ -818,6 +1116,8 @@ export type PostCreateManyAuthorInput = {
   disableComments?: boolean
   imageUrl?: string | null
   createdAt?: Date | string
+  isShared?: boolean
+  sharedFromId?: string | null
 }
 
 export type PostUpdateWithoutAuthorInput = {
@@ -829,9 +1129,12 @@ export type PostUpdateWithoutAuthorInput = {
   disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   specificTo?: Prisma.UserUpdateManyWithoutVisiblePostsNestedInput
   likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
+  sharedFrom?: Prisma.PostUpdateOneWithoutSharedPostsNestedInput
+  sharedPosts?: Prisma.PostUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostUncheckedUpdateWithoutAuthorInput = {
@@ -843,9 +1146,12 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specificTo?: Prisma.UserUncheckedUpdateManyWithoutVisiblePostsNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
+  sharedPosts?: Prisma.PostUncheckedUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutAuthorInput = {
@@ -857,6 +1163,8 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type PostUpdateWithoutSpecificToInput = {
@@ -868,9 +1176,12 @@ export type PostUpdateWithoutSpecificToInput = {
   disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
   likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
+  sharedFrom?: Prisma.PostUpdateOneWithoutSharedPostsNestedInput
+  sharedPosts?: Prisma.PostUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostUncheckedUpdateWithoutSpecificToInput = {
@@ -883,8 +1194,11 @@ export type PostUncheckedUpdateWithoutSpecificToInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
+  sharedPosts?: Prisma.PostUncheckedUpdateManyWithoutSharedFromNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutSpecificToInput = {
@@ -897,6 +1211,68 @@ export type PostUncheckedUpdateManyWithoutSpecificToInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sharedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type PostCreateManySharedFromInput = {
+  id?: string
+  content: string
+  location?: string | null
+  visibility?: $Enums.PostVisibility
+  hideLikes?: boolean
+  disableComments?: boolean
+  imageUrl?: string | null
+  createdAt?: Date | string
+  authorId: string
+  isShared?: boolean
+}
+
+export type PostUpdateWithoutSharedFromInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumPostVisibilityFieldUpdateOperationsInput | $Enums.PostVisibility
+  hideLikes?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  specificTo?: Prisma.UserUpdateManyWithoutVisiblePostsNestedInput
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
+  sharedPosts?: Prisma.PostUpdateManyWithoutSharedFromNestedInput
+}
+
+export type PostUncheckedUpdateWithoutSharedFromInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumPostVisibilityFieldUpdateOperationsInput | $Enums.PostVisibility
+  hideLikes?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  specificTo?: Prisma.UserUncheckedUpdateManyWithoutVisiblePostsNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
+  sharedPosts?: Prisma.PostUncheckedUpdateManyWithoutSharedFromNestedInput
+}
+
+export type PostUncheckedUpdateManyWithoutSharedFromInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumPostVisibilityFieldUpdateOperationsInput | $Enums.PostVisibility
+  hideLikes?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -908,12 +1284,14 @@ export type PostCountOutputType = {
   specificTo: number
   likes: number
   comments: number
+  sharedPosts: number
 }
 
 export type PostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   specificTo?: boolean | PostCountOutputTypeCountSpecificToArgs
   likes?: boolean | PostCountOutputTypeCountLikesArgs
   comments?: boolean | PostCountOutputTypeCountCommentsArgs
+  sharedPosts?: boolean | PostCountOutputTypeCountSharedPostsArgs
 }
 
 /**
@@ -947,6 +1325,13 @@ export type PostCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.CommentWhereInput
 }
 
+/**
+ * PostCountOutputType without action
+ */
+export type PostCountOutputTypeCountSharedPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PostWhereInput
+}
+
 
 export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -958,10 +1343,14 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   imageUrl?: boolean
   createdAt?: boolean
   authorId?: boolean
+  isShared?: boolean
+  sharedFromId?: boolean
   specificTo?: boolean | Prisma.Post$specificToArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.Post$likesArgs<ExtArgs>
   comments?: boolean | Prisma.Post$commentsArgs<ExtArgs>
+  sharedFrom?: boolean | Prisma.Post$sharedFromArgs<ExtArgs>
+  sharedPosts?: boolean | Prisma.Post$sharedPostsArgs<ExtArgs>
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
@@ -975,7 +1364,10 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   imageUrl?: boolean
   createdAt?: boolean
   authorId?: boolean
+  isShared?: boolean
+  sharedFromId?: boolean
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sharedFrom?: boolean | Prisma.Post$sharedFromArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -988,7 +1380,10 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   imageUrl?: boolean
   createdAt?: boolean
   authorId?: boolean
+  isShared?: boolean
+  sharedFromId?: boolean
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sharedFrom?: boolean | Prisma.Post$sharedFromArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectScalar = {
@@ -1001,21 +1396,27 @@ export type PostSelectScalar = {
   imageUrl?: boolean
   createdAt?: boolean
   authorId?: boolean
+  isShared?: boolean
+  sharedFromId?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "location" | "visibility" | "hideLikes" | "disableComments" | "imageUrl" | "createdAt" | "authorId", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "location" | "visibility" | "hideLikes" | "disableComments" | "imageUrl" | "createdAt" | "authorId" | "isShared" | "sharedFromId", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   specificTo?: boolean | Prisma.Post$specificToArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.Post$likesArgs<ExtArgs>
   comments?: boolean | Prisma.Post$commentsArgs<ExtArgs>
+  sharedFrom?: boolean | Prisma.Post$sharedFromArgs<ExtArgs>
+  sharedPosts?: boolean | Prisma.Post$sharedPostsArgs<ExtArgs>
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sharedFrom?: boolean | Prisma.Post$sharedFromArgs<ExtArgs>
 }
 export type PostIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sharedFrom?: boolean | Prisma.Post$sharedFromArgs<ExtArgs>
 }
 
 export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1025,6 +1426,8 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     author: Prisma.$UserPayload<ExtArgs>
     likes: Prisma.$LikePayload<ExtArgs>[]
     comments: Prisma.$CommentPayload<ExtArgs>[]
+    sharedFrom: Prisma.$PostPayload<ExtArgs> | null
+    sharedPosts: Prisma.$PostPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1036,6 +1439,8 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     imageUrl: string | null
     createdAt: Date
     authorId: string
+    isShared: boolean
+    sharedFromId: string | null
   }, ExtArgs["result"]["post"]>
   composites: {}
 }
@@ -1434,6 +1839,8 @@ export interface Prisma__PostClient<T, Null = never, ExtArgs extends runtime.Typ
   author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   likes<T extends Prisma.Post$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.Post$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sharedFrom<T extends Prisma.Post$sharedFromArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$sharedFromArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  sharedPosts<T extends Prisma.Post$sharedPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$sharedPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1472,6 +1879,8 @@ export interface PostFieldRefs {
   readonly imageUrl: Prisma.FieldRef<"Post", 'String'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly authorId: Prisma.FieldRef<"Post", 'String'>
+  readonly isShared: Prisma.FieldRef<"Post", 'Boolean'>
+  readonly sharedFromId: Prisma.FieldRef<"Post", 'String'>
 }
     
 
@@ -1942,6 +2351,49 @@ export type Post$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.CommentScalarFieldEnum | Prisma.CommentScalarFieldEnum[]
+}
+
+/**
+ * Post.sharedFrom
+ */
+export type Post$sharedFromArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Post
+   */
+  select?: Prisma.PostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Post
+   */
+  omit?: Prisma.PostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostInclude<ExtArgs> | null
+  where?: Prisma.PostWhereInput
+}
+
+/**
+ * Post.sharedPosts
+ */
+export type Post$sharedPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Post
+   */
+  select?: Prisma.PostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Post
+   */
+  omit?: Prisma.PostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostInclude<ExtArgs> | null
+  where?: Prisma.PostWhereInput
+  orderBy?: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[]
+  cursor?: Prisma.PostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PostScalarFieldEnum | Prisma.PostScalarFieldEnum[]
 }
 
 /**

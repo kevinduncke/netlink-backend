@@ -101,7 +101,9 @@ export const PostScalarFieldEnum = {
   disableComments: 'disableComments',
   imageUrl: 'imageUrl',
   createdAt: 'createdAt',
-  authorId: 'authorId'
+  authorId: 'authorId',
+  isShared: 'isShared',
+  sharedFromId: 'sharedFromId'
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]

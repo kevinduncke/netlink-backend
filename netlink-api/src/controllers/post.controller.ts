@@ -114,6 +114,74 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
     }
 }
 
+export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+
+        const userId = (req as any).user?.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(401).json({
+                error: 'Unauthorized.'
+            });
+        };
+
+        const posts = await prisma.post.findMany({
+            where: {
+                visibility: 'PUBLIC'
+            },
+            orderBy: { createdAt: 'desc' },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true,
+                        followers: {
+                            where: { followerId: userId },
+                            select: { id: true }
+                        }
+                    }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
+        });
+
+        const mapped = posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            createdAt: post.createdAt,
+            isShared: post.isShared,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl,
+                followers: post.author.followers,
+                isFollowedByMe: post.author.followers.length > 0
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            }
+        }));
+
+        res.json({
+            postsCount: mapped.length,
+            posts: mapped
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 export async function deletePost(req: Request, res: Response, next: NextFunction) {
     try {
         const userId = (req as any).user.id;
@@ -183,6 +251,117 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
 
         // RESPOND WITH UPDATED STATUS CODE
         res.json({ success: true, post: updatedPost });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function searchPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user.id;
+
+        const {
+            query = '',
+            people = 'anyone',
+            shares = 'all',
+            fromDate,
+            toDate,
+        } = req.query;
+
+        // ONLY FILTER BY PUBLIC POSTS FOR NOW..
+        const where: any = {
+            visibility: 'PUBLIC',
+            content: {
+                contains: query,
+                mode: 'insensitive'
+            }
+        };
+
+        // FILTER POSTS BY AUTHOR OR FOLLOWING IDK
+        if (people === 'following') {
+            const following = await prisma.follow.findMany({
+                where: { followerId: userId },
+                select: { followingId: true }
+            });
+
+            const followingIds = following.map(f => f.followingId);
+
+            where.authorId = {
+                in: followingIds
+            };
+        }
+
+        // FILTER BY SHARED OR ORIGINAL POSTS
+        if (shares === 'posts') {
+            where.isShared = false;
+        }
+
+        // DATE FILTERS
+        if (fromDate) {
+            where.createdAt = {
+                gte: new Date(fromDate as string)
+            }
+        }
+        if (toDate) {
+            where.createdAt = {
+                ...(where.createdAt || {}),
+                lte: new Date(toDate as string)
+            };
+        }
+
+        // QUERY POSTS DB
+        const posts = await prisma.post.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true,
+                        followers: {
+                            where: { followerId: userId },
+                            select: { id: true }
+                        }
+                    }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
+        });
+
+        // MAP POSTS TO INCLUDE THE FOLLOW INFO BRUH
+        const mapped = posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            createdAt: post.createdAt,
+            isShared: post.isShared,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl,
+                followers: post.author.followers,
+                isFollowedByMe: post.author.followers.length > 0
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            }
+        }));
+
+        res.json({
+            postsCount: mapped.length,
+            posts: mapped
+        });
+
     } catch (error) {
         next(error);
     }
