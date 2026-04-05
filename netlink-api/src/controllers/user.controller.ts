@@ -89,15 +89,6 @@ export async function getMyProfile(req: Request, res: Response, next: NextFuncti
                 bio: true,
                 url: true,
                 avatarUrl: true,
-                // FOLLOWERS COUNT
-                followers: {
-                    select: { id: true }
-                },
-
-                // FOLLOWING COUNT
-                following: {
-                    select: { id: true }
-                },
 
                 // POSTS
                 posts: {
@@ -107,6 +98,34 @@ export async function getMyProfile(req: Request, res: Response, next: NextFuncti
                         content: true,
                         imageUrl: true,
                         createdAt: true,
+                    }
+                }
+            }
+        });
+
+        const following = await prisma.follow.findMany({
+            where: { followerId: userId },
+            include: {
+                following: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                }
+            }
+        });
+
+        const followers = await prisma.follow.findMany({
+            where: { followingId: userId },
+            include: {
+                follower: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
                     }
                 }
             }
@@ -124,8 +143,10 @@ export async function getMyProfile(req: Request, res: Response, next: NextFuncti
             bio: user.bio,
             url: user.url,
             avatarUrl: user.avatarUrl,
-            followersCount: user.followers.length,
-            followingCount: user.following.length,
+            followers: followers.map(f => f.follower),
+            followersCount: followers.length,
+            following: following.map(f => f.following),
+            followingCount: following.length,
             postsCount: user.posts.length,
             posts: user.posts
         });

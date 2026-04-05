@@ -137,10 +137,6 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                         name: true,
                         username: true,
                         avatarUrl: true,
-                        followers: {
-                            where: { followerId: userId },
-                            select: { id: true }
-                        }
                     }
                 },
                 _count: {
@@ -162,9 +158,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                 id: post.author.id,
                 name: post.author.name,
                 username: post.author.username,
-                avatarUrl: post.author.avatarUrl,
-                followers: post.author.followers,
-                isFollowedByMe: post.author.followers.length > 0
+                avatarUrl: post.author.avatarUrl
             },
             _count: {
                 comments: post._count.comments,
@@ -260,6 +254,24 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
     try {
         const userId = (req as any).user.id;
 
+        const parseDateParam = (value: unknown, endOfDay = false): Date | null => {
+            if (typeof value !== 'string' || value.trim().length === 0) {
+                return null;
+            }
+
+            const raw = value.trim();
+            const iso = /^\d{4}-\d{2}-\d{2}$/.test(raw)
+                ? `${raw}${endOfDay ? 'T23:59:59.999Z' : 'T00:00:00.000Z'}`
+                : raw;
+
+            const parsed = new Date(iso);
+            if (Number.isNaN(parsed.getTime())) {
+                return null;
+            }
+
+            return parsed;
+        };
+
         const {
             query = '',
             people = 'anyone',
@@ -298,14 +310,29 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
 
         // DATE FILTERS
         if (fromDate) {
-            where.createdAt = {
-                gte: new Date(fromDate as string)
+            const parsedFromDate = parseDateParam(fromDate, false);
+            if (!parsedFromDate) {
+                return res.status(400).json({
+                    error: 'Invalid fromDate. Use YYYY-MM-DD or a valid ISO date.'
+                });
             }
+
+            where.createdAt = {
+                gte: parsedFromDate
+            };
         }
+
         if (toDate) {
+            const parsedToDate = parseDateParam(toDate, true);
+            if (!parsedToDate) {
+                return res.status(400).json({
+                    error: 'Invalid toDate. Use YYYY-MM-DD or a valid ISO date.'
+                });
+            }
+
             where.createdAt = {
                 ...(where.createdAt || {}),
-                lte: new Date(toDate as string)
+                lte: parsedToDate
             };
         }
 
@@ -349,6 +376,66 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 avatarUrl: post.author.avatarUrl,
                 followers: post.author.followers,
                 isFollowedByMe: post.author.followers.length > 0
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            }
+        }));
+
+        res.json({
+            postsCount: mapped.length,
+            posts: mapped
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getUserPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = req.params.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        const posts = await prisma.post.findMany({
+            where: { authorId: userId },
+            orderBy: { createdAt: 'desc' },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
+        });
+
+        const mapped = posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            createdAt: post.createdAt,
+            isShared: post.isShared,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl
             },
             _count: {
                 comments: post._count.comments,

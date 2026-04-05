@@ -67,7 +67,7 @@ export async function unfollowUser(req: Request, res: Response, next: NextFuncti
     }
 }
 
-// GET FOLLOWERS USERS
+// GET SPECIFIC FOLLOWERS USER
 export async function getFollowers(req: Request, res: Response, next: NextFunction) {
     try {
         const userId = req.params.id;
@@ -96,7 +96,7 @@ export async function getFollowers(req: Request, res: Response, next: NextFuncti
     }
 }
 
-// GET FOLLOWING USERS
+// GET SPECIFIC FOLLOWING USER
 export async function getFollowing(req: Request, res: Response, next: NextFunction) {
     try {
         const userId = req.params.id;
@@ -111,8 +111,8 @@ export async function getFollowing(req: Request, res: Response, next: NextFuncti
                 following: {
                     select: {
                         id: true,
-                        email: true,
                         name: true,
+                        username: true,
                         avatarUrl: true,
                     },
                 },
@@ -120,6 +120,68 @@ export async function getFollowing(req: Request, res: Response, next: NextFuncti
         });
 
         res.json(following.map(f => f.following));
+    } catch (error) {
+        next(error);
+    }
+}
+
+// GET ALL FOLLOWING USERS
+export async function getAllFollowing(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user!.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        const following = await prisma.follow.findMany({
+            where: { followerId: userId },
+            include: {
+                following: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                }
+            }
+        });
+
+        res.json(following.map(f => f.following));
+    } catch (error) {
+        next(error);
+    }
+}
+
+// GET ALL FOLLOWERS USERS
+export async function getAllFollowers(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user!.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        const followers = await prisma.follow.findMany({
+            where: { followingId: userId },
+            include: {
+                follower: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                }
+            }
+        });
+
+        res.json(followers.map(f => f.follower));
     } catch (error) {
         next(error);
     }
