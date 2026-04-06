@@ -15,7 +15,6 @@ export const comparePassword = async (password: string, hash: string) => {
 
 // CREATE A NEW USER.
 export const createUser = async (email: string, password: string, name: string, bio: string, avatarUrl: string) => {
-    console.log('DATA: ', email, password);
 
     // CONCATENATE THE NAME AND LASTNAME TO CREATE A USERNAME
     const username = name.toLowerCase().replace(/\s+/g, '');

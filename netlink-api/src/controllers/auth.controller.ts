@@ -60,16 +60,12 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 
         // CHECK IF USER ALREADY EXISTS
         const userCheck = await findUserByEmail(email);
-        console.log('-------------------------');
-        console.log(email);
         if (userCheck) {
             return res.status(409).json({ message: 'Email already exists.' });
         }
 
         // CALL TO HASH THE PASSWORD
         const hashed = await hashPassword(password);
-        console.log(hashed);
-        console.log('-------------------------');
         
         // CALL TO CREATE NEW USER
         const user = await createUser(email, hashed, name, bio, avatarUrl);

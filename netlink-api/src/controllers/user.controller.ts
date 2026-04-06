@@ -209,8 +209,6 @@ export async function getListOfUsers(req: Request, res: Response, next: NextFunc
             take: 5 // LIMIT TO 5 RESULTS
         });
 
-        console.log(users);
-
         res.json(users);
     } catch (error) {
         next(error);

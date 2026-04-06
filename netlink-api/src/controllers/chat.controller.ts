@@ -54,16 +54,10 @@ export async function getUserChats(req: Request, res: Response, next: NextFuncti
                 users: {
                     select: {
                         id: true,
-                        email: true,
+                        username: true,
                         name: true,
                         avatarUrl: true
                     }
-                },
-                messages: {
-                    orderBy: {
-                        createdAt: 'desc'
-                    },
-                    take: 1
                 }
             },
             orderBy: {
@@ -73,15 +67,26 @@ export async function getUserChats(req: Request, res: Response, next: NextFuncti
             }
         });
 
-        // SHOW THE OTHER USER INSTEAD OF ALL USERS
-        const formattedChats = chats.map(chat => {
-            const otherUser = chat.users.filter(user => user.id !== userId);
-            return {
-                id: chat.id,
-                otherUser,
-                lastMessage: chat.messages[0] || null,
-            };
-        });
+        // SHOW THE OTHER USER AS A SINGLE OBJECT INSTEAD OF AN ARRAY
+        const formattedChats = chats
+            .map(chat => {
+                const receiver = chat.users.find(user => user.id !== userId);
+
+                if (!receiver) {
+                    return null;
+                }
+
+                return {
+                    chatId: chat.id,
+                    receiver: {
+                        id: receiver.id,
+                        username: receiver.username,
+                        name: receiver.name,
+                        avatarUrl: receiver.avatarUrl ?? undefined
+                    }
+                };
+            })
+            .filter((chat): chat is NonNullable<typeof chat> => chat !== null);
 
         res.json(formattedChats);
     } catch (error) {
@@ -136,16 +141,22 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
             return res.status(400).json({ error: 'Invalid user ID.' });
         }
 
-        // PAGINATION PARAMS
-        const limit = Number(req.query.limit) || 20;
-        const cursor = req.query.cursor ? String(req.query.cursor) : null;
-
-        // UCC (USER CHAT CHECK)
+        // UCC (USER CHAT CHECK) & GET RECEIVER INFO
         const ucc = await prisma.chat.findFirst({
             where: {
                 id: chatId,
                 users: {
                     some: { id: userId }
+                }
+            },
+            include: {
+                users: {
+                    select: {
+                        id: true,
+                        username: true,
+                        name: true,
+                        avatarUrl: true
+                    }
                 }
             }
         });
@@ -153,21 +164,27 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
             return res.status(404).json({ error: "You're not part of this chat, back off!" });
         }
 
-        // FETCH MESSAGES WITH PAG
+        // EXTRACT RECEIVER
+        const receiver = ucc.users.find(user => user.id !== userId);
+        if (!receiver) {
+            return res.status(500).json({ error: "Receiver not found in chat." });
+        }
+
+        // FETCH MESSAGES
         const message = await prisma.message.findMany({
             where: { chatId },
             orderBy: { createdAt: 'asc' },
-            take: limit,
-            ...(cursor && {
-                skip: 1,
-                cursor: { id: cursor }
-            })
         });
 
-        // NEXT CURSOR
-        const nextCursor = message.length === limit ? message[message.length - 1]?.id : null;
-
-        res.json({ message, nextCursor });
+        res.json({
+            message,
+            receiver: {
+                id: receiver.id,
+                username: receiver.username,
+                name: receiver.name,
+                avatarUrl: receiver.avatarUrl ?? undefined
+            }
+        });
 
     } catch (error) {
         next(error);
