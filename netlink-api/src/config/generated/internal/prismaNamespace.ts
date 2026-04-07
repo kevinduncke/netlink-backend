@@ -390,6 +390,7 @@ export const ModelName = {
   Comment: 'Comment',
   Follow: 'Follow',
   Chat: 'Chat',
+  ChatHidden: 'ChatHidden',
   Message: 'Message',
   Notification: 'Notification'
 } as const
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "post" | "like" | "comment" | "follow" | "chat" | "message" | "notification"
+    modelProps: "user" | "post" | "like" | "comment" | "follow" | "chat" | "chatHidden" | "message" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -855,6 +856,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ChatHidden: {
+      payload: Prisma.$ChatHiddenPayload<ExtArgs>
+      fields: Prisma.ChatHiddenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChatHiddenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChatHiddenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>
+        }
+        findFirst: {
+          args: Prisma.ChatHiddenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChatHiddenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>
+        }
+        findMany: {
+          args: Prisma.ChatHiddenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>[]
+        }
+        create: {
+          args: Prisma.ChatHiddenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>
+        }
+        createMany: {
+          args: Prisma.ChatHiddenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChatHiddenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>[]
+        }
+        delete: {
+          args: Prisma.ChatHiddenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>
+        }
+        update: {
+          args: Prisma.ChatHiddenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>
+        }
+        deleteMany: {
+          args: Prisma.ChatHiddenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChatHiddenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChatHiddenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>[]
+        }
+        upsert: {
+          args: Prisma.ChatHiddenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatHiddenPayload>
+        }
+        aggregate: {
+          args: Prisma.ChatHiddenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChatHidden>
+        }
+        groupBy: {
+          args: Prisma.ChatHiddenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatHiddenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChatHiddenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatHiddenCountAggregateOutputType> | number
+        }
+      }
+    }
     Message: {
       payload: Prisma.$MessagePayload<ExtArgs>
       fields: Prisma.MessageFieldRefs
@@ -1113,6 +1188,16 @@ export const ChatScalarFieldEnum = {
 export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
 
 
+export const ChatHiddenScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  chatId: 'chatId',
+  userId: 'userId'
+} as const
+
+export type ChatHiddenScalarFieldEnum = (typeof ChatHiddenScalarFieldEnum)[keyof typeof ChatHiddenScalarFieldEnum]
+
+
 export const MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
@@ -1329,6 +1414,7 @@ export type GlobalOmitConfig = {
   comment?: Prisma.CommentOmit
   follow?: Prisma.FollowOmit
   chat?: Prisma.ChatOmit
+  chatHidden?: Prisma.ChatHiddenOmit
   message?: Prisma.MessageOmit
   notification?: Prisma.NotificationOmit
 }

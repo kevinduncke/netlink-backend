@@ -1,18 +1,44 @@
 import { Request, Response, NextFunction } from "express";
+import type { Prisma } from '../config/generated/client';
 import { prisma } from '../config/prisma';
+
+function getAuthenticatedUserId(req: Request) {
+    const userId = (req as any).user?.id;
+    return typeof userId === 'string' ? userId : null;
+}
+
+async function shouldPermanentlyDeleteChat(tx: Prisma.TransactionClient, chatId: string) {
+    const chat = await tx.chat.findUnique({
+        where: { id: chatId },
+        select: {
+            _count: {
+                select: {
+                    users: true,
+                    hiddenBy: true
+                }
+            }
+        }
+    });
+
+    if (!chat) {
+        return false;
+    }
+
+    return chat._count.users > 0 && chat._count.hiddenBy >= chat._count.users;
+}
 
 // NEW CHAT
 export async function createChat(req: Request, res: Response, next: NextFunction) {
     try {
         const { userId } = req.body;
-        const currentUserId = (req as any).user!.id;
+        const currentUserId = getAuthenticatedUserId(req);
 
         if (!userId || typeof userId !== 'string') {
             return res.status(400).json({ error: 'Invalid user ID.' });
         }
 
-        if (!currentUserId || typeof currentUserId !== 'string') {
-            return res.status(400).json({ error: 'Invalid current user ID.' });
+        if (!currentUserId) {
+            return res.status(401).json({ error: 'Authentication required.' });
         }
 
         const chat = await prisma.chat.create({
@@ -38,16 +64,19 @@ export async function createChat(req: Request, res: Response, next: NextFunction
 // GET ALL CHATS
 export async function getUserChats(req: Request, res: Response, next: NextFunction) {
     try {
-        const userId = (req as any).user!.id;
+        const userId = getAuthenticatedUserId(req);
 
-        if (!userId || typeof userId !== 'string') {
-            return res.status(400).json({ error: 'Invalid user ID.' });
+        if (!userId) {
+            return res.status(401).json({ error: 'Authentication required.' });
         }
 
         const chats = await prisma.chat.findMany({
             where: {
                 users: {
                     some: { id: userId }
+                },
+                hiddenBy: {
+                    none: { userId }
                 }
             },
             include: {
@@ -99,7 +128,7 @@ export async function newMessage(req: Request, res: Response, next: NextFunction
     try {
         const chatId = req.params.id;
         const { content } = req.body;
-        const senderId = (req as any).user!.id;
+        const senderId = getAuthenticatedUserId(req);
 
         if (!chatId || typeof chatId !== 'string') {
             console.log('Invalid chat ID:', chatId);
@@ -107,9 +136,25 @@ export async function newMessage(req: Request, res: Response, next: NextFunction
             return res.status(400).json({ error: 'Invalid chat ID.' });
         }
 
-        if (!senderId || typeof senderId !== 'string') {
+        if (!senderId) {
             console.log('Invalid sender ID:', senderId);
-            return res.status(400).json({ error: 'Invalid sender ID.', senderId });
+            return res.status(401).json({ error: 'Authentication required.' });
+        }
+
+        const chat = await prisma.chat.findFirst({
+            where: {
+                id: chatId,
+                users: {
+                    some: { id: senderId }
+                },
+                hiddenBy: {
+                    none: { userId: senderId }
+                }
+            }
+        });
+
+        if (!chat) {
+            return res.status(404).json({ error: 'Chat not found.' });
         }
 
         const message = await prisma.message.create({
@@ -131,14 +176,14 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
     try {
         const rawChatId = req.params.id;
         const chatId = Array.isArray(rawChatId) ? rawChatId[0] : rawChatId;
-        const userId = (req as any).user!.id;
+        const userId = getAuthenticatedUserId(req);
 
         if (!chatId) {
             return res.status(400).json({ error: 'Chat ID is required.' });
         }
 
-        if (!userId || typeof userId !== 'string') {
-            return res.status(400).json({ error: 'Invalid user ID.' });
+        if (!userId) {
+            return res.status(401).json({ error: 'Authentication required.' });
         }
 
         // UCC (USER CHAT CHECK) & GET RECEIVER INFO
@@ -147,6 +192,9 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
                 id: chatId,
                 users: {
                     some: { id: userId }
+                },
+                hiddenBy: {
+                    none: { userId }
                 }
             },
             include: {
@@ -155,7 +203,8 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
                         id: true,
                         username: true,
                         name: true,
-                        avatarUrl: true
+                        avatarUrl: true,
+                        createdAt: true
                     }
                 }
             }
@@ -182,10 +231,82 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
                 id: receiver.id,
                 username: receiver.username,
                 name: receiver.name,
-                avatarUrl: receiver.avatarUrl ?? undefined
+                avatarUrl: receiver.avatarUrl ?? undefined,
+                createdAt: receiver.createdAt
             }
         });
 
+    } catch (error) {
+        next(error);
+    }
+}
+
+// DELETE CHAT
+export async function deleteChat(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = getAuthenticatedUserId(req);
+        const chatId = req.params.id;
+
+        if (!userId) {
+            return res.status(401).json({
+                error: 'Authentication required.'
+            });
+        }
+
+        if (!chatId || typeof chatId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid chat ID is required.'
+            });
+        }
+
+        const chat = await prisma.chat.findFirst({
+            where: {
+                id: chatId,
+                users: {
+                    some: { id: userId }
+                }
+            }
+        });
+
+        if (!chat) {
+            return res.status(403).json({
+                error: 'Not authorized to delete this chat.'
+            });
+        }
+
+        const wasFullyDeleted = await prisma.$transaction(async (tx) => {
+            // Hide the shared chat only for the current user.
+            await tx.chatHidden.upsert({
+                where: {
+                    chatId_userId: {
+                        chatId,
+                        userId
+                    }
+                },
+                create: {
+                    chatId,
+                    userId
+                },
+                update: {}
+            });
+
+            const mustDeleteForEveryone = await shouldPermanentlyDeleteChat(tx, chatId);
+            if (!mustDeleteForEveryone) {
+                return false;
+            }
+
+            await tx.message.deleteMany({
+                where: { chatId }
+            });
+
+            await tx.chat.delete({
+                where: { id: chatId }
+            });
+
+            return true;
+        });
+
+        res.json({ success: true, hidden: !wasFullyDeleted, deletedForEveryone: wasFullyDeleted });
     } catch (error) {
         next(error);
     }

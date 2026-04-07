@@ -28,6 +28,7 @@ model User {
   following     Follow[]  @relation("following")
   messages      Message[] @relation("userMessages")
   chats         Chat[]    @relation("userChats")
+  chatHides     ChatHidden[] @relation("userChatHides")
   notifications Notification[]
   visiblePosts  Post[]    @relation("SpecificVisibility")
 }
@@ -104,6 +105,20 @@ model Chat {
 
   users         User[]    @relation("userChats")
   messages      Message[]
+  hiddenBy      ChatHidden[] @relation("chatHidden")
+}
+
+model ChatHidden {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+
+  chat          Chat      @relation("chatHidden", fields: [chatId], references: [id], onDelete: Cascade)
+  chatId        String
+
+  user          User      @relation("userChatHides", fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+
+  @@unique([chatId, userId])
 }
 
 model Message {

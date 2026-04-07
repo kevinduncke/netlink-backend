@@ -48,6 +48,11 @@ export type Follow = Prisma.FollowModel
  */
 export type Chat = Prisma.ChatModel
 /**
+ * Model ChatHidden
+ * 
+ */
+export type ChatHidden = Prisma.ChatHiddenModel
+/**
  * Model Message
  * 
  */
