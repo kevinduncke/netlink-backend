@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.5.0",
-  "engineVersion": "280c870be64f457428992c43c1f6d557fab6e29e",
+  "clientVersion": "7.4.1",
+  "engineVersion": "55ae170b1ced7fc6ed07a15f110549408c501bb3",
   "activeProvider": "postgresql",
   "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/config/generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id        String   @id @default(cuid())\n  email     String   @unique\n  password  String\n  createdAt DateTime @default(now())\n\n  // Profile Section\n  name      String?\n  username  String? @unique\n  bio       String?\n  url       String?\n  avatarUrl String?\n\n  // Relations \n  posts         Post[]\n  likes         Like[]\n  comments      Comment[]\n  followers     Follow[]       @relation(\"followers\")\n  following     Follow[]       @relation(\"following\")\n  messages      Message[]      @relation(\"userMessages\")\n  chats         Chat[]         @relation(\"userChats\")\n  chatHides     ChatHidden[]   @relation(\"userChatHides\")\n  notifications Notification[]\n  visiblePosts  Post[]         @relation(\"SpecificVisibility\")\n}\n\nenum PostVisibility {\n  PUBLIC\n  FOLLOWERS\n  ONLY_ME\n  SPECIFIC\n}\n\nmodel Post {\n  id              String         @id @default(uuid())\n  content         String\n  location        String?\n  visibility      PostVisibility @default(PUBLIC)\n  specificTo      User[]         @relation(\"SpecificVisibility\")\n  hideLikes       Boolean        @default(false)\n  disableComments Boolean        @default(false)\n  imageUrl        String?\n  createdAt       DateTime       @default(now())\n\n  author   User   @relation(fields: [authorId], references: [id])\n  authorId String\n\n  likes    Like[]\n  comments Comment[]\n\n  isShared     Boolean @default(false)\n  sharedFromId String?\n  sharedFrom   Post?   @relation(\"SharedPost\", fields: [sharedFromId], references: [id])\n  sharedPosts  Post[]  @relation(\"SharedPost\")\n}\n\nmodel Like {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  post   Post   @relation(fields: [postId], references: [id])\n  postId String\n\n  @@unique([userId, postId])\n}\n\nmodel Comment {\n  id        String   @id @default(uuid())\n  content   String\n  createdAt DateTime @default(now())\n\n  author   User   @relation(fields: [authorId], references: [id])\n  authorId String\n\n  post   Post   @relation(fields: [postId], references: [id])\n  postId String\n}\n\nmodel Follow {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n\n  follower   User   @relation(\"followers\", fields: [followerId], references: [id])\n  followerId String\n\n  following   User   @relation(\"following\", fields: [followingId], references: [id])\n  followingId String\n}\n\nmodel Chat {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n\n  users    User[]       @relation(\"userChats\")\n  messages Message[]\n  hiddenBy ChatHidden[] @relation(\"chatHidden\")\n}\n\nmodel ChatHidden {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n\n  chat   Chat   @relation(\"chatHidden\", fields: [chatId], references: [id], onDelete: Cascade)\n  chatId String\n\n  user   User   @relation(\"userChatHides\", fields: [userId], references: [id], onDelete: Cascade)\n  userId String\n\n  @@unique([chatId, userId])\n}\n\nmodel Message {\n  id        String   @id @default(uuid())\n  content   String\n  createdAt DateTime @default(now())\n\n  chat   Chat   @relation(fields: [chatId], references: [id])\n  chatId String\n\n  sender   User   @relation(\"userMessages\", fields: [senderId], references: [id])\n  senderId String\n}\n\nmodel Notification {\n  id        String   @id @default(uuid())\n  type      String\n  message   String\n  read      Boolean  @default(false)\n  createdAt DateTime @default(now())\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n}\n",
   "runtimeDataModel": {
@@ -67,9 +67,7 @@ export interface PrismaClientConstructor {
    * Type-safe database client for TypeScript
    * @example
    * ```
-   * const prisma = new PrismaClient({
-   *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
-   * })
+   * const prisma = new PrismaClient()
    * // Fetch zero or more Users
    * const users = await prisma.user.findMany()
    * ```
@@ -91,9 +89,7 @@ export interface PrismaClientConstructor {
  * Type-safe database client for TypeScript
  * @example
  * ```
- * const prisma = new PrismaClient({
- *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
- * })
+ * const prisma = new PrismaClient()
  * // Fetch zero or more Users
  * const users = await prisma.user.findMany()
  * ```
