@@ -5,6 +5,7 @@ import userRouter from './user';
 import postRouter from './post';
 import followRouter from './follow';
 import chatRouter from './chats';
+import favoriteRouter from './favorite';
 
 // Register Routes Paths.
 export const registerRoutes = (app: Express) => {
@@ -14,4 +15,5 @@ export const registerRoutes = (app: Express) => {
     app.use('/chats', chatRouter);
     app.use('/post', postRouter);
     app.use('/follow', followRouter);
+    app.use('/favorites', favoriteRouter);
 };

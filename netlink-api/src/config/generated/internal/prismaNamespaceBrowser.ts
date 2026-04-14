@@ -56,6 +56,7 @@ export const ModelName = {
   Like: 'Like',
   Comment: 'Comment',
   Follow: 'Follow',
+  Favorite: 'Favorite',
   Chat: 'Chat',
   ChatHidden: 'ChatHidden',
   Message: 'Message',
@@ -139,6 +140,16 @@ export const FollowScalarFieldEnum = {
 } as const
 
 export type FollowScalarFieldEnum = (typeof FollowScalarFieldEnum)[keyof typeof FollowScalarFieldEnum]
+
+
+export const FavoriteScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  favoriteId: 'favoriteId'
+} as const
+
+export type FavoriteScalarFieldEnum = (typeof FavoriteScalarFieldEnum)[keyof typeof FavoriteScalarFieldEnum]
 
 
 export const ChatScalarFieldEnum = {

@@ -43,6 +43,11 @@ export type Comment = Prisma.CommentModel
  */
 export type Follow = Prisma.FollowModel
 /**
+ * Model Favorite
+ * 
+ */
+export type Favorite = Prisma.FavoriteModel
+/**
  * Model Chat
  * 
  */

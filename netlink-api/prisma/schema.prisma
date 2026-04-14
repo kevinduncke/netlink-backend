@@ -24,13 +24,18 @@ model User {
   posts         Post[]
   likes         Like[]
   comments      Comment[]
-  followers     Follow[]  @relation("followers")
-  following     Follow[]  @relation("following")
-  messages      Message[] @relation("userMessages")
-  chats         Chat[]    @relation("userChats")
-  chatHides     ChatHidden[] @relation("userChatHides")
+  followers     Follow[]          @relation("followers")
+  following     Follow[]          @relation("following")
+  messages      Message[]         @relation("userMessages")
+  chats         Chat[]            @relation("userChats")
+  chatHides     ChatHidden[]      @relation("userChatHides")
   notifications Notification[]
-  visiblePosts  Post[]    @relation("SpecificVisibility")
+  visiblePosts  Post[]            @relation("SpecificVisibility")
+
+  // USERS ADDED TO FAVORITES
+  favorites     Favorite[]        @relation("UserFavorites")
+  // USERS WHO ADDED ME TO FAVORITES
+  favoredBy  Favorite[]  @relation("UserFavoredBy")  
 }
 
 enum PostVisibility {
@@ -97,6 +102,18 @@ model Follow {
 
   following     User      @relation("following", fields: [followingId], references: [id])
   followingId   String
+}
+
+model Favorite {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+
+  // THE USER WHO FAVORITES SOMEONE
+  user          User     @relation("UserFavorites", fields: [userId], references: [id])
+  userId        String
+
+  favorite      User     @relation("UserFavoredBy", fields: [favoriteId], references: [id])
+  favoriteId    String  
 }
 
 model Chat {

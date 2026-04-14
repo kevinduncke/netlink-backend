@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.1
- * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+ * Prisma Client JS version: 7.5.0
+ * Query Engine version: 280c870be64f457428992c43c1f6d557fab6e29e
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.1",
-  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
+  client: "7.5.0",
+  engine: "280c870be64f457428992c43c1f6d557fab6e29e"
 }
 
 /**
@@ -389,6 +389,7 @@ export const ModelName = {
   Like: 'Like',
   Comment: 'Comment',
   Follow: 'Follow',
+  Favorite: 'Favorite',
   Chat: 'Chat',
   ChatHidden: 'ChatHidden',
   Message: 'Message',
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "post" | "like" | "comment" | "follow" | "chat" | "chatHidden" | "message" | "notification"
+    modelProps: "user" | "post" | "like" | "comment" | "follow" | "favorite" | "chat" | "chatHidden" | "message" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -779,6 +780,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.FollowCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.FollowCountAggregateOutputType> | number
+        }
+      }
+    }
+    Favorite: {
+      payload: Prisma.$FavoritePayload<ExtArgs>
+      fields: Prisma.FavoriteFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FavoriteFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FavoriteFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
+        }
+        findFirst: {
+          args: Prisma.FavoriteFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FavoriteFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
+        }
+        findMany: {
+          args: Prisma.FavoriteFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>[]
+        }
+        create: {
+          args: Prisma.FavoriteCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
+        }
+        createMany: {
+          args: Prisma.FavoriteCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FavoriteCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>[]
+        }
+        delete: {
+          args: Prisma.FavoriteDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
+        }
+        update: {
+          args: Prisma.FavoriteUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
+        }
+        deleteMany: {
+          args: Prisma.FavoriteDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FavoriteUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FavoriteUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>[]
+        }
+        upsert: {
+          args: Prisma.FavoriteUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
+        }
+        aggregate: {
+          args: Prisma.FavoriteAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFavorite>
+        }
+        groupBy: {
+          args: Prisma.FavoriteGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FavoriteGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FavoriteCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FavoriteCountAggregateOutputType> | number
         }
       }
     }
@@ -1180,6 +1255,16 @@ export const FollowScalarFieldEnum = {
 export type FollowScalarFieldEnum = (typeof FollowScalarFieldEnum)[keyof typeof FollowScalarFieldEnum]
 
 
+export const FavoriteScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  favoriteId: 'favoriteId'
+} as const
+
+export type FavoriteScalarFieldEnum = (typeof FavoriteScalarFieldEnum)[keyof typeof FavoriteScalarFieldEnum]
+
+
 export const ChatScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt'
@@ -1413,6 +1498,7 @@ export type GlobalOmitConfig = {
   like?: Prisma.LikeOmit
   comment?: Prisma.CommentOmit
   follow?: Prisma.FollowOmit
+  favorite?: Prisma.FavoriteOmit
   chat?: Prisma.ChatOmit
   chatHidden?: Prisma.ChatHiddenOmit
   message?: Prisma.MessageOmit
