@@ -58,6 +58,7 @@ export const ModelName = {
   Follow: 'Follow',
   Favorite: 'Favorite',
   Chat: 'Chat',
+  ChatParticipant: 'ChatParticipant',
   ChatHidden: 'ChatHidden',
   Message: 'Message',
   Notification: 'Notification'
@@ -158,6 +159,15 @@ export const ChatScalarFieldEnum = {
 } as const
 
 export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
+
+
+export const ChatParticipantScalarFieldEnum = {
+  id: 'id',
+  chatId: 'chatId',
+  userId: 'userId'
+} as const
+
+export type ChatParticipantScalarFieldEnum = (typeof ChatParticipantScalarFieldEnum)[keyof typeof ChatParticipantScalarFieldEnum]
 
 
 export const ChatHiddenScalarFieldEnum = {

@@ -8,34 +8,32 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
-  createdAt     DateTime  @default(now())
+  id                  String                  @id @default(cuid())
+  email               String                  @unique
+  password            String
+  createdAt           DateTime                @default(now())
 
   // Profile Section
-  name          String?
-  username      String?   @unique
-  bio           String?
-  url           String?
-  avatarUrl     String?
+  name                String?
+  username            String?                 @unique
+  bio                 String?
+  url                 String?
+  avatarUrl           String?
 
   // Relations 
-  posts         Post[]
-  likes         Like[]
-  comments      Comment[]
-  followers     Follow[]          @relation("followers")
-  following     Follow[]          @relation("following")
-  messages      Message[]         @relation("userMessages")
-  chats         Chat[]            @relation("userChats")
-  chatHides     ChatHidden[]      @relation("userChatHides")
-  notifications Notification[]
-  visiblePosts  Post[]            @relation("SpecificVisibility")
+  posts               Post[]
+  likes               Like[]
+  comments            Comment[]
+  followers           Follow[]                @relation("followers")
+  following           Follow[]                @relation("following")
+  messages            Message[]               @relation("userMessages")
+  chatParticipants    ChatParticipant[]
+  chatHides           ChatHidden[]            @relation("userChatHides")
+  notifications       Notification[]
+  visiblePosts        Post[]                  @relation("SpecificVisibility")
 
-  // USERS ADDED TO FAVORITES
-  favorites     Favorite[]        @relation("UserFavorites")
-  // USERS WHO ADDED ME TO FAVORITES
-  favoredBy  Favorite[]  @relation("UserFavoredBy")  
+  favorites           Favorite[]              @relation("UserFavorites")
+  favoredBy           Favorite[]              @relation("UserFavoredBy")  
 }
 
 enum PostVisibility {
@@ -56,7 +54,7 @@ model Post {
   imageUrl        String?
   createdAt       DateTime         @default(now())
 
-  author          User             @relation(fields: [authorId], references: [id])
+  author          User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId        String
 
   likes           Like[]
@@ -72,10 +70,10 @@ model Like {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
 
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
 
   @@unique([userId, postId])
@@ -86,7 +84,7 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
 
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String
 
   post      Post     @relation(fields: [postId], references: [id])
@@ -97,10 +95,10 @@ model Follow {
   id            String    @id @default(uuid())
   createdAt     DateTime  @default(now())
 
-  follower      User      @relation("followers", fields: [followerId], references: [id])
+  follower      User      @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
   followerId    String
 
-  following     User      @relation("following", fields: [followingId], references: [id])
+  following     User      @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
   followingId   String
 }
 
@@ -109,10 +107,10 @@ model Favorite {
   createdAt     DateTime @default(now())
 
   // THE USER WHO FAVORITES SOMEONE
-  user          User     @relation("UserFavorites", fields: [userId], references: [id])
+  user          User     @relation("UserFavorites", fields: [userId], references: [id], onDelete: Cascade)
   userId        String
 
-  favorite      User     @relation("UserFavoredBy", fields: [favoriteId], references: [id])
+  favorite      User     @relation("UserFavoredBy", fields: [favoriteId], references: [id], onDelete: Cascade)
   favoriteId    String  
 }
 
@@ -120,9 +118,20 @@ model Chat {
   id            String    @id @default(uuid())
   createdAt     DateTime  @default(now())
 
-  users         User[]    @relation("userChats")
+  participants  ChatParticipant[]
   messages      Message[]
   hiddenBy      ChatHidden[] @relation("chatHidden")
+}
+
+model ChatParticipant {
+  id            String    @default(uuid())
+  chatId        String
+  userId        String
+
+  chat          Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatId, userId]) // prev dup
 }
 
 model ChatHidden {
@@ -143,10 +152,10 @@ model Message {
   content       String
   createdAt     DateTime  @default(now())
 
-  chat          Chat      @relation(fields: [chatId], references: [id])
+  chat          Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
   chatId        String
 
-  sender        User      @relation("userMessages", fields: [senderId], references: [id])
+  sender        User      @relation("userMessages", fields: [senderId], references: [id], onDelete: Cascade)
   senderId      String
 }
 
@@ -157,6 +166,6 @@ model Notification {
   read          Boolean   @default(false)
   createdAt     DateTime  @default(now())
 
-  user          User      @relation(fields: [userId], references: [id])
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
 }

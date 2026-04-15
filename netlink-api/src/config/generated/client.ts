@@ -75,6 +75,11 @@ export type Favorite = Prisma.FavoriteModel
  */
 export type Chat = Prisma.ChatModel
 /**
+ * Model ChatParticipant
+ * 
+ */
+export type ChatParticipant = Prisma.ChatParticipantModel
+/**
  * Model ChatHidden
  * 
  */

@@ -13,15 +13,23 @@ export async function login(req: Request, res: Response) {
         }
 
         // CHECK IF USER ALREADY EXISTS.
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@netlink\.local$/;
+        if (!emailPattern.test(email)) {
+            return res.status(400).json({ error: 'Invalid login credentials.' });
+        }
         const user = await findUserByEmail(email);
         if (!user) {
-            return res.status(401).json({ message: 'Invalid Email!' });
+            return res.status(401).json({ error: 'Invalid login credentials.' });
         }
 
         // CHECK PASSWORD
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;;
+        if (!passwordPattern.test(password)) {
+            return res.status(400).json({ error: 'Invalid login credentials.' });
+        }
         const passCheck = await comparePassword(password, user.password);
         if (!passCheck) {
-            return res.status(401).json({ message: 'Invalid Password!' });
+            return res.status(401).json({ error: 'Invalid login credentials.' });
         }
 
         // SIGN JWT TOKEN
@@ -40,7 +48,7 @@ export async function login(req: Request, res: Response) {
         });
     } catch (err) {
         console.error('REGISTER ERROR', err);
-        return res.status(500).json({ message: 'Internal Server Error.' });
+        return res.status(500).json({ error: 'Internal Server Error.' });
     }
 };
 
@@ -55,16 +63,32 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 
         // CHECK IF EMAIL AND PASSWORD ARE PROVIDED.
         if (!email || !name || !password) {
-            return res.status(400).json({ error: 'Email, Name, and Password are Required!' });
+            return res.status(400).json({ error: 'Email, Name and Password are Required!' });
         }
 
         // CHECK IF USER ALREADY EXISTS
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@netlink\.local$/;
+        if (!emailPattern.test(email)) {
+            return res.status(400).json({ error: 'Invalid login credentials.' });
+        }        
         const userCheck = await findUserByEmail(email);
         if (userCheck) {
-            return res.status(409).json({ message: 'Email already exists.' });
+            return res.status(409).json({ error: 'Email already exists.' });
         }
 
-        // CALL TO HASH THE PASSWORD
+        // CHECK NAME
+        const namePattern = /^[A-Za-zÀ-ÿ ]{2,40}$/;
+        if (!namePattern.test(name)) {
+        return res.status(400).json({ error: "Invalid name format" });
+        }        
+
+        // CHECK PASSWORD
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;;
+        if (!passwordPattern.test(password)) {
+            return res.status(400).json({ error: 'Invalid login credentials.' });
+        }        
+
+        // CALL TO HASH THE PASSWORD        
         const hashed = await hashPassword(password);
         
         // CALL TO CREATE NEW USER

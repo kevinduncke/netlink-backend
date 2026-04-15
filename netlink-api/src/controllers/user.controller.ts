@@ -250,3 +250,22 @@ export async function getSuggestedUsers(req: Request, res: Response, next: NextF
         next(error);
     }
 }
+
+export async function deleteMyAccount(req: Request, res: Response, next: NextFunction) {
+    try {
+        const currentUserId = (req as any).user!.id;
+
+        if (!currentUserId || typeof currentUserId !== 'string') {
+            return res.status(400).json({ error: 'Invalid User ID.' });
+        }
+
+        // DELETE ACCOUNT IN CASCADE + ALL USER-RELATED DATA
+        await prisma.user.delete({
+            where: { id: currentUserId }
+        });
+
+        res.json({ message: 'Account deleted successfully.' });
+    } catch (error) {
+        next(error);
+    }
+}

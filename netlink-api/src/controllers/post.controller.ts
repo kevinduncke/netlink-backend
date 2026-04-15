@@ -116,7 +116,6 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
 
 export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
     try {
-
         const userId = (req as any).user?.id;
 
         if (!userId || typeof userId !== 'string') {
@@ -449,6 +448,78 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             posts: mapped
         });
 
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getFollowingPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user?.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(401).json({
+                error: 'Unauthorized.'
+            });
+        };
+
+        const following = await prisma.follow.findMany({
+            where: { followerId: userId },
+            select: { followingId: true }
+        });
+
+        const followingIds = following.map(f => f.followingId);
+
+        const posts = await prisma.post.findMany({
+            where: {
+                authorId: {
+                    in: followingIds
+                },
+                visibility: 'PUBLIC'
+            },
+            orderBy: { createdAt: 'desc' },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
+        });
+
+        const mapped = posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            createdAt: post.createdAt,
+            location: post.location,
+            isShared: post.isShared,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            }
+        }));
+
+        res.json({
+            postsCount: mapped.length,
+            posts: mapped
+        });
     } catch (error) {
         next(error);
     }
