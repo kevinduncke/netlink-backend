@@ -74,6 +74,8 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                         id: true,
                         content: true,
                         location: true,
+                        hideLikes: true,
+                        disableComments: true,
                         imageUrl: true,
                         createdAt: true,
 
@@ -97,16 +99,18 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             id: user.id,
             name: user.name,
             username: user.username,
-            postsCount: user.posts.length,
+            postsCount: user.posts.length,            
             posts: user.posts.map(post => ({
                 id: post.id,
                 content: post.content,
                 location: post.location,
                 imageUrl: post.imageUrl,
                 createdAt: post.createdAt,
+                hideLikes: post.hideLikes,
+                disableCommentes: post.disableComments,                 
                 commentsCount: post._count.comments,
                 likesCount: post._count.likes,
-                // sharesCount: post._count.shares ?? 0
+                // sharesCount: post._count.shares
             }))
         });
     } catch (error) {
@@ -129,7 +133,13 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                 visibility: 'PUBLIC'
             },
             orderBy: { createdAt: 'desc' },
-            include: {
+            select: {
+                id: true,
+                content: true,
+                createdAt: true,
+                isShared: true,
+                hideLikes: true,
+                disableComments: true,
                 author: {
                     select: {
                         id: true,
@@ -153,6 +163,8 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             content: post.content,
             createdAt: post.createdAt,
             isShared: post.isShared,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -406,7 +418,14 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
         const posts = await prisma.post.findMany({
             where: { authorId: userId },
             orderBy: { createdAt: 'desc' },
-            include: {
+            select: {
+                id: true,
+                content: true,
+                location: true,
+                createdAt: true,
+                isShared: true,
+                hideLikes: true,
+                disableComments: true,
                 author: {
                     select: {
                         id: true,
@@ -430,6 +449,8 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             content: post.content,
             createdAt: post.createdAt,
             isShared: post.isShared,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -478,7 +499,14 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                 visibility: 'PUBLIC'
             },
             orderBy: { createdAt: 'desc' },
-            include: {
+            select: {
+                id: true,
+                content: true,
+                location: true,
+                createdAt: true,
+                isShared: true,
+                hideLikes: true,
+                disableComments: true,
                 author: {
                     select: {
                         id: true,
@@ -503,6 +531,8 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             createdAt: post.createdAt,
             location: post.location,
             isShared: post.isShared,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
             author: {
                 id: post.author.id,
                 name: post.author.name,

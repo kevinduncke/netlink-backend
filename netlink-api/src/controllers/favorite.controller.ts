@@ -260,7 +260,13 @@ export async function getFavoriteUsersPosts(req: Request, res: Response, next: N
             },
             orderBy: { createdAt: 'desc' },
             take: 10,
-            include: {
+            select: {
+                id: true,
+                content: true,
+                location: true,
+                createdAt: true,
+                hideLikes: true,
+                disableComments: true,
                 author: {
                     select: {
                         id: true,
@@ -287,6 +293,8 @@ export async function getFavoriteUsersPosts(req: Request, res: Response, next: N
             commentsCount: post._count.comments,
             likesCount: post._count.likes,
             sharesCount: post._count.sharedPosts,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
             author: {
                 id: post.author.id,
                 name: post.author.name,
