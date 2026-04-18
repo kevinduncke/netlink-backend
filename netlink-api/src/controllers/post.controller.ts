@@ -52,6 +52,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     }
 }
 
+
 export async function getMyPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const userId = (req as any).user.id;
@@ -113,149 +114,6 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                 // sharesCount: post._count.shares
             }))
         });
-    } catch (error) {
-        next(error);
-    }
-}
-
-export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
-    try {
-        const userId = (req as any).user?.id;
-
-        if (!userId || typeof userId !== 'string') {
-            return res.status(401).json({
-                error: 'Unauthorized.'
-            });
-        };
-
-        const posts = await prisma.post.findMany({
-            where: {
-                visibility: 'PUBLIC'
-            },
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                content: true,
-                createdAt: true,
-                isShared: true,
-                hideLikes: true,
-                disableComments: true,
-                author: {
-                    select: {
-                        id: true,
-                        name: true,
-                        username: true,
-                        avatarUrl: true,
-                    }
-                },
-                _count: {
-                    select: {
-                        comments: true,
-                        likes: true,
-                        sharedPosts: true
-                    }
-                }
-            }
-        });
-
-        const mapped = posts.map(post => ({
-            id: post.id,
-            content: post.content,
-            createdAt: post.createdAt,
-            isShared: post.isShared,
-            hideLikes: post.hideLikes,
-            disableComments: post.disableComments,
-            author: {
-                id: post.author.id,
-                name: post.author.name,
-                username: post.author.username,
-                avatarUrl: post.author.avatarUrl
-            },
-            _count: {
-                comments: post._count.comments,
-                likes: post._count.likes,
-                shares: post._count.sharedPosts
-            }
-        }));
-
-        res.json({
-            postsCount: mapped.length,
-            posts: mapped
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
-export async function deletePost(req: Request, res: Response, next: NextFunction) {
-    try {
-        const userId = (req as any).user.id;
-        const postId = req.params.id;
-
-        if (!userId || typeof userId !== 'string') {
-            return res.status(400).json({
-                error: 'Valid user ID is required.'
-            });
-        };
-
-        if (!postId || typeof postId !== 'string') {
-            return res.status(400).json({
-                error: 'Valid post ID is required.'
-            });
-        }
-
-        const post = await prisma.post.findUnique({
-            where: { id: postId },
-        });
-
-        if (!post || post.authorId !== userId) {
-            return res.status(403).json({ error: 'Not authorized to delete this post.' });
-        }
-
-        await prisma.post.delete({
-            where: { id: postId }
-        });
-
-        res.json({ success: true });
-    } catch (error) {
-        next(error);
-    }
-}
-
-export async function updatePost(req: Request, res: Response, next: NextFunction) {
-    try {
-        const userId = (req as any).user.id;
-        const postId = req.params.id;
-
-        if (!userId || typeof userId !== 'string') {
-            return res.status(400).json({
-                error: 'Valid user ID is required.'
-            });
-        };
-
-        if (!postId || typeof postId !== 'string') {
-            return res.status(400).json({
-                error: 'Valid post ID is required.'
-            });
-        }
-
-        const post = await prisma.post.findUnique({
-            where: { id: postId },
-        });
-
-        if (!post || post.authorId !== userId) {
-            return res.status(403).json({ error: 'Not authorized to update this post.' });
-        }
-
-        const updatedPost = await prisma.post.update({
-            where: { id: postId },
-            data: {
-                content: req.body.content
-            },
-        });
-
-        // RESPOND WITH UPDATED STATUS CODE
-        res.json({ success: true, post: updatedPost });
     } catch (error) {
         next(error);
     }
@@ -476,16 +334,16 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
 
 export async function getFollowingPosts(req: Request, res: Response, next: NextFunction) {
     try {
-        const userId = (req as any).user?.id;
+        const currentUserId = (req as any).user?.id;
 
-        if (!userId || typeof userId !== 'string') {
+        if (!currentUserId || typeof currentUserId !== 'string') {
             return res.status(401).json({
                 error: 'Unauthorized.'
             });
         };
 
         const following = await prisma.follow.findMany({
-            where: { followerId: userId },
+            where: { followerId: currentUserId },
             select: { followingId: true }
         });
 
@@ -495,6 +353,13 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             where: {
                 authorId: {
                     in: followingIds
+                },
+                author: {
+                    favoredBy: {
+                        none: {
+                            userId: currentUserId
+                        }
+                    }
                 },
                 visibility: 'PUBLIC'
             },
@@ -550,6 +415,150 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             postsCount: mapped.length,
             posts: mapped
         });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user?.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(401).json({
+                error: 'Unauthorized.'
+            });
+        };
+
+        const posts = await prisma.post.findMany({
+            where: {
+                visibility: 'PUBLIC'
+            },
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                content: true,
+                createdAt: true,
+                isShared: true,
+                hideLikes: true,
+                disableComments: true,
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true,
+                    }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
+        });
+
+        const mapped = posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            createdAt: post.createdAt,
+            isShared: post.isShared,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            }
+        }));
+
+        res.json({
+            postsCount: mapped.length,
+            posts: mapped
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+export async function deletePost(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user.id;
+        const postId = req.params.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        if (!postId || typeof postId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid post ID is required.'
+            });
+        }
+
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+        });
+
+        if (!post || post.authorId !== userId) {
+            return res.status(403).json({ error: 'Not authorized to delete this post.' });
+        }
+
+        await prisma.post.delete({
+            where: { id: postId }
+        });
+
+        res.json({ success: true });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function updatePost(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user.id;
+        const postId = req.params.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        if (!postId || typeof postId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid post ID is required.'
+            });
+        }
+
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+        });
+
+        if (!post || post.authorId !== userId) {
+            return res.status(403).json({ error: 'Not authorized to update this post.' });
+        }
+
+        const updatedPost = await prisma.post.update({
+            where: { id: postId },
+            data: {
+                content: req.body.content
+            },
+        });
+
+        // RESPOND WITH UPDATED STATUS CODE
+        res.json({ success: true, post: updatedPost });
     } catch (error) {
         next(error);
     }

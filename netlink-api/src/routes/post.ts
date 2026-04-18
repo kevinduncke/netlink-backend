@@ -11,19 +11,26 @@ import {
 } from "../controllers/post.controller";
 import { authenticate } from "../middleware/auth.middleware";
 import { likePost, unlikePost } from "../controllers/like.controller";
+import { createComment, getAllPostComments } from "../controllers/comment.controller";
 
 const router = Router();
 
+// POST ROUTES
 router.get("/following", authenticate, getFollowingPosts);
 router.get("/all", authenticate, getAllPosts);
 router.get("/my-posts", authenticate, getMyPosts);
 router.get("/user/:id", authenticate, getUserPosts);
 router.get("/:id", authenticate, searchPosts);
-
 router.post("/", authenticate, createPost);
 router.put("/update/:id", authenticate, updatePost);
 router.delete("/delete/:id", authenticate, deletePost);
+
+// LIKE ROUTES
 router.post("/like/:id", authenticate, likePost);
 router.post("/unlike/:id", authenticate, unlikePost);
+
+// COMMENT ROUTES
+router.post("/comment/:id", authenticate, createComment);
+router.get("/comments/all/:id", authenticate, getAllPostComments);
 
 export default router;
