@@ -290,9 +290,6 @@ export async function getFavoriteUsersPosts(req: Request, res: Response, next: N
             content: post.content,
             location: post.location,
             createdAt: post.createdAt,
-            commentsCount: post._count.comments,
-            likesCount: post._count.likes,
-            sharesCount: post._count.sharedPosts,
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             author: {
@@ -300,6 +297,11 @@ export async function getFavoriteUsersPosts(req: Request, res: Response, next: N
                 name: post.author.name,
                 username: post.author.username,
                 avatarUrl: post.author.avatarUrl
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                sharedPosts: post._count.sharedPosts
             }
         }));
 

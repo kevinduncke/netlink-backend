@@ -13,7 +13,7 @@ async function shouldPermanentlyDeleteChat(tx: Prisma.TransactionClient, chatId:
         select: {
             _count: {
                 select: {
-                    users: true,
+                    participants: true,
                     hiddenBy: true
                 }
             }
@@ -24,7 +24,7 @@ async function shouldPermanentlyDeleteChat(tx: Prisma.TransactionClient, chatId:
         return false;
     }
 
-    return chat._count.users > 0 && chat._count.hiddenBy >= chat._count.users;
+    return chat._count.participants > 0 && chat._count.hiddenBy >= chat._count.participants;
 }
 
 // NEW CHAT
@@ -43,15 +43,23 @@ export async function createChat(req: Request, res: Response, next: NextFunction
 
         const chat = await prisma.chat.create({
             data: {
-                users: {
-                    connect: [
-                        { id: currentUserId },
-                        { id: userId }
+                participants: {
+                    create: [
+                        {
+                            user: {
+                                connect: { id: currentUserId }
+                            }
+                        },
+                        {
+                            user: {
+                                connect: { id: userId }
+                            }
+                        }
                     ]
                 },
             },
             include: {
-                users: true
+                participants: true
             },
         });
 
@@ -72,20 +80,25 @@ export async function getUserChats(req: Request, res: Response, next: NextFuncti
 
         const chats = await prisma.chat.findMany({
             where: {
-                users: {
-                    some: { id: userId }
+                participants: {
+                    some: { userId }
                 },
                 hiddenBy: {
                     none: { userId }
                 }
             },
             include: {
-                users: {
+                participants: {
                     select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        avatarUrl: true
+                        userId: true,
+                        user: {
+                            select: {
+                                id: true,
+                                username: true,
+                                name: true,
+                                avatarUrl: true
+                            }
+                        }
                     }
                 }
             },
@@ -99,11 +112,13 @@ export async function getUserChats(req: Request, res: Response, next: NextFuncti
         // SHOW THE OTHER USER AS A SINGLE OBJECT INSTEAD OF AN ARRAY
         const formattedChats = chats
             .map(chat => {
-                const receiver = chat.users.find(user => user.id !== userId);
+                const receiverParticipant = chat.participants.find(participant => participant.userId !== userId);
 
-                if (!receiver) {
+                if (!receiverParticipant) {
                     return null;
                 }
+
+                const receiver = receiverParticipant.user;
 
                 return {
                     chatId: chat.id,
@@ -144,8 +159,8 @@ export async function newMessage(req: Request, res: Response, next: NextFunction
         const chat = await prisma.chat.findFirst({
             where: {
                 id: chatId,
-                users: {
-                    some: { id: senderId }
+                participants: {
+                    some: { userId: senderId }
                 },
                 hiddenBy: {
                     none: { userId: senderId }
@@ -190,21 +205,26 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
         const ucc = await prisma.chat.findFirst({
             where: {
                 id: chatId,
-                users: {
-                    some: { id: userId }
+                participants: {
+                    some: { userId }
                 },
                 hiddenBy: {
                     none: { userId }
                 }
             },
             include: {
-                users: {
+                participants: {
                     select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        avatarUrl: true,
-                        createdAt: true
+                        userId: true,
+                        user: {
+                            select: {
+                                id: true,
+                                username: true,
+                                name: true,
+                                avatarUrl: true,
+                                createdAt: true
+                            }
+                        }
                     }
                 }
             }
@@ -214,10 +234,12 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
         }
 
         // EXTRACT RECEIVER
-        const receiver = ucc.users.find(user => user.id !== userId);
-        if (!receiver) {
+        const receiverParticipant = ucc.participants.find(participant => participant.userId !== userId);
+        if (!receiverParticipant) {
             return res.status(500).json({ error: "Receiver not found in chat." });
         }
+
+        const receiver = receiverParticipant.user;
 
         // FETCH MESSAGES
         const message = await prisma.message.findMany({
@@ -262,8 +284,8 @@ export async function deleteChat(req: Request, res: Response, next: NextFunction
         const chat = await prisma.chat.findFirst({
             where: {
                 id: chatId,
-                users: {
-                    some: { id: userId }
+                participants: {
+                    some: { userId }
                 }
             }
         });

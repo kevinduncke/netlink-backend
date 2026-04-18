@@ -11,7 +11,7 @@ import {
 } from "../controllers/post.controller";
 import { authenticate } from "../middleware/auth.middleware";
 import { likePost, unlikePost } from "../controllers/like.controller";
-import { createComment, getAllPostComments } from "../controllers/comment.controller";
+import { createComment, deleteComment, getAllPostComments, updateComment } from "../controllers/comment.controller";
 
 const router = Router();
 
@@ -32,5 +32,7 @@ router.post("/unlike/:id", authenticate, unlikePost);
 // COMMENT ROUTES
 router.post("/comment/:id", authenticate, createComment);
 router.get("/comments/all/:id", authenticate, getAllPostComments);
+router.delete("/comment/:id", authenticate, deleteComment);
+router.put("/comment/:id", authenticate, updateComment);
 
 export default router;
