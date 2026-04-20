@@ -69,22 +69,23 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                 id: true,
                 name: true,
                 username: true,
+                avatarUrl: true,
                 posts: {
                     orderBy: { createdAt: 'desc' },
                     select: {
                         id: true,
                         content: true,
                         location: true,
+                        imageUrl: true,
                         hideLikes: true,
                         disableComments: true,
-                        imageUrl: true,
                         createdAt: true,
 
                         _count: {
                             select: {
                                 comments: true,
                                 likes: true,
-                                // shares: true
+                                sharedPosts: true
                             }
                         }
                     }
@@ -96,24 +97,29 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             return res.status(404).json({ error: `User not found: ${userId}` });
         }
 
-        res.json({
-            id: user.id,
-            name: user.name,
-            username: user.username,
-            postsCount: user.posts.length,            
-            posts: user.posts.map(post => ({
-                id: post.id,
-                content: post.content,
-                location: post.location,
-                imageUrl: post.imageUrl,
-                createdAt: post.createdAt,
-                hideLikes: post.hideLikes,
-                disableCommentes: post.disableComments,                 
-                commentsCount: post._count.comments,
-                likesCount: post._count.likes,
-                // sharesCount: post._count.shares
-            }))
-        });
+        const mapped = user.posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            imageUrl: post.imageUrl,
+            location: post.location,
+            createdAt: post.createdAt,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
+            author: {
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                avatarUrl: user.avatarUrl
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            },
+            postsCount: user.posts.length,
+        }))
+
+        res.json(mapped);
     } catch (error) {
         next(error);
     }
@@ -319,14 +325,226 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                 comments: post._count.comments,
                 likes: post._count.likes,
                 shares: post._count.sharedPosts
-            }
+            },
+            postsCount: posts.length
         }));
 
-        res.json({
-            postsCount: mapped.length,
-            posts: mapped
+        res.json(mapped);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user?.id;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(401).json({
+                error: 'Unauthorized.'
+            });
+        };
+
+        const posts = await prisma.post.findMany({
+            where: {
+                visibility: 'PUBLIC'
+            },
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                content: true,
+                createdAt: true,
+                isShared: true,
+                hideLikes: true,
+                disableComments: true,
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true,
+                    }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
         });
 
+        const mapped = posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            createdAt: post.createdAt,
+            isShared: post.isShared,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            },
+            postsCount: posts.length
+        }));
+
+        res.json(mapped);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getDashboardPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+        const currentUserId = (req as any).user?.id;
+
+        if (!currentUserId || typeof currentUserId !== 'string') {
+            return res.status(400).json({ error: 'Valid user ID is required in URL params.' });
+        }
+
+        // GET ONLY THREE FAVORITE USERS AND GET POSTS FROM THEM
+        const favorites = await prisma.favorite.findMany({
+            where: { userId: currentUserId },
+            select: { favoriteId: true },
+            take: 3
+        });
+        const favoriteIds = favorites.map(f => f.favoriteId);
+        const favoritePosts = await prisma.post.findMany({
+            where: {
+                authorId: { in: favoriteIds }
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 10,
+            select: {
+                id: true,
+                content: true,
+                location: true,
+                createdAt: true,
+                hideLikes: true,
+                disableComments: true,
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
+        });
+        const mappedFavorites = favoritePosts.map(post => ({
+            id: post.id,
+            content: post.content,
+            location: post.location,
+            createdAt: post.createdAt,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                sharedPosts: post._count.sharedPosts
+            },
+            postsCount: favoritePosts.length
+        }));
+
+        // GET POSTS FROM FOLLOWING USERS
+        const following = await prisma.follow.findMany({
+            where: { followerId: currentUserId },
+            select: { followingId: true }
+        });
+        const followingIds = following.map(f => f.followingId);
+        const followingPosts = await prisma.post.findMany({
+            where: {
+                authorId: {
+                    in: followingIds
+                },
+                author: {
+                    favoredBy: {
+                        none: {
+                            userId: currentUserId
+                        }
+                    }
+                },
+                visibility: 'PUBLIC'
+            },
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                content: true,
+                location: true,
+                createdAt: true,
+                isShared: true,
+                hideLikes: true,
+                disableComments: true,
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
+        });
+        const mappedFollowing = followingPosts.map(post => ({
+            id: post.id,
+            content: post.content,
+            createdAt: post.createdAt,
+            location: post.location,
+            isShared: post.isShared,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            },
+            postsCount: followingPosts.length
+        }));
+
+        // MAP MAPPED FAVORITES AND FOLLOWING POSTS TOGETHER AND RESPOND
+        // SO THE FRONTEND RECEIVE IN A OBJECT { favorites: [], following: [] }
+        const dashboardPosts = {
+            favorites: mappedFavorites,
+            following: mappedFollowing
+        };
+
+        res.json(dashboardPosts);
     } catch (error) {
         next(error);
     }
@@ -408,87 +626,15 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                 comments: post._count.comments,
                 likes: post._count.likes,
                 shares: post._count.sharedPosts
-            }
+            },
+            postsCount: posts.length
         }));
 
-        res.json({
-            postsCount: mapped.length,
-            posts: mapped
-        });
+        res.json(mapped);
     } catch (error) {
         next(error);
     }
 }
-
-export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
-    try {
-        const userId = (req as any).user?.id;
-
-        if (!userId || typeof userId !== 'string') {
-            return res.status(401).json({
-                error: 'Unauthorized.'
-            });
-        };
-
-        const posts = await prisma.post.findMany({
-            where: {
-                visibility: 'PUBLIC'
-            },
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                content: true,
-                createdAt: true,
-                isShared: true,
-                hideLikes: true,
-                disableComments: true,
-                author: {
-                    select: {
-                        id: true,
-                        name: true,
-                        username: true,
-                        avatarUrl: true,
-                    }
-                },
-                _count: {
-                    select: {
-                        comments: true,
-                        likes: true,
-                        sharedPosts: true
-                    }
-                }
-            }
-        });
-
-        const mapped = posts.map(post => ({
-            id: post.id,
-            content: post.content,
-            createdAt: post.createdAt,
-            isShared: post.isShared,
-            hideLikes: post.hideLikes,
-            disableComments: post.disableComments,
-            author: {
-                id: post.author.id,
-                name: post.author.name,
-                username: post.author.username,
-                avatarUrl: post.author.avatarUrl
-            },
-            _count: {
-                comments: post._count.comments,
-                likes: post._count.likes,
-                shares: post._count.sharedPosts
-            }
-        }));
-
-        res.json({
-            postsCount: mapped.length,
-            posts: mapped
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
 
 export async function deletePost(req: Request, res: Response, next: NextFunction) {
     try {

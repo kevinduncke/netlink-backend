@@ -72,7 +72,7 @@ export async function getAllPostComments(req: Request, res: Response, next: Next
                     }
                 }
             },
-            orderBy: { createdAt: 'asc' }
+            orderBy: { createdAt: 'desc' }
         });
 
         const mapped = comments.map(comment => ({

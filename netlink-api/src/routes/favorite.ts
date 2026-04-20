@@ -7,8 +7,7 @@ import {
     getSuggestedFavoriteUsers,
     removeFavoriteUser,
     removeAllFavoritesUsers,
-    searchFavoriteUsers,
-    getFavoriteUsersPosts
+    searchFavoriteUsers
 } from "../controllers/favorite.controller";
 
 const router = Router();
@@ -19,6 +18,6 @@ router.delete('/:id', authenticate, removeFavoriteUser);
 router.get('/', authenticate, getFavoriteUsers);
 router.get('/suggested', authenticate, getSuggestedFavoriteUsers);
 router.get('/search', authenticate, searchFavoriteUsers);
-router.get('/posts', authenticate, getFavoriteUsersPosts)
+
 
 export default router;
