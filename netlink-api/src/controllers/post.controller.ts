@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/prisma';
+import { likePost } from './like.controller';
 
 export async function createPost(req: Request, res: Response, next: NextFunction) {
     try {
@@ -90,6 +91,11 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                         }
                     }
                 },
+                likes: {
+                    select: {
+                        postId: true
+                    }
+                },
             }
         });
 
@@ -109,7 +115,8 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                 id: user.id,
                 name: user.name,
                 username: user.username,
-                avatarUrl: user.avatarUrl
+                avatarUrl: user.avatarUrl,
+                liked: user.likes.some(likePost => likePost.postId === post.id),
             },
             _count: {
                 comments: post._count.comments,
@@ -127,7 +134,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
 
 export async function searchPosts(req: Request, res: Response, next: NextFunction) {
     try {
-        const userId = (req as any).user.id;
+        const currentUserId = (req as any).user.id;
 
         const parseDateParam = (value: unknown, endOfDay = false): Date | null => {
             if (typeof value !== 'string' || value.trim().length === 0) {
@@ -167,7 +174,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
         // FILTER POSTS BY AUTHOR OR FOLLOWING IDK
         if (people === 'following') {
             const following = await prisma.follow.findMany({
-                where: { followerId: userId },
+                where: { followerId: currentUserId },
                 select: { followingId: true }
             });
 
@@ -223,10 +230,14 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                         username: true,
                         avatarUrl: true,
                         followers: {
-                            where: { followerId: userId },
+                            where: { followerId: currentUserId },
                             select: { id: true }
                         }
                     }
+                },
+                likes: {
+                    where: { userId: currentUserId },
+                    select: { id: true }
                 },
                 _count: {
                     select: {
@@ -250,7 +261,8 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 username: post.author.username,
                 avatarUrl: post.author.avatarUrl,
                 followers: post.author.followers,
-                isFollowedByMe: post.author.followers.length > 0
+                isFollowedByMe: post.author.followers.length > 0,
+                liked: post.likes.length > 0,
             },
             _count: {
                 comments: post._count.comments,
@@ -271,6 +283,14 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
 
 export async function getUserPosts(req: Request, res: Response, next: NextFunction) {
     try {
+        const currentUserId = (req as any).user?.id;
+
+        if (!currentUserId || typeof currentUserId !== 'string') {
+            return res.status(401).json({
+                error: 'Unauthorized.'
+            });
+        };
+
         const userId = req.params.id;
 
         if (!userId || typeof userId !== 'string') {
@@ -298,73 +318,9 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                         avatarUrl: true
                     }
                 },
-                _count: {
-                    select: {
-                        comments: true,
-                        likes: true,
-                        sharedPosts: true
-                    }
-                }
-            }
-        });
-
-        const mapped = posts.map(post => ({
-            id: post.id,
-            content: post.content,
-            createdAt: post.createdAt,
-            isShared: post.isShared,
-            hideLikes: post.hideLikes,
-            disableComments: post.disableComments,
-            author: {
-                id: post.author.id,
-                name: post.author.name,
-                username: post.author.username,
-                avatarUrl: post.author.avatarUrl
-            },
-            _count: {
-                comments: post._count.comments,
-                likes: post._count.likes,
-                shares: post._count.sharedPosts
-            },
-            postsCount: posts.length
-        }));
-
-        res.json(mapped);
-
-    } catch (error) {
-        next(error);
-    }
-}
-
-export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
-    try {
-        const userId = (req as any).user?.id;
-
-        if (!userId || typeof userId !== 'string') {
-            return res.status(401).json({
-                error: 'Unauthorized.'
-            });
-        };
-
-        const posts = await prisma.post.findMany({
-            where: {
-                visibility: 'PUBLIC'
-            },
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                content: true,
-                createdAt: true,
-                isShared: true,
-                hideLikes: true,
-                disableComments: true,
-                author: {
-                    select: {
-                        id: true,
-                        name: true,
-                        username: true,
-                        avatarUrl: true,
-                    }
+                likes: {
+                    where: { userId: currentUserId },
+                    select: { id: true }
                 },
                 _count: {
                     select: {
@@ -387,7 +343,82 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                 id: post.author.id,
                 name: post.author.name,
                 username: post.author.username,
-                avatarUrl: post.author.avatarUrl
+                avatarUrl: post.author.avatarUrl,
+                liked: post.likes.length > 0,
+            },
+            _count: {
+                comments: post._count.comments,
+                likes: post._count.likes,
+                shares: post._count.sharedPosts
+            },
+            postsCount: posts.length
+        }));
+
+        res.json(mapped);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+        const currentUserId = (req as any).user?.id;
+
+        if (!currentUserId || typeof currentUserId !== 'string') {
+            return res.status(401).json({
+                error: 'Unauthorized.'
+            });
+        };
+
+        const posts = await prisma.post.findMany({
+            where: {
+                authorId: { not: currentUserId },
+                visibility: 'PUBLIC'
+            },
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                content: true,
+                createdAt: true,
+                isShared: true,
+                hideLikes: true,
+                disableComments: true,
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true,
+                    }
+                },
+                likes: {
+                    where: { userId: currentUserId },
+                    select: { id: true }
+                },
+                _count: {
+                    select: {
+                        comments: true,
+                        likes: true,
+                        sharedPosts: true
+                    }
+                }
+            }
+        });
+
+        const mapped = posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            createdAt: post.createdAt,
+            isShared: post.isShared,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
+            author: {
+                id: post.author.id,
+                name: post.author.name,
+                username: post.author.username,
+                avatarUrl: post.author.avatarUrl,
+                liked: post.likes.length > 0,
             },
             _count: {
                 comments: post._count.comments,
@@ -451,6 +482,10 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                         avatarUrl: true
                     }
                 },
+                likes: {
+                    where: { userId: currentUserId },
+                    select: { id: true }
+                },
                 _count: {
                     select: {
                         comments: true,
@@ -473,7 +508,8 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                 id: post.author.id,
                 name: post.author.name,
                 username: post.author.username,
-                avatarUrl: post.author.avatarUrl
+                avatarUrl: post.author.avatarUrl,
+                liked: post.likes.length > 0,
             },
             _count: {
                 comments: post._count.comments,

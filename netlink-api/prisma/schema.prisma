@@ -62,7 +62,7 @@ model Post {
 
   isShared        Boolean          @default(false)
   sharedFromId    String?
-  sharedFrom      Post?            @relation("SharedPost", fields: [sharedFromId], references: [id])
+  sharedFrom      Post?            @relation("SharedPost", fields: [sharedFromId], references: [id], onDelete: Cascade)
   sharedPosts     Post[]           @relation("SharedPost")
 }
 
@@ -87,7 +87,7 @@ model Comment {
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String
 
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
 }
 
