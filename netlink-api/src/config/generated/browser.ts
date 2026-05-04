@@ -38,6 +38,11 @@ export type Like = Prisma.LikeModel
  */
 export type Comment = Prisma.CommentModel
 /**
+ * Model Share
+ * 
+ */
+export type Share = Prisma.ShareModel
+/**
  * Model Follow
  * 
  */

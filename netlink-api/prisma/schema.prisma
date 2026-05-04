@@ -24,6 +24,7 @@ model User {
   posts               Post[]
   likes               Like[]
   comments            Comment[]
+  shares              Share[]
   followers           Follow[]                @relation("followers")
   following           Follow[]                @relation("following")
   messages            Message[]               @relation("userMessages")
@@ -59,11 +60,7 @@ model Post {
 
   likes           Like[]
   comments        Comment[]
-
-  isShared        Boolean          @default(false)
-  sharedFromId    String?
-  sharedFrom      Post?            @relation("SharedPost", fields: [sharedFromId], references: [id], onDelete: Cascade)
-  sharedPosts     Post[]           @relation("SharedPost")
+  shares          Share[]
 }
 
 model Like {
@@ -89,6 +86,18 @@ model Comment {
 
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
+}
+
+model Share {
+  id              String          @id @default(uuid())
+  userId          String
+  postId          String
+  createdAt       DateTime        @default(now())
+
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post            Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
 }
 
 model Follow {

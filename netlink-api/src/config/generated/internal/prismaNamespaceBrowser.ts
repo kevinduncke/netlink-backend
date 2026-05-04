@@ -55,6 +55,7 @@ export const ModelName = {
   Post: 'Post',
   Like: 'Like',
   Comment: 'Comment',
+  Share: 'Share',
   Follow: 'Follow',
   Favorite: 'Favorite',
   Chat: 'Chat',
@@ -104,9 +105,7 @@ export const PostScalarFieldEnum = {
   disableComments: 'disableComments',
   imageUrl: 'imageUrl',
   createdAt: 'createdAt',
-  authorId: 'authorId',
-  isShared: 'isShared',
-  sharedFromId: 'sharedFromId'
+  authorId: 'authorId'
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
@@ -131,6 +130,16 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const ShareScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  postId: 'postId',
+  createdAt: 'createdAt'
+} as const
+
+export type ShareScalarFieldEnum = (typeof ShareScalarFieldEnum)[keyof typeof ShareScalarFieldEnum]
 
 
 export const FollowScalarFieldEnum = {

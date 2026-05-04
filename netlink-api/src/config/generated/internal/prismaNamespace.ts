@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.1
- * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+ * Prisma Client JS version: 7.5.0
+ * Query Engine version: 280c870be64f457428992c43c1f6d557fab6e29e
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.1",
-  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
+  client: "7.5.0",
+  engine: "280c870be64f457428992c43c1f6d557fab6e29e"
 }
 
 /**
@@ -388,6 +388,7 @@ export const ModelName = {
   Post: 'Post',
   Like: 'Like',
   Comment: 'Comment',
+  Share: 'Share',
   Follow: 'Follow',
   Favorite: 'Favorite',
   Chat: 'Chat',
@@ -410,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "post" | "like" | "comment" | "follow" | "favorite" | "chat" | "chatParticipant" | "chatHidden" | "message" | "notification"
+    modelProps: "user" | "post" | "like" | "comment" | "share" | "follow" | "favorite" | "chat" | "chatParticipant" | "chatHidden" | "message" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -707,6 +708,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CommentCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CommentCountAggregateOutputType> | number
+        }
+      }
+    }
+    Share: {
+      payload: Prisma.$SharePayload<ExtArgs>
+      fields: Prisma.ShareFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShareFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShareFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>
+        }
+        findFirst: {
+          args: Prisma.ShareFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShareFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>
+        }
+        findMany: {
+          args: Prisma.ShareFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>[]
+        }
+        create: {
+          args: Prisma.ShareCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>
+        }
+        createMany: {
+          args: Prisma.ShareCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShareCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>[]
+        }
+        delete: {
+          args: Prisma.ShareDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>
+        }
+        update: {
+          args: Prisma.ShareUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>
+        }
+        deleteMany: {
+          args: Prisma.ShareDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShareUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShareUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>[]
+        }
+        upsert: {
+          args: Prisma.ShareUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SharePayload>
+        }
+        aggregate: {
+          args: Prisma.ShareAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShare>
+        }
+        groupBy: {
+          args: Prisma.ShareGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShareGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShareCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShareCountAggregateOutputType> | number
         }
       }
     }
@@ -1291,9 +1366,7 @@ export const PostScalarFieldEnum = {
   disableComments: 'disableComments',
   imageUrl: 'imageUrl',
   createdAt: 'createdAt',
-  authorId: 'authorId',
-  isShared: 'isShared',
-  sharedFromId: 'sharedFromId'
+  authorId: 'authorId'
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
@@ -1318,6 +1391,16 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const ShareScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  postId: 'postId',
+  createdAt: 'createdAt'
+} as const
+
+export type ShareScalarFieldEnum = (typeof ShareScalarFieldEnum)[keyof typeof ShareScalarFieldEnum]
 
 
 export const FollowScalarFieldEnum = {
@@ -1581,6 +1664,7 @@ export type GlobalOmitConfig = {
   post?: Prisma.PostOmit
   like?: Prisma.LikeOmit
   comment?: Prisma.CommentOmit
+  share?: Prisma.ShareOmit
   follow?: Prisma.FollowOmit
   favorite?: Prisma.FavoriteOmit
   chat?: Prisma.ChatOmit

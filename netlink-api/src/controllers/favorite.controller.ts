@@ -119,7 +119,21 @@ export async function addFavoriteUser(req: Request, res: Response, next: NextFun
             },
         });
 
-        res.status(201).json(favorite);
+        const createdFavorite = await prisma.favorite.findUnique({
+            where: { id: favorite.id },
+            select: {
+                favorite: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                }
+            }
+        });    
+
+        res.status(201).json(createdFavorite?.favorite);
     } catch (error) {
         next(error);
     }

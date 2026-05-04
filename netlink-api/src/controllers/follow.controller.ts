@@ -156,32 +156,46 @@ export async function getAllFollowing(req: Request, res: Response, next: NextFun
     }
 }
 
-// GET ALL FOLLOWERS USERS
+// GET ALL FOLLOWERS USERS (DATA) + WHO FROM THIS USERS I DON'T FOLLOW BACK
 export async function getAllFollowers(req: Request, res: Response, next: NextFunction) {
     try {
-        const userId = (req as any).user!.id;
+        const currentUserId = (req as any).user!.id;
 
-        if (!userId || typeof userId !== 'string') {
+        if (!currentUserId || typeof currentUserId !== 'string') {
             return res.status(400).json({
                 error: 'Valid user ID is required.'
             });
         };
 
+        // Get users that the current user is following
+        const following = await prisma.follow.findMany({
+            where: { followerId: currentUserId },
+            select: { followingId: true }
+        });
+
+        const followingIds = new Set(following.map(f => f.followingId));
+
+        // Get followers of the current user
         const followers = await prisma.follow.findMany({
-            where: { followingId: userId },
-            include: {
+            where: { followingId: currentUserId },
+            select: {
                 follower: {
                     select: {
                         id: true,
                         name: true,
                         username: true,
-                        avatarUrl: true
+                        avatarUrl: true  
                     }
                 }
             }
         });
 
-        res.json(followers.map(f => f.follower));
+        const mapped = followers.map(f => ({
+            ...f.follower,
+            isFollowedByMe: followingIds.has(f.follower.id)
+        }));
+
+        res.json(mapped);
     } catch (error) {
         next(error);
     }

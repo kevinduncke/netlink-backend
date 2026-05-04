@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/prisma';
-import { likePost } from './like.controller';
 
 export async function createPost(req: Request, res: Response, next: NextFunction) {
     try {
@@ -53,7 +52,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     }
 }
 
-
+// PROBLEMS IN searchPosts, getUserPosts, getAllPosts, getFollowingPosts [SHARES]
 export async function getMyPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const userId = (req as any).user.id;
@@ -86,7 +85,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                             select: {
                                 comments: true,
                                 likes: true,
-                                sharedPosts: true
+                                shares: true
                             }
                         }
                     }
@@ -95,7 +94,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                     select: {
                         postId: true
                     }
-                },
+                }
             }
         });
 
@@ -103,7 +102,40 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             return res.status(404).json({ error: `User not found: ${userId}` });
         }
 
-        const mapped = user.posts.map(post => ({
+        const reposts = await prisma.share.findMany({
+            where: { userId },
+            include: {
+                post: {
+                    select: {
+                        id: true,
+                        content: true,
+                        location: true,
+                        imageUrl: true,
+                        hideLikes: true,
+                        disableComments: true,
+                        createdAt: true,
+                        author: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                                avatarUrl: true
+                            }
+                        },
+                        _count: {
+                            select: {
+                                comments: true,
+                                likes: true,
+                                shares: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        // MAPs
+        const myPosts = user.posts.map(post => ({
             id: post.id,
             content: post.content,
             imageUrl: post.imageUrl,
@@ -111,6 +143,8 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             createdAt: post.createdAt,
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
+            isRepost: false,
+            repostedAt: null,
             author: {
                 id: user.id,
                 name: user.name,
@@ -121,17 +155,45 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             _count: {
                 comments: post._count.comments,
                 likes: post._count.likes,
-                shares: post._count.sharedPosts
-            },
-            postsCount: user.posts.length,
-        }))
+                shares: post._count.shares
+            }
+        }));
 
-        res.json(mapped);
+        const myReposts = reposts.map(r => ({
+            id: r.post.id,
+            content: r.post.content,
+            imageUrl: r.post.imageUrl,
+            location: r.post.location,
+            createdAt: r.post.createdAt,
+            hideLikes: r.post.hideLikes,
+            disableComments: r.post.disableComments,
+            isRepost: true,
+            repostedAt: r.createdAt,
+            author: {
+                id: r.post.author.id,
+                name: r.post.author.name,
+                username: r.post.author.username,
+                avatarUrl: r.post.author.avatarUrl,
+                liked: user.likes.some(likePost => likePost.postId === r.post.id),
+            },
+            _count: {
+                comments: r.post._count.comments,
+                likes: r.post._count.likes,
+                shares: r.post._count.shares
+            }
+        }));
+
+        const merged = [...myPosts, ...myReposts.sort((a, b) => {
+            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
+            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
+            return new Date(dateB).getTime() - new Date(dateA).getTime();
+        })];
+
+        res.json(merged);
     } catch (error) {
         next(error);
     }
 }
-
 export async function searchPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user.id;
@@ -243,7 +305,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                     select: {
                         comments: true,
                         likes: true,
-                        sharedPosts: true
+                        shares: true
                     }
                 }
             }
@@ -254,7 +316,6 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             id: post.id,
             content: post.content,
             createdAt: post.createdAt,
-            isShared: post.isShared,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -267,7 +328,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             _count: {
                 comments: post._count.comments,
                 likes: post._count.likes,
-                shares: post._count.sharedPosts
+                shares: post._count.shares
             }
         }));
 
@@ -280,7 +341,6 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
         next(error);
     }
 }
-
 export async function getUserPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user?.id;
@@ -307,7 +367,6 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                 content: true,
                 location: true,
                 createdAt: true,
-                isShared: true,
                 hideLikes: true,
                 disableComments: true,
                 author: {
@@ -326,7 +385,7 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                     select: {
                         comments: true,
                         likes: true,
-                        sharedPosts: true
+                        shares: true
                     }
                 }
             }
@@ -336,7 +395,6 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             id: post.id,
             content: post.content,
             createdAt: post.createdAt,
-            isShared: post.isShared,
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             author: {
@@ -349,7 +407,7 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             _count: {
                 comments: post._count.comments,
                 likes: post._count.likes,
-                shares: post._count.sharedPosts
+                shares: post._count.shares
             },
             postsCount: posts.length
         }));
@@ -360,7 +418,6 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
         next(error);
     }
 }
-
 export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user?.id;
@@ -381,7 +438,6 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                 id: true,
                 content: true,
                 createdAt: true,
-                isShared: true,
                 hideLikes: true,
                 disableComments: true,
                 author: {
@@ -400,7 +456,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                     select: {
                         comments: true,
                         likes: true,
-                        sharedPosts: true
+                        shares: true
                     }
                 }
             }
@@ -410,7 +466,6 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             id: post.id,
             content: post.content,
             createdAt: post.createdAt,
-            isShared: post.isShared,
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             author: {
@@ -423,7 +478,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             _count: {
                 comments: post._count.comments,
                 likes: post._count.likes,
-                shares: post._count.sharedPosts
+                shares: post._count.shares
             },
             postsCount: posts.length
         }));
@@ -433,7 +488,6 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
         next(error);
     }
 }
-
 export async function getFollowingPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user?.id;
@@ -471,7 +525,6 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                 content: true,
                 location: true,
                 createdAt: true,
-                isShared: true,
                 hideLikes: true,
                 disableComments: true,
                 author: {
@@ -490,7 +543,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                     select: {
                         comments: true,
                         likes: true,
-                        sharedPosts: true
+                        shares: true
                     }
                 }
             }
@@ -501,7 +554,6 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             content: post.content,
             createdAt: post.createdAt,
             location: post.location,
-            isShared: post.isShared,
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             author: {
@@ -514,7 +566,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             _count: {
                 comments: post._count.comments,
                 likes: post._count.likes,
-                shares: post._count.sharedPosts
+                shares: post._count.shares
             },
             postsCount: posts.length
         }));
@@ -524,6 +576,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
         next(error);
     }
 }
+
 
 export async function deletePost(req: Request, res: Response, next: NextFunction) {
     try {
@@ -559,7 +612,6 @@ export async function deletePost(req: Request, res: Response, next: NextFunction
         next(error);
     }
 }
-
 export async function updatePost(req: Request, res: Response, next: NextFunction) {
     try {
         const userId = (req as any).user.id;
@@ -594,6 +646,83 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
 
         // RESPOND WITH UPDATED STATUS CODE
         res.json({ success: true, post: updatedPost });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+export async function createRepost(req: Request, res: Response, next: NextFunction) {
+    try {
+        const currentUserId = (req as any).user.id;
+        const postId = req.params.id;
+
+        if (!currentUserId || typeof currentUserId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        if (!postId || typeof postId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid post ID is required.'
+            });
+        }
+
+        const alreadyRepost = await prisma.share.findFirst({
+            where: {
+                userId: currentUserId,
+                postId: postId
+            }
+        });
+
+        if (alreadyRepost) {
+            return res.status(400).json({ error: 'You have already reposted this post.' });
+        }
+
+        // CREATE REPOST
+        const repost = await prisma.share.create({
+            data: {
+                userId: currentUserId,
+                postId: postId
+            }
+        });
+
+        res.status(201).json({ message: "Post reposted successfully.", repost });
+    } catch (error) {
+        next(error);
+    }
+}
+export async function deleteRepost(req: Request, res: Response, next: NextFunction) {
+    try {
+        const currentUserId = (req as any).user.id;
+        const postId = req.params.id;
+
+        if (!currentUserId || typeof currentUserId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        if (!postId || typeof postId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid post ID is required.'
+            });
+        }
+
+        const repost = await prisma.share.findUnique({
+            where: { userId_postId: { userId: currentUserId, postId: postId } }
+        });
+
+        if (!repost) {
+            return res.status(403).json({ error: 'Not authorized to delete this repost.' });
+        }
+
+        await prisma.share.delete({
+            where: { userId_postId: { userId: currentUserId, postId: postId } }
+        });
+
+        res.json({ success: true, message: "Repost deleted successfully." });
     } catch (error) {
         next(error);
     }

@@ -7,7 +7,9 @@ import {
     getAllPosts,
     searchPosts,
     getUserPosts,
-    getFollowingPosts
+    getFollowingPosts,
+    createRepost,
+    deleteRepost
 } from "../controllers/post.controller";
 import { authenticate } from "../middleware/auth.middleware";
 import { likePost, unlikePost } from "../controllers/like.controller";
@@ -34,5 +36,9 @@ router.post("/comment/:id", authenticate, createComment);
 router.get("/comments/all/:id", authenticate, getAllPostComments);
 router.delete("/comment/:id", authenticate, deleteComment);
 router.put("/comment/:id", authenticate, updateComment);
+
+// REPOST ROUTES
+router.post("/repost/:id", authenticate, createRepost);
+router.delete("/repost/:id", authenticate, deleteRepost);
 
 export default router;
