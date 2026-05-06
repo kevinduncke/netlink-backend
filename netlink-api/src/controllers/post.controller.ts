@@ -52,19 +52,19 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     }
 }
 
-// PROBLEMS IN searchPosts, getUserPosts, getAllPosts, getFollowingPosts [SHARES]
+// PROBLEMS IN searchPosts, getAllPosts, getFollowingPosts [SHARES]
 export async function getMyPosts(req: Request, res: Response, next: NextFunction) {
     try {
-        const userId = (req as any).user.id;
+        const currentUserId = (req as any).user.id;
 
-        if (!userId || typeof userId !== 'string') {
+        if (!currentUserId || typeof currentUserId !== 'string') {
             return res.status(400).json({
                 error: 'Valid user ID is required.'
             });
         };
 
         const user = await prisma.user.findUnique({
-            where: { id: userId },
+            where: { id: currentUserId },
             select: {
                 id: true,
                 name: true,
@@ -99,11 +99,11 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
         });
 
         if (!user) {
-            return res.status(404).json({ error: `User not found: ${userId}` });
+            return res.status(404).json({ error: `User not found: ${currentUserId}` });
         }
 
         const reposts = await prisma.share.findMany({
-            where: { userId },
+            where: { userId: currentUserId },
             include: {
                 post: {
                     select: {
@@ -130,9 +130,10 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                             }
                         }
                     }
-                }
+                },
+                user: true,
             }
-        })
+        });
 
         // MAPs
         const myPosts = user.posts.map(post => ({
@@ -160,7 +161,8 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
         }));
 
         const myReposts = reposts.map(r => ({
-            id: r.post.id,
+            id: r.id,
+            postId: r.post.id,
             content: r.post.content,
             imageUrl: r.post.imageUrl,
             location: r.post.location,
@@ -180,6 +182,13 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                 comments: r.post._count.comments,
                 likes: r.post._count.likes,
                 shares: r.post._count.shares
+            },
+            repostedBy: {
+                id: r.user.id,
+                name: r.user.name,
+                username: r.user.username,
+                avatarUrl: r.user.avatarUrl,
+                bio: r.user.bio,
             }
         }));
 
@@ -218,8 +227,8 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
 
         const {
             query = '',
-            people = 'anyone',
-            shares = 'all',
+            people,
+            shared,
             fromDate,
             toDate,
         } = req.query;
@@ -230,27 +239,25 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             content: {
                 contains: query,
                 mode: 'insensitive'
-            }
+            },
+            authorId: { not: currentUserId }
         };
 
         // FILTER POSTS BY AUTHOR OR FOLLOWING IDK
+        const following = await prisma.follow.findMany({
+            where: { followerId: currentUserId },
+            select: { followingId: true }
+        });
+
+        const followingIds = following.map(f => f.followingId);
+
         if (people === 'following') {
-            const following = await prisma.follow.findMany({
-                where: { followerId: currentUserId },
-                select: { followingId: true }
-            });
-
-            const followingIds = following.map(f => f.followingId);
-
             where.authorId = {
                 in: followingIds
             };
         }
 
-        // FILTER BY SHARED OR ORIGINAL POSTS
-        if (shares === 'posts') {
-            where.isShared = false;
-        }
+
 
         // DATE FILTERS
         if (fromDate) {
@@ -312,10 +319,14 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
         });
 
         // MAP POSTS TO INCLUDE THE FOLLOW INFO BRUH
-        const mapped = posts.map(post => ({
+        const mappedPosts = posts.map(post => ({
             id: post.id,
             content: post.content,
             createdAt: post.createdAt,
+            hideLikes: post.hideLikes,
+            disableComments: post.disableComments,
+            isRepost: false,
+            repostedAt: null,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -329,14 +340,94 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 comments: post._count.comments,
                 likes: post._count.likes,
                 shares: post._count.shares
+            },
+            postsCount: posts.length
+        }));
+
+        const reposts = await prisma.share.findMany({
+            where: {
+                userId: {
+                    in: followingIds
+                },
+            },
+            include: {
+                post: {
+                    select: {
+                        id: true,
+                        content: true,
+                        location: true,
+                        imageUrl: true,
+                        hideLikes: true,
+                        disableComments: true,
+                        createdAt: true,
+                        author: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                                avatarUrl: true
+                            }
+                        },
+                        likes: {
+                            where: { userId: currentUserId },
+                            select: { id: true }
+                        },
+                        _count: {
+                            select: {
+                                comments: true,
+                                likes: true,
+                                shares: true
+                            }
+                        }
+                    }
+                },
+                user: true,
+            }
+        });
+
+        const mappedReposts = reposts.map(r => ({
+            id: r.id,
+            postId: r.post.id,
+            content: r.post.content,
+            imageUrl: r.post.imageUrl,
+            location: r.post.location,
+            createdAt: r.post.createdAt,
+            hideLikes: r.post.hideLikes,
+            disableComments: r.post.disableComments,
+            isRepost: true,
+            repostedAt: r.createdAt,
+            author: {
+                id: r.post.author.id,
+                name: r.post.author.name,
+                username: r.post.author.username,
+                avatarUrl: r.post.author.avatarUrl,
+                liked: r.post.likes.length > 0,
+            },
+            _count: {
+                comments: r.post._count.comments,
+                likes: r.post._count.likes,
+                shares: r.post._count.shares
+            },
+            repostedBy: {
+                id: r.user.id,
+                name: r.user.name,
+                username: r.user.username,
+                avatarUrl: r.user.avatarUrl,
+                bio: r.user.bio,
             }
         }));
 
-        res.json({
-            postsCount: mapped.length,
-            posts: mapped
-        });
+        const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
+            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
+            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
+            return new Date(dateB).getTime() - new Date(dateA).getTime();
+        })];
 
+        if (shared === 'posts') {
+            res.json(mappedPosts);
+        } else {
+            res.json(merged);
+        }
     } catch (error) {
         next(error);
     }
@@ -391,12 +482,52 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             }
         });
 
-        const mapped = posts.map(post => ({
+        const reposts = await prisma.share.findMany({
+            where: { userId: userId },
+            include: {
+                post: {
+                    select: {
+                        id: true,
+                        content: true,
+                        location: true,
+                        imageUrl: true,
+                        hideLikes: true,
+                        disableComments: true,
+                        createdAt: true,
+                        author: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                                avatarUrl: true
+                            }
+                        },
+                        likes: {
+                            where: { userId: currentUserId },
+                            select: { id: true }
+                        },
+                        _count: {
+                            select: {
+                                comments: true,
+                                likes: true,
+                                shares: true
+                            }
+                        }
+                    }
+                },
+                user: true,
+            }
+        });
+
+        // MAPs    
+        const mappedPosts = posts.map(post => ({
             id: post.id,
             content: post.content,
             createdAt: post.createdAt,
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
+            isRepost: false,
+            repostedAt: null,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -412,8 +543,45 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             postsCount: posts.length
         }));
 
-        res.json(mapped);
+        const mappedReposts = reposts.map(r => ({
+            id: r.id,
+            postId: r.post.id,
+            content: r.post.content,
+            imageUrl: r.post.imageUrl,
+            location: r.post.location,
+            createdAt: r.post.createdAt,
+            hideLikes: r.post.hideLikes,
+            disableComments: r.post.disableComments,
+            isRepost: true,
+            repostedAt: r.createdAt,
+            author: {
+                id: r.post.author.id,
+                name: r.post.author.name,
+                username: r.post.author.username,
+                avatarUrl: r.post.author.avatarUrl,
+                liked: r.post.likes.length > 0,
+            },
+            _count: {
+                comments: r.post._count.comments,
+                likes: r.post._count.likes,
+                shares: r.post._count.shares
+            },
+            repostedBy: {
+                id: r.user.id,
+                name: r.user.name,
+                username: r.user.username,
+                avatarUrl: r.user.avatarUrl,
+                bio: r.user.bio,
+            }
+        }));
 
+        const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
+            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
+            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
+            return new Date(dateB).getTime() - new Date(dateA).getTime();
+        })];
+
+        res.json(merged);
     } catch (error) {
         next(error);
     }
@@ -462,12 +630,51 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             }
         });
 
-        const mapped = posts.map(post => ({
+        const reposts = await prisma.share.findMany({
+            where: { userId: { not: currentUserId } },
+            include: {
+                post: {
+                    select: {
+                        id: true,
+                        content: true,
+                        location: true,
+                        imageUrl: true,
+                        hideLikes: true,
+                        disableComments: true,
+                        createdAt: true,
+                        author: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                                avatarUrl: true
+                            }
+                        },
+                        likes: {
+                            where: { userId: currentUserId },
+                            select: { id: true }
+                        },
+                        _count: {
+                            select: {
+                                comments: true,
+                                likes: true,
+                                shares: true
+                            }
+                        }
+                    }
+                },
+                user: true,
+            }
+        })
+
+        const mappedPosts = posts.map(post => ({
             id: post.id,
             content: post.content,
             createdAt: post.createdAt,
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
+            isRepost: false,
+            repostedAt: null,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -483,7 +690,45 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             postsCount: posts.length
         }));
 
-        res.json(mapped);
+        const mappedReposts = reposts.map(r => ({
+            id: r.id,
+            postId: r.post.id,
+            content: r.post.content,
+            imageUrl: r.post.imageUrl,
+            location: r.post.location,
+            createdAt: r.post.createdAt,
+            hideLikes: r.post.hideLikes,
+            disableComments: r.post.disableComments,
+            isRepost: true,
+            repostedAt: r.createdAt,
+            author: {
+                id: r.post.author.id,
+                name: r.post.author.name,
+                username: r.post.author.username,
+                avatarUrl: r.post.author.avatarUrl,
+                liked: r.post.likes.length > 0,
+            },
+            _count: {
+                comments: r.post._count.comments,
+                likes: r.post._count.likes,
+                shares: r.post._count.shares
+            },
+            repostedBy: {
+                id: r.user.id,
+                name: r.user.name,
+                username: r.user.username,
+                avatarUrl: r.user.avatarUrl,
+                bio: r.user.bio,
+            }
+        }));
+
+        const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
+            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
+            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
+            return new Date(dateB).getTime() - new Date(dateA).getTime();
+        })];
+
+        res.json(merged);
     } catch (error) {
         next(error);
     }

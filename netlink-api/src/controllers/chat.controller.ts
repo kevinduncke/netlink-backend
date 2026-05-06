@@ -146,13 +146,10 @@ export async function newMessage(req: Request, res: Response, next: NextFunction
         const senderId = getAuthenticatedUserId(req);
 
         if (!chatId || typeof chatId !== 'string') {
-            console.log('Invalid chat ID:', chatId);
-            console.log('Sender ID: ', senderId);
             return res.status(400).json({ error: 'Invalid chat ID.' });
         }
 
         if (!senderId) {
-            console.log('Invalid sender ID:', senderId);
             return res.status(401).json({ error: 'Authentication required.' });
         }
 
