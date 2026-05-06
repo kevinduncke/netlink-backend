@@ -451,7 +451,7 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
         };
 
         const posts = await prisma.post.findMany({
-            where: { authorId: userId },
+            where: { authorId: userId, visibility: { in: ['PUBLIC', 'FOLLOWERS'] } },
             orderBy: { createdAt: 'desc' },
             select: {
                 id: true,
@@ -598,8 +598,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
 
         const posts = await prisma.post.findMany({
             where: {
-                authorId: { not: currentUserId },
-                visibility: 'PUBLIC'
+                authorId: currentUserId, visibility: { in: ['PUBLIC', 'FOLLOWERS'] }
             },
             orderBy: { createdAt: 'desc' },
             select: {
@@ -744,7 +743,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
         };
 
         const following = await prisma.follow.findMany({
-            where: { followerId: currentUserId },
+            where: { followerId: currentUserId, visibility: { in: ['PUBLIC', 'FOLLOWERS']  }},
             select: { followingId: true }
         });
 
