@@ -36,6 +36,16 @@ export async function followUser(req: Request, res: Response, next: NextFunction
             },
         });
 
+        await prisma.notification.create({
+            data: {
+                userId: targetUserId,
+                fromUserId: currentUserId,
+                type: 'FOLLOW',
+                followId: follow.id,
+                content: 'started following you.',
+            }
+        });
+
         res.status(201).json(follow);
     } catch (error) {
         next(error);

@@ -8,7 +8,8 @@ export async function createPost(req: Request, res: Response, next: NextFunction
             location,
             imageUrl,
             hideLikes,
-            disableComments
+            disableComments,
+            mentions
         } = req.body;
 
         const specificFollowers = req.body.specificTo; // AN ARRAY OF USER IDS
@@ -45,6 +46,38 @@ export async function createPost(req: Request, res: Response, next: NextFunction
             },
         });
 
+        const mentionedUsers = await prisma.user.findMany({
+            where: {
+                username: {
+                    in: mentions || []
+                }
+            },
+            select: {
+                id: true,
+            }
+        });
+
+        const mentionData = mentionedUsers.map(user => ({
+            userId: user.id
+        }));
+
+        await prisma.mention.createMany({
+            data: mentionData.map(m => ({
+                userId: m.userId,
+                postId: post.id
+            }))
+        });
+
+        await prisma.notification.createMany({
+            data: mentionedUsers.map(user => ({
+                userId: user.id,
+                fromUserId: (req as any).user.id,
+                type: 'MENTION',
+                postId: post.id,
+                content: 'mentioned you in a post.'
+            }))
+        });
+
         // RESPOND WITH CREATED POST
         res.status(201).json(post);
     } catch (error) {
@@ -52,7 +85,6 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     }
 }
 
-// PROBLEMS IN searchPosts, getAllPosts, getFollowingPosts [SHARES]
 export async function getMyPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user.id;
@@ -1006,6 +1038,17 @@ export async function createRepost(req: Request, res: Response, next: NextFuncti
                 postId: postId
             }
         });
+
+        await prisma.notification.create({
+            data: {
+                userId: (await prisma.post.findUnique({ where: { id: postId } }))!.authorId,
+                fromUserId: currentUserId,
+                type: 'REPOST',
+                postId: postId,
+                shareId: repost.id,
+                content: 'reposted your post.'
+            }
+        })
 
         res.status(201).json({ message: "Post reposted successfully.", repost });
     } catch (error) {

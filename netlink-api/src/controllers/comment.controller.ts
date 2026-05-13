@@ -41,6 +41,17 @@ export async function createComment(req: Request, res: Response, next: NextFunct
             }
         });
 
+        await prisma.notification.create({
+            data: {
+                userId: (await prisma.post.findUnique({ where: { id: postId } }))!.authorId,
+                fromUserId: authorId,
+                type: 'COMMENT',
+                postId: postId,
+                commentId: comment.id,
+                content: 'commented on your post.'
+            }
+        })
+
         res.status(201).json({
             id: comment.id,
             content: comment.content,

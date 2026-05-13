@@ -177,6 +177,27 @@ export async function newMessage(req: Request, res: Response, next: NextFunction
             },
         });
 
+        // Find the other participant in the chat and notify them
+        const recipient = await prisma.chatParticipant.findFirst({
+            where: {
+                chatId,
+                NOT: { userId: senderId }
+            },
+            select: { userId: true }
+        });
+
+        if (recipient) {
+            await prisma.notification.create({
+                data: {
+                    userId: recipient.userId,
+                    fromUserId: senderId,
+                    type: 'MESSAGE',
+                    chatId: chatId,
+                    content: 'sent you a message.'
+                }
+            });
+        }
+
         res.status(201).json(message);
     } catch (error) {
         next(error);

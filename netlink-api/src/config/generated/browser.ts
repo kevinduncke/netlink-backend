@@ -77,3 +77,8 @@ export type Message = Prisma.MessageModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model Mention
+ * 
+ */
+export type Mention = Prisma.MentionModel

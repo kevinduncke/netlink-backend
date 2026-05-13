@@ -25,6 +25,7 @@ model User {
   likes               Like[]
   comments            Comment[]
   shares              Share[]
+  mentions            Mention[]
   followers           Follow[]                @relation("followers")
   following           Follow[]                @relation("following")
   messages            Message[]               @relation("userMessages")
@@ -72,6 +73,7 @@ model Post {
   likes           Like[]
   comments        Comment[]
   shares          Share[]
+  mentions        Mention[]
   notifications    Notification[]
 }
 
@@ -223,4 +225,17 @@ model Notification {
 
   messageId     String?
   message       Message?  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model Mention {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId        String
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+
+  @@unique([postId, userId])
 }

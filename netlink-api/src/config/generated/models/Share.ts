@@ -1322,11 +1322,6 @@ export type ShareFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Skip the first `n` Shares.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of Shares.
-   */
   distinct?: Prisma.ShareScalarFieldEnum | Prisma.ShareScalarFieldEnum[]
 }
 
