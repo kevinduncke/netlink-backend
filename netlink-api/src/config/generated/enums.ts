@@ -17,3 +17,15 @@ export const PostVisibility = {
 } as const
 
 export type PostVisibility = (typeof PostVisibility)[keyof typeof PostVisibility]
+
+
+export const NotificationTypes = {
+  FOLLOW: 'FOLLOW',
+  LIKE: 'LIKE',
+  COMMENT: 'COMMENT',
+  REPOST: 'REPOST',
+  MENTION: 'MENTION',
+  MESSAGE: 'MESSAGE'
+} as const
+
+export type NotificationTypes = (typeof NotificationTypes)[keyof typeof NotificationTypes]

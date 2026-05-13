@@ -31,6 +31,8 @@ model User {
   chatParticipants    ChatParticipant[]
   chatHides           ChatHidden[]            @relation("userChatHides")
   notifications       Notification[]
+  sentNotifications   Notification[]          @relation("NotificationFromUser")
+  
   visiblePosts        Post[]                  @relation("SpecificVisibility")
 
   favorites           Favorite[]              @relation("UserFavorites")
@@ -44,23 +46,33 @@ enum PostVisibility {
   SPECIFIC
 }
 
+enum NotificationTypes {
+  FOLLOW
+  LIKE
+  COMMENT
+  REPOST
+  MENTION
+  MESSAGE
+}
+
 model Post {
   id              String           @id @default(uuid())
   content         String
   location        String?
   visibility      PostVisibility   @default(PUBLIC)
-  specificTo      User[]           @relation("SpecificVisibility")
   hideLikes       Boolean          @default(false)
   disableComments Boolean          @default(false)  
   imageUrl        String?
   createdAt       DateTime         @default(now())
 
+  // Relations
   author          User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId        String
-
+  specificTo      User[]           @relation("SpecificVisibility")
   likes           Like[]
   comments        Comment[]
   shares          Share[]
+  notifications    Notification[]
 }
 
 model Like {
@@ -72,6 +84,8 @@ model Like {
 
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
+
+  notifications Notification[]
 
   @@unique([userId, postId])
 }
@@ -86,6 +100,8 @@ model Comment {
 
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
+  
+  notifications Notification[]
 }
 
 model Share {
@@ -96,6 +112,8 @@ model Share {
 
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   post            Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  notifications   Notification[]
 
   @@unique([userId, postId])
 }
@@ -109,6 +127,8 @@ model Follow {
 
   following     User      @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
   followingId   String
+
+  notifications Notification[]
 }
 
 model Favorite {
@@ -166,15 +186,41 @@ model Message {
 
   sender        User      @relation("userMessages", fields: [senderId], references: [id], onDelete: Cascade)
   senderId      String
+
+  notifications   Notification[]
 }
 
 model Notification {
-  id            String    @id @default(uuid())
-  type          String
-  message       String
-  read          Boolean   @default(false)
-  createdAt     DateTime  @default(now())
+  id            String               @id @default(uuid())
+  type          NotificationTypes    
+  content       String?
+  read          Boolean              @default(false)
+  createdAt     DateTime             @default(now())
 
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // DEST
   userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // SOURCE
+  fromUserId    String?
+  fromUser      User?     @relation("NotificationFromUser", fields: [fromUserId], references: [id], onDelete: Cascade)
+
+  // OPT DEPENDING ON TYPE
+  postId        String?
+  post          Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  commentId     String?
+  comment       Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  likeId        String?
+  like          Like?     @relation(fields: [likeId], references: [id], onDelete: Cascade)
+
+  shareId       String?
+  share         Share?    @relation(fields: [shareId], references: [id], onDelete: Cascade)
+
+  followId      String?
+  follow        Follow?   @relation(fields: [followId], references: [id], onDelete: Cascade)
+
+  messageId     String?
+  message       Message?  @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }

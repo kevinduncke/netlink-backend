@@ -176,6 +176,7 @@ export type ShareWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Share"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
+  notifications?: Prisma.NotificationListRelationFilter
 }
 
 export type ShareOrderByWithRelationInput = {
@@ -185,6 +186,7 @@ export type ShareOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   post?: Prisma.PostOrderByWithRelationInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
 }
 
 export type ShareWhereUniqueInput = Prisma.AtLeast<{
@@ -198,6 +200,7 @@ export type ShareWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Share"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
+  notifications?: Prisma.NotificationListRelationFilter
 }, "id" | "userId_postId">
 
 export type ShareOrderByWithAggregationInput = {
@@ -225,6 +228,7 @@ export type ShareCreateInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSharesInput
   post: Prisma.PostCreateNestedOneWithoutSharesInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutShareInput
 }
 
 export type ShareUncheckedCreateInput = {
@@ -232,6 +236,7 @@ export type ShareUncheckedCreateInput = {
   userId: string
   postId: string
   createdAt?: Date | string
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutShareInput
 }
 
 export type ShareUpdateInput = {
@@ -239,6 +244,7 @@ export type ShareUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSharesNestedInput
   post?: Prisma.PostUpdateOneRequiredWithoutSharesNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutShareNestedInput
 }
 
 export type ShareUncheckedUpdateInput = {
@@ -246,6 +252,7 @@ export type ShareUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutShareNestedInput
 }
 
 export type ShareCreateManyInput = {
@@ -301,6 +308,11 @@ export type ShareMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type ShareNullableScalarRelationFilter = {
+  is?: Prisma.ShareWhereInput | null
+  isNot?: Prisma.ShareWhereInput | null
 }
 
 export type ShareCreateNestedManyWithoutUserInput = {
@@ -387,16 +399,34 @@ export type ShareUncheckedUpdateManyWithoutPostNestedInput = {
   deleteMany?: Prisma.ShareScalarWhereInput | Prisma.ShareScalarWhereInput[]
 }
 
+export type ShareCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.ShareCreateWithoutNotificationsInput, Prisma.ShareUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.ShareCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.ShareWhereUniqueInput
+}
+
+export type ShareUpdateOneWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ShareCreateWithoutNotificationsInput, Prisma.ShareUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.ShareCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.ShareUpsertWithoutNotificationsInput
+  disconnect?: Prisma.ShareWhereInput | boolean
+  delete?: Prisma.ShareWhereInput | boolean
+  connect?: Prisma.ShareWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ShareUpdateToOneWithWhereWithoutNotificationsInput, Prisma.ShareUpdateWithoutNotificationsInput>, Prisma.ShareUncheckedUpdateWithoutNotificationsInput>
+}
+
 export type ShareCreateWithoutUserInput = {
   id?: string
   createdAt?: Date | string
   post: Prisma.PostCreateNestedOneWithoutSharesInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutShareInput
 }
 
 export type ShareUncheckedCreateWithoutUserInput = {
   id?: string
   postId: string
   createdAt?: Date | string
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutShareInput
 }
 
 export type ShareCreateOrConnectWithoutUserInput = {
@@ -439,12 +469,14 @@ export type ShareCreateWithoutPostInput = {
   id?: string
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSharesInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutShareInput
 }
 
 export type ShareUncheckedCreateWithoutPostInput = {
   id?: string
   userId: string
   createdAt?: Date | string
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutShareInput
 }
 
 export type ShareCreateOrConnectWithoutPostInput = {
@@ -473,6 +505,50 @@ export type ShareUpdateManyWithWhereWithoutPostInput = {
   data: Prisma.XOR<Prisma.ShareUpdateManyMutationInput, Prisma.ShareUncheckedUpdateManyWithoutPostInput>
 }
 
+export type ShareCreateWithoutNotificationsInput = {
+  id?: string
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutSharesInput
+  post: Prisma.PostCreateNestedOneWithoutSharesInput
+}
+
+export type ShareUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  userId: string
+  postId: string
+  createdAt?: Date | string
+}
+
+export type ShareCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.ShareWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShareCreateWithoutNotificationsInput, Prisma.ShareUncheckedCreateWithoutNotificationsInput>
+}
+
+export type ShareUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.ShareUpdateWithoutNotificationsInput, Prisma.ShareUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.ShareCreateWithoutNotificationsInput, Prisma.ShareUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.ShareWhereInput
+}
+
+export type ShareUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.ShareWhereInput
+  data: Prisma.XOR<Prisma.ShareUpdateWithoutNotificationsInput, Prisma.ShareUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type ShareUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutSharesNestedInput
+  post?: Prisma.PostUpdateOneRequiredWithoutSharesNestedInput
+}
+
+export type ShareUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  postId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type ShareCreateManyUserInput = {
   id?: string
   postId: string
@@ -483,12 +559,14 @@ export type ShareUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   post?: Prisma.PostUpdateOneRequiredWithoutSharesNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutShareNestedInput
 }
 
 export type ShareUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutShareNestedInput
 }
 
 export type ShareUncheckedUpdateManyWithoutUserInput = {
@@ -507,12 +585,14 @@ export type ShareUpdateWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSharesNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutShareNestedInput
 }
 
 export type ShareUncheckedUpdateWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutShareNestedInput
 }
 
 export type ShareUncheckedUpdateManyWithoutPostInput = {
@@ -522,6 +602,35 @@ export type ShareUncheckedUpdateManyWithoutPostInput = {
 }
 
 
+/**
+ * Count Type ShareCountOutputType
+ */
+
+export type ShareCountOutputType = {
+  notifications: number
+}
+
+export type ShareCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  notifications?: boolean | ShareCountOutputTypeCountNotificationsArgs
+}
+
+/**
+ * ShareCountOutputType without action
+ */
+export type ShareCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShareCountOutputType
+   */
+  select?: Prisma.ShareCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ShareCountOutputType without action
+ */
+export type ShareCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
 
 export type ShareSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -530,6 +639,8 @@ export type ShareSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  notifications?: boolean | Prisma.Share$notificationsArgs<ExtArgs>
+  _count?: boolean | Prisma.ShareCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["share"]>
 
 export type ShareSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -561,6 +672,8 @@ export type ShareOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
 export type ShareInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  notifications?: boolean | Prisma.Share$notificationsArgs<ExtArgs>
+  _count?: boolean | Prisma.ShareCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ShareIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -576,6 +689,7 @@ export type $SharePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     post: Prisma.$PostPayload<ExtArgs>
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -978,6 +1092,7 @@ export interface Prisma__ShareClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   post<T extends Prisma.PostDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostDefaultArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  notifications<T extends Prisma.Share$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Share$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1207,6 +1322,11 @@ export type ShareFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Skip the first `n` Shares.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Shares.
+   */
   distinct?: Prisma.ShareScalarFieldEnum | Prisma.ShareScalarFieldEnum[]
 }
 
@@ -1404,6 +1524,30 @@ export type ShareDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Shares to delete.
    */
   limit?: number
+}
+
+/**
+ * Share.notifications
+ */
+export type Share$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

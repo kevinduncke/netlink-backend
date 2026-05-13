@@ -17,7 +17,6 @@ export const createApp = () => {
 
     app.use(cors());
     app.use(express.json());
-    app.use(errorHandler);
 
     // EXPRESS TEST ROUTE
     app.get('/health', (req, res) => {
@@ -48,6 +47,14 @@ export const createApp = () => {
 
     // REGISTER ROUTES
     registerRoutes(app);
+
+    // 404 HANDLER (for unmatched routes)
+    app.use((req: Request, res: Response) => {
+        res.status(404).json({ error: 'Route not found' });
+    });
+
+    // ERROR HANDLER (must be after all routes and middleware)
+    app.use(errorHandler);
 
     return app;
 };

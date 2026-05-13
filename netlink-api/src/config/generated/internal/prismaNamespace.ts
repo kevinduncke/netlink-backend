@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.1
- * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+ * Prisma Client JS version: 7.5.0
+ * Query Engine version: 280c870be64f457428992c43c1f6d557fab6e29e
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.1",
-  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
+  client: "7.5.0",
+  engine: "280c870be64f457428992c43c1f6d557fab6e29e"
 }
 
 /**
@@ -1464,10 +1464,17 @@ export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeo
 export const NotificationScalarFieldEnum = {
   id: 'id',
   type: 'type',
-  message: 'message',
+  content: 'content',
   read: 'read',
   createdAt: 'createdAt',
-  userId: 'userId'
+  userId: 'userId',
+  fromUserId: 'fromUserId',
+  postId: 'postId',
+  commentId: 'commentId',
+  likeId: 'likeId',
+  shareId: 'shareId',
+  followId: 'followId',
+  messageId: 'messageId'
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
@@ -1549,6 +1556,20 @@ export type ListEnumPostVisibilityFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'NotificationTypes'
+ */
+export type EnumNotificationTypesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationTypes'>
+    
+
+
+/**
+ * Reference to a field of type 'NotificationTypes[]'
+ */
+export type ListEnumNotificationTypesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationTypes[]'>
     
 
 

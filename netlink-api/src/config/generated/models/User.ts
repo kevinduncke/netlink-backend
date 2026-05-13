@@ -224,6 +224,7 @@ export type UserWhereInput = {
   chatParticipants?: Prisma.ChatParticipantListRelationFilter
   chatHides?: Prisma.ChatHiddenListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  sentNotifications?: Prisma.NotificationListRelationFilter
   visiblePosts?: Prisma.PostListRelationFilter
   favorites?: Prisma.FavoriteListRelationFilter
   favoredBy?: Prisma.FavoriteListRelationFilter
@@ -249,6 +250,7 @@ export type UserOrderByWithRelationInput = {
   chatParticipants?: Prisma.ChatParticipantOrderByRelationAggregateInput
   chatHides?: Prisma.ChatHiddenOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
+  sentNotifications?: Prisma.NotificationOrderByRelationAggregateInput
   visiblePosts?: Prisma.PostOrderByRelationAggregateInput
   favorites?: Prisma.FavoriteOrderByRelationAggregateInput
   favoredBy?: Prisma.FavoriteOrderByRelationAggregateInput
@@ -277,6 +279,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   chatParticipants?: Prisma.ChatParticipantListRelationFilter
   chatHides?: Prisma.ChatHiddenListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  sentNotifications?: Prisma.NotificationListRelationFilter
   visiblePosts?: Prisma.PostListRelationFilter
   favorites?: Prisma.FavoriteListRelationFilter
   favoredBy?: Prisma.FavoriteListRelationFilter
@@ -332,6 +335,7 @@ export type UserCreateInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -357,6 +361,7 @@ export type UserUncheckedCreateInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -382,6 +387,7 @@ export type UserUpdateInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -407,6 +413,7 @@ export type UserUncheckedUpdateInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -484,19 +491,24 @@ export type UserMinOrderByAggregateInput = {
   avatarUrl?: Prisma.SortOrder
 }
 
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
+}
+
 export type UserListRelationFilter = {
   every?: Prisma.UserWhereInput
   some?: Prisma.UserWhereInput
   none?: Prisma.UserWhereInput
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
-}
-
 export type UserOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -511,22 +523,30 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
-export type UserCreateNestedManyWithoutVisiblePostsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutVisiblePostsInput, Prisma.UserUncheckedCreateWithoutVisiblePostsInput> | Prisma.UserCreateWithoutVisiblePostsInput[] | Prisma.UserUncheckedCreateWithoutVisiblePostsInput[]
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVisiblePostsInput | Prisma.UserCreateOrConnectWithoutVisiblePostsInput[]
-  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-}
-
 export type UserCreateNestedOneWithoutPostsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPostsInput, Prisma.UserUncheckedCreateWithoutPostsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPostsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
+export type UserCreateNestedManyWithoutVisiblePostsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVisiblePostsInput, Prisma.UserUncheckedCreateWithoutVisiblePostsInput> | Prisma.UserCreateWithoutVisiblePostsInput[] | Prisma.UserUncheckedCreateWithoutVisiblePostsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVisiblePostsInput | Prisma.UserCreateOrConnectWithoutVisiblePostsInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
 export type UserUncheckedCreateNestedManyWithoutVisiblePostsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutVisiblePostsInput, Prisma.UserUncheckedCreateWithoutVisiblePostsInput> | Prisma.UserCreateWithoutVisiblePostsInput[] | Prisma.UserUncheckedCreateWithoutVisiblePostsInput[]
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutVisiblePostsInput | Prisma.UserCreateOrConnectWithoutVisiblePostsInput[]
   connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUpdateOneRequiredWithoutPostsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPostsInput, Prisma.UserUncheckedCreateWithoutPostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPostsInput
+  upsert?: Prisma.UserUpsertWithoutPostsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPostsInput, Prisma.UserUpdateWithoutPostsInput>, Prisma.UserUncheckedUpdateWithoutPostsInput>
 }
 
 export type UserUpdateManyWithoutVisiblePostsNestedInput = {
@@ -540,14 +560,6 @@ export type UserUpdateManyWithoutVisiblePostsNestedInput = {
   update?: Prisma.UserUpdateWithWhereUniqueWithoutVisiblePostsInput | Prisma.UserUpdateWithWhereUniqueWithoutVisiblePostsInput[]
   updateMany?: Prisma.UserUpdateManyWithWhereWithoutVisiblePostsInput | Prisma.UserUpdateManyWithWhereWithoutVisiblePostsInput[]
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
-}
-
-export type UserUpdateOneRequiredWithoutPostsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPostsInput, Prisma.UserUncheckedCreateWithoutPostsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPostsInput
-  upsert?: Prisma.UserUpsertWithoutPostsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPostsInput, Prisma.UserUpdateWithoutPostsInput>, Prisma.UserUncheckedUpdateWithoutPostsInput>
 }
 
 export type UserUncheckedUpdateManyWithoutVisiblePostsNestedInput = {
@@ -709,6 +721,12 @@ export type UserCreateNestedOneWithoutNotificationsInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
+export type UserCreateNestedOneWithoutSentNotificationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentNotificationsInput, Prisma.UserUncheckedCreateWithoutSentNotificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentNotificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
 export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationsInput
@@ -717,57 +735,14 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
 }
 
-export type UserCreateWithoutVisiblePostsInput = {
-  id?: string
-  email: string
-  password: string
-  createdAt?: Date | string
-  name?: string | null
-  username?: string | null
-  bio?: string | null
-  url?: string | null
-  avatarUrl?: string | null
-  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
-  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
-  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
-  shares?: Prisma.ShareCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollowerInput
-  following?: Prisma.FollowCreateNestedManyWithoutFollowingInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
-  chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
-  chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
-  favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
-}
-
-export type UserUncheckedCreateWithoutVisiblePostsInput = {
-  id?: string
-  email: string
-  password: string
-  createdAt?: Date | string
-  name?: string | null
-  username?: string | null
-  bio?: string | null
-  url?: string | null
-  avatarUrl?: string | null
-  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
-  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
-  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
-  shares?: Prisma.ShareUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
-  following?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
-  chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
-  chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
-  favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
-}
-
-export type UserCreateOrConnectWithoutVisiblePostsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutVisiblePostsInput, Prisma.UserUncheckedCreateWithoutVisiblePostsInput>
+export type UserUpdateOneWithoutSentNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentNotificationsInput, Prisma.UserUncheckedCreateWithoutSentNotificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentNotificationsInput
+  upsert?: Prisma.UserUpsertWithoutSentNotificationsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSentNotificationsInput, Prisma.UserUpdateWithoutSentNotificationsInput>, Prisma.UserUncheckedUpdateWithoutSentNotificationsInput>
 }
 
 export type UserCreateWithoutPostsInput = {
@@ -789,6 +764,7 @@ export type UserCreateWithoutPostsInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -813,6 +789,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -821,6 +798,122 @@ export type UserUncheckedCreateWithoutPostsInput = {
 export type UserCreateOrConnectWithoutPostsInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutPostsInput, Prisma.UserUncheckedCreateWithoutPostsInput>
+}
+
+export type UserCreateWithoutVisiblePostsInput = {
+  id?: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  name?: string | null
+  username?: string | null
+  bio?: string | null
+  url?: string | null
+  avatarUrl?: string | null
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  shares?: Prisma.ShareCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowCreateNestedManyWithoutFollowerInput
+  following?: Prisma.FollowCreateNestedManyWithoutFollowingInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
+  chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
+}
+
+export type UserUncheckedCreateWithoutVisiblePostsInput = {
+  id?: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  name?: string | null
+  username?: string | null
+  bio?: string | null
+  url?: string | null
+  avatarUrl?: string | null
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  shares?: Prisma.ShareUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
+  following?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
+  chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
+}
+
+export type UserCreateOrConnectWithoutVisiblePostsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutVisiblePostsInput, Prisma.UserUncheckedCreateWithoutVisiblePostsInput>
+}
+
+export type UserUpsertWithoutPostsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPostsInput, Prisma.UserUncheckedUpdateWithoutPostsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPostsInput, Prisma.UserUncheckedCreateWithoutPostsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPostsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPostsInput, Prisma.UserUncheckedUpdateWithoutPostsInput>
+}
+
+export type UserUpdateWithoutPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  shares?: Prisma.ShareUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
+  following?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
+  chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
+  visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  shares?: Prisma.ShareUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
+  following?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
+  chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
+  visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutVisiblePostsInput = {
@@ -854,65 +947,6 @@ export type UserScalarWhereInput = {
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
 }
 
-export type UserUpsertWithoutPostsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutPostsInput, Prisma.UserUncheckedUpdateWithoutPostsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutPostsInput, Prisma.UserUncheckedCreateWithoutPostsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutPostsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutPostsInput, Prisma.UserUncheckedUpdateWithoutPostsInput>
-}
-
-export type UserUpdateWithoutPostsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
-  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
-  shares?: Prisma.ShareUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
-  following?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
-  chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
-  chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
-  favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
-}
-
-export type UserUncheckedUpdateWithoutPostsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
-  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
-  shares?: Prisma.ShareUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
-  following?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
-  chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
-  chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
-  favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
-}
-
 export type UserCreateWithoutLikesInput = {
   id?: string
   email: string
@@ -932,6 +966,7 @@ export type UserCreateWithoutLikesInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -956,6 +991,7 @@ export type UserUncheckedCreateWithoutLikesInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -996,6 +1032,7 @@ export type UserUpdateWithoutLikesInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -1020,6 +1057,7 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -1044,6 +1082,7 @@ export type UserCreateWithoutCommentsInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -1068,6 +1107,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -1108,6 +1148,7 @@ export type UserUpdateWithoutCommentsInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -1132,6 +1173,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -1156,6 +1198,7 @@ export type UserCreateWithoutSharesInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -1180,6 +1223,7 @@ export type UserUncheckedCreateWithoutSharesInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -1220,6 +1264,7 @@ export type UserUpdateWithoutSharesInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -1244,6 +1289,7 @@ export type UserUncheckedUpdateWithoutSharesInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -1268,6 +1314,7 @@ export type UserCreateWithoutFollowersInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -1292,6 +1339,7 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -1321,6 +1369,7 @@ export type UserCreateWithoutFollowingInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -1345,6 +1394,7 @@ export type UserUncheckedCreateWithoutFollowingInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -1385,6 +1435,7 @@ export type UserUpdateWithoutFollowersInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -1409,6 +1460,7 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -1444,6 +1496,7 @@ export type UserUpdateWithoutFollowingInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -1468,6 +1521,7 @@ export type UserUncheckedUpdateWithoutFollowingInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -1493,6 +1547,7 @@ export type UserCreateWithoutFavoritesInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
 }
@@ -1517,6 +1572,7 @@ export type UserUncheckedCreateWithoutFavoritesInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
 }
@@ -1546,6 +1602,7 @@ export type UserCreateWithoutFavoredByInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
 }
@@ -1570,6 +1627,7 @@ export type UserUncheckedCreateWithoutFavoredByInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1610,6 +1668,7 @@ export type UserUpdateWithoutFavoritesInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
 }
@@ -1634,6 +1693,7 @@ export type UserUncheckedUpdateWithoutFavoritesInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
 }
@@ -1669,6 +1729,7 @@ export type UserUpdateWithoutFavoredByInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
 }
@@ -1693,6 +1754,7 @@ export type UserUncheckedUpdateWithoutFavoredByInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -1716,6 +1778,7 @@ export type UserCreateWithoutChatParticipantsInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -1740,6 +1803,7 @@ export type UserUncheckedCreateWithoutChatParticipantsInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -1780,6 +1844,7 @@ export type UserUpdateWithoutChatParticipantsInput = {
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -1804,6 +1869,7 @@ export type UserUncheckedUpdateWithoutChatParticipantsInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -1828,6 +1894,7 @@ export type UserCreateWithoutChatHidesInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -1852,6 +1919,7 @@ export type UserUncheckedCreateWithoutChatHidesInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -1892,6 +1960,7 @@ export type UserUpdateWithoutChatHidesInput = {
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -1916,6 +1985,7 @@ export type UserUncheckedUpdateWithoutChatHidesInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -1940,6 +2010,7 @@ export type UserCreateWithoutMessagesInput = {
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -1964,6 +2035,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -2004,6 +2076,7 @@ export type UserUpdateWithoutMessagesInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -2028,6 +2101,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -2052,6 +2126,7 @@ export type UserCreateWithoutNotificationsInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
@@ -2076,6 +2151,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
   chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFromUserInput
   visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
@@ -2084,6 +2160,61 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
 export type UserCreateOrConnectWithoutNotificationsInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
+}
+
+export type UserCreateWithoutSentNotificationsInput = {
+  id?: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  name?: string | null
+  username?: string | null
+  bio?: string | null
+  url?: string | null
+  avatarUrl?: string | null
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  shares?: Prisma.ShareCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowCreateNestedManyWithoutFollowerInput
+  following?: Prisma.FollowCreateNestedManyWithoutFollowingInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  chatParticipants?: Prisma.ChatParticipantCreateNestedManyWithoutUserInput
+  chatHides?: Prisma.ChatHiddenCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  visiblePosts?: Prisma.PostCreateNestedManyWithoutSpecificToInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  favoredBy?: Prisma.FavoriteCreateNestedManyWithoutFavoriteInput
+}
+
+export type UserUncheckedCreateWithoutSentNotificationsInput = {
+  id?: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  name?: string | null
+  username?: string | null
+  bio?: string | null
+  url?: string | null
+  avatarUrl?: string | null
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  shares?: Prisma.ShareUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
+  following?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  chatParticipants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutUserInput
+  chatHides?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  visiblePosts?: Prisma.PostUncheckedCreateNestedManyWithoutSpecificToInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  favoredBy?: Prisma.FavoriteUncheckedCreateNestedManyWithoutFavoriteInput
+}
+
+export type UserCreateOrConnectWithoutSentNotificationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentNotificationsInput, Prisma.UserUncheckedCreateWithoutSentNotificationsInput>
 }
 
 export type UserUpsertWithoutNotificationsInput = {
@@ -2116,6 +2247,7 @@ export type UserUpdateWithoutNotificationsInput = {
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
@@ -2140,6 +2272,68 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
+  visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
+}
+
+export type UserUpsertWithoutSentNotificationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSentNotificationsInput, Prisma.UserUncheckedUpdateWithoutSentNotificationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentNotificationsInput, Prisma.UserUncheckedCreateWithoutSentNotificationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSentNotificationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSentNotificationsInput, Prisma.UserUncheckedUpdateWithoutSentNotificationsInput>
+}
+
+export type UserUpdateWithoutSentNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  shares?: Prisma.ShareUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
+  following?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
+  chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  visiblePosts?: Prisma.PostUpdateManyWithoutSpecificToNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSentNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  shares?: Prisma.ShareUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
+  following?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
+  chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   visiblePosts?: Prisma.PostUncheckedUpdateManyWithoutSpecificToNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
@@ -2165,6 +2359,7 @@ export type UserUpdateWithoutVisiblePostsInput = {
   chatParticipants?: Prisma.ChatParticipantUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutFromUserNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUpdateManyWithoutFavoriteNestedInput
 }
@@ -2189,6 +2384,7 @@ export type UserUncheckedUpdateWithoutVisiblePostsInput = {
   chatParticipants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutUserNestedInput
   chatHides?: Prisma.ChatHiddenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutFromUserNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   favoredBy?: Prisma.FavoriteUncheckedUpdateManyWithoutFavoriteNestedInput
 }
@@ -2221,6 +2417,7 @@ export type UserCountOutputType = {
   chatParticipants: number
   chatHides: number
   notifications: number
+  sentNotifications: number
   visiblePosts: number
   favorites: number
   favoredBy: number
@@ -2237,6 +2434,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   chatParticipants?: boolean | UserCountOutputTypeCountChatParticipantsArgs
   chatHides?: boolean | UserCountOutputTypeCountChatHidesArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+  sentNotifications?: boolean | UserCountOutputTypeCountSentNotificationsArgs
   visiblePosts?: boolean | UserCountOutputTypeCountVisiblePostsArgs
   favorites?: boolean | UserCountOutputTypeCountFavoritesArgs
   favoredBy?: boolean | UserCountOutputTypeCountFavoredByArgs
@@ -2325,6 +2523,13 @@ export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountSentNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountVisiblePostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PostWhereInput
 }
@@ -2364,6 +2569,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   chatParticipants?: boolean | Prisma.User$chatParticipantsArgs<ExtArgs>
   chatHides?: boolean | Prisma.User$chatHidesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  sentNotifications?: boolean | Prisma.User$sentNotificationsArgs<ExtArgs>
   visiblePosts?: boolean | Prisma.User$visiblePostsArgs<ExtArgs>
   favorites?: boolean | Prisma.User$favoritesArgs<ExtArgs>
   favoredBy?: boolean | Prisma.User$favoredByArgs<ExtArgs>
@@ -2418,6 +2624,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   chatParticipants?: boolean | Prisma.User$chatParticipantsArgs<ExtArgs>
   chatHides?: boolean | Prisma.User$chatHidesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  sentNotifications?: boolean | Prisma.User$sentNotificationsArgs<ExtArgs>
   visiblePosts?: boolean | Prisma.User$visiblePostsArgs<ExtArgs>
   favorites?: boolean | Prisma.User$favoritesArgs<ExtArgs>
   favoredBy?: boolean | Prisma.User$favoredByArgs<ExtArgs>
@@ -2439,6 +2646,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     chatParticipants: Prisma.$ChatParticipantPayload<ExtArgs>[]
     chatHides: Prisma.$ChatHiddenPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
+    sentNotifications: Prisma.$NotificationPayload<ExtArgs>[]
     visiblePosts: Prisma.$PostPayload<ExtArgs>[]
     favorites: Prisma.$FavoritePayload<ExtArgs>[]
     favoredBy: Prisma.$FavoritePayload<ExtArgs>[]
@@ -2857,6 +3065,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   chatParticipants<T extends Prisma.User$chatParticipantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatParticipantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatHides<T extends Prisma.User$chatHidesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatHidesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatHiddenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sentNotifications<T extends Prisma.User$sentNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   visiblePosts<T extends Prisma.User$visiblePostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$visiblePostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   favorites<T extends Prisma.User$favoritesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   favoredBy<T extends Prisma.User$favoredByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$favoredByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3094,6 +3303,11 @@ export type UserFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Users.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Users.
+   */
   distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
 }
 
@@ -3505,6 +3719,30 @@ export type User$chatHidesArgs<ExtArgs extends runtime.Types.Extensions.Internal
  * User.notifications
  */
 export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * User.sentNotifications
+ */
+export type User$sentNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Notification
    */

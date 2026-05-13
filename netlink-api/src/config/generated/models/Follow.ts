@@ -176,6 +176,7 @@ export type FollowWhereInput = {
   followingId?: Prisma.StringFilter<"Follow"> | string
   follower?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   following?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  notifications?: Prisma.NotificationListRelationFilter
 }
 
 export type FollowOrderByWithRelationInput = {
@@ -185,6 +186,7 @@ export type FollowOrderByWithRelationInput = {
   followingId?: Prisma.SortOrder
   follower?: Prisma.UserOrderByWithRelationInput
   following?: Prisma.UserOrderByWithRelationInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
 }
 
 export type FollowWhereUniqueInput = Prisma.AtLeast<{
@@ -197,6 +199,7 @@ export type FollowWhereUniqueInput = Prisma.AtLeast<{
   followingId?: Prisma.StringFilter<"Follow"> | string
   follower?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   following?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  notifications?: Prisma.NotificationListRelationFilter
 }, "id">
 
 export type FollowOrderByWithAggregationInput = {
@@ -224,6 +227,7 @@ export type FollowCreateInput = {
   createdAt?: Date | string
   follower: Prisma.UserCreateNestedOneWithoutFollowersInput
   following: Prisma.UserCreateNestedOneWithoutFollowingInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutFollowInput
 }
 
 export type FollowUncheckedCreateInput = {
@@ -231,6 +235,7 @@ export type FollowUncheckedCreateInput = {
   createdAt?: Date | string
   followerId: string
   followingId: string
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFollowInput
 }
 
 export type FollowUpdateInput = {
@@ -238,6 +243,7 @@ export type FollowUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   follower?: Prisma.UserUpdateOneRequiredWithoutFollowersNestedInput
   following?: Prisma.UserUpdateOneRequiredWithoutFollowingNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutFollowNestedInput
 }
 
 export type FollowUncheckedUpdateInput = {
@@ -245,6 +251,7 @@ export type FollowUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   followerId?: Prisma.StringFieldUpdateOperationsInput | string
   followingId?: Prisma.StringFieldUpdateOperationsInput | string
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutFollowNestedInput
 }
 
 export type FollowCreateManyInput = {
@@ -295,6 +302,11 @@ export type FollowMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   followerId?: Prisma.SortOrder
   followingId?: Prisma.SortOrder
+}
+
+export type FollowNullableScalarRelationFilter = {
+  is?: Prisma.FollowWhereInput | null
+  isNot?: Prisma.FollowWhereInput | null
 }
 
 export type FollowCreateNestedManyWithoutFollowerInput = {
@@ -381,16 +393,34 @@ export type FollowUncheckedUpdateManyWithoutFollowingNestedInput = {
   deleteMany?: Prisma.FollowScalarWhereInput | Prisma.FollowScalarWhereInput[]
 }
 
+export type FollowCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.FollowCreateWithoutNotificationsInput, Prisma.FollowUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.FollowCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.FollowWhereUniqueInput
+}
+
+export type FollowUpdateOneWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.FollowCreateWithoutNotificationsInput, Prisma.FollowUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.FollowCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.FollowUpsertWithoutNotificationsInput
+  disconnect?: Prisma.FollowWhereInput | boolean
+  delete?: Prisma.FollowWhereInput | boolean
+  connect?: Prisma.FollowWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FollowUpdateToOneWithWhereWithoutNotificationsInput, Prisma.FollowUpdateWithoutNotificationsInput>, Prisma.FollowUncheckedUpdateWithoutNotificationsInput>
+}
+
 export type FollowCreateWithoutFollowerInput = {
   id?: string
   createdAt?: Date | string
   following: Prisma.UserCreateNestedOneWithoutFollowingInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutFollowInput
 }
 
 export type FollowUncheckedCreateWithoutFollowerInput = {
   id?: string
   createdAt?: Date | string
   followingId: string
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFollowInput
 }
 
 export type FollowCreateOrConnectWithoutFollowerInput = {
@@ -407,12 +437,14 @@ export type FollowCreateWithoutFollowingInput = {
   id?: string
   createdAt?: Date | string
   follower: Prisma.UserCreateNestedOneWithoutFollowersInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutFollowInput
 }
 
 export type FollowUncheckedCreateWithoutFollowingInput = {
   id?: string
   createdAt?: Date | string
   followerId: string
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutFollowInput
 }
 
 export type FollowCreateOrConnectWithoutFollowingInput = {
@@ -467,6 +499,50 @@ export type FollowUpdateManyWithWhereWithoutFollowingInput = {
   data: Prisma.XOR<Prisma.FollowUpdateManyMutationInput, Prisma.FollowUncheckedUpdateManyWithoutFollowingInput>
 }
 
+export type FollowCreateWithoutNotificationsInput = {
+  id?: string
+  createdAt?: Date | string
+  follower: Prisma.UserCreateNestedOneWithoutFollowersInput
+  following: Prisma.UserCreateNestedOneWithoutFollowingInput
+}
+
+export type FollowUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  createdAt?: Date | string
+  followerId: string
+  followingId: string
+}
+
+export type FollowCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.FollowWhereUniqueInput
+  create: Prisma.XOR<Prisma.FollowCreateWithoutNotificationsInput, Prisma.FollowUncheckedCreateWithoutNotificationsInput>
+}
+
+export type FollowUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.FollowUpdateWithoutNotificationsInput, Prisma.FollowUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.FollowCreateWithoutNotificationsInput, Prisma.FollowUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.FollowWhereInput
+}
+
+export type FollowUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.FollowWhereInput
+  data: Prisma.XOR<Prisma.FollowUpdateWithoutNotificationsInput, Prisma.FollowUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type FollowUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  follower?: Prisma.UserUpdateOneRequiredWithoutFollowersNestedInput
+  following?: Prisma.UserUpdateOneRequiredWithoutFollowingNestedInput
+}
+
+export type FollowUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  followerId?: Prisma.StringFieldUpdateOperationsInput | string
+  followingId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
 export type FollowCreateManyFollowerInput = {
   id?: string
   createdAt?: Date | string
@@ -483,12 +559,14 @@ export type FollowUpdateWithoutFollowerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   following?: Prisma.UserUpdateOneRequiredWithoutFollowingNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutFollowNestedInput
 }
 
 export type FollowUncheckedUpdateWithoutFollowerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   followingId?: Prisma.StringFieldUpdateOperationsInput | string
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutFollowNestedInput
 }
 
 export type FollowUncheckedUpdateManyWithoutFollowerInput = {
@@ -501,12 +579,14 @@ export type FollowUpdateWithoutFollowingInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   follower?: Prisma.UserUpdateOneRequiredWithoutFollowersNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutFollowNestedInput
 }
 
 export type FollowUncheckedUpdateWithoutFollowingInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   followerId?: Prisma.StringFieldUpdateOperationsInput | string
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutFollowNestedInput
 }
 
 export type FollowUncheckedUpdateManyWithoutFollowingInput = {
@@ -516,6 +596,35 @@ export type FollowUncheckedUpdateManyWithoutFollowingInput = {
 }
 
 
+/**
+ * Count Type FollowCountOutputType
+ */
+
+export type FollowCountOutputType = {
+  notifications: number
+}
+
+export type FollowCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  notifications?: boolean | FollowCountOutputTypeCountNotificationsArgs
+}
+
+/**
+ * FollowCountOutputType without action
+ */
+export type FollowCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FollowCountOutputType
+   */
+  select?: Prisma.FollowCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * FollowCountOutputType without action
+ */
+export type FollowCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
 
 export type FollowSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -524,6 +633,8 @@ export type FollowSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   followingId?: boolean
   follower?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   following?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  notifications?: boolean | Prisma.Follow$notificationsArgs<ExtArgs>
+  _count?: boolean | Prisma.FollowCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["follow"]>
 
 export type FollowSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -555,6 +666,8 @@ export type FollowOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type FollowInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   follower?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   following?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  notifications?: boolean | Prisma.Follow$notificationsArgs<ExtArgs>
+  _count?: boolean | Prisma.FollowCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FollowIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   follower?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -570,6 +683,7 @@ export type $FollowPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     follower: Prisma.$UserPayload<ExtArgs>
     following: Prisma.$UserPayload<ExtArgs>
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -972,6 +1086,7 @@ export interface Prisma__FollowClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   follower<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   following<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  notifications<T extends Prisma.Follow$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Follow$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1201,6 +1316,11 @@ export type FollowFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Skip the first `n` Follows.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Follows.
+   */
   distinct?: Prisma.FollowScalarFieldEnum | Prisma.FollowScalarFieldEnum[]
 }
 
@@ -1398,6 +1518,30 @@ export type FollowDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Limit how many Follows to delete.
    */
   limit?: number
+}
+
+/**
+ * Follow.notifications
+ */
+export type Follow$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

@@ -203,10 +203,17 @@ export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeo
 export const NotificationScalarFieldEnum = {
   id: 'id',
   type: 'type',
-  message: 'message',
+  content: 'content',
   read: 'read',
   createdAt: 'createdAt',
-  userId: 'userId'
+  userId: 'userId',
+  fromUserId: 'fromUserId',
+  postId: 'postId',
+  commentId: 'commentId',
+  likeId: 'likeId',
+  shareId: 'shareId',
+  followId: 'followId',
+  messageId: 'messageId'
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]

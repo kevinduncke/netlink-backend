@@ -18,18 +18,18 @@ router.get('/suggested', authenticate, getSuggestedUsers);
 // SEARCH USERS
 router.get('/search', authenticate, getListOfUsers);
 
-// USER PROFILE
-router.get('/me', authenticate, getMyProfile);
-router.get('/:id', getUserProfile);
-
-// USER PROFILE UPDATE
-router.patch('/me', authenticate, updateUserProfile);
-
-// USER NOTIFICATIONS
+// USER NOTIFICATIONS (must be before /:id to avoid being caught by parameter)
 router.get('/notifications', authenticate, getNotifications);
 router.patch('/notifications/:id/read', authenticate, markAsRead);
+
+// USER PROFILE
+router.get('/me', authenticate, getMyProfile);
+router.patch('/me', authenticate, updateUserProfile);
 
 // USER DELETE
 router.delete('/me', authenticate, deleteMyAccount);
 
-export default router;
+// USER PROFILE BY ID (catch-all, must be last)
+router.get('/:id', getUserProfile);
+
+export default router;  
