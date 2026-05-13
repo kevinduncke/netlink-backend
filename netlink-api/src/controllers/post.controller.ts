@@ -49,7 +49,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
         const mentionedUsers = await prisma.user.findMany({
             where: {
                 username: {
-                    in: mentions || []
+                    in: mentions?.map((m: any) => m.username) || []
                 }
             },
             select: {
@@ -504,6 +504,18 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                     where: { userId: currentUserId },
                     select: { id: true }
                 },
+                mentions: {
+                    select: {
+                        userId: true,
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                            }
+                        }
+                    }
+                },
                 _count: {
                     select: {
                         comments: true,
@@ -538,6 +550,17 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                             where: { userId: currentUserId },
                             select: { id: true }
                         },
+                        mentions: {
+                            select: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                    }
+                                }
+                            }
+                        },
                         _count: {
                             select: {
                                 comments: true,
@@ -567,6 +590,11 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                 avatarUrl: post.author.avatarUrl,
                 liked: post.likes.length > 0,
             },
+            mentions: post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            })),
             _count: {
                 comments: post._count.comments,
                 likes: post._count.likes,
@@ -593,6 +621,11 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                 avatarUrl: r.post.author.avatarUrl,
                 liked: r.post.likes.length > 0,
             },
+            mentions: r.post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            })),
             _count: {
                 comments: r.post._count.comments,
                 likes: r.post._count.likes,
