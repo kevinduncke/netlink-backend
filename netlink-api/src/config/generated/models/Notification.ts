@@ -33,6 +33,7 @@ export type NotificationMinAggregateOutputType = {
   userId: string | null
   fromUserId: string | null
   postId: string | null
+  chatId: string | null
   commentId: string | null
   likeId: string | null
   shareId: string | null
@@ -49,6 +50,7 @@ export type NotificationMaxAggregateOutputType = {
   userId: string | null
   fromUserId: string | null
   postId: string | null
+  chatId: string | null
   commentId: string | null
   likeId: string | null
   shareId: string | null
@@ -65,6 +67,7 @@ export type NotificationCountAggregateOutputType = {
   userId: number
   fromUserId: number
   postId: number
+  chatId: number
   commentId: number
   likeId: number
   shareId: number
@@ -83,6 +86,7 @@ export type NotificationMinAggregateInputType = {
   userId?: true
   fromUserId?: true
   postId?: true
+  chatId?: true
   commentId?: true
   likeId?: true
   shareId?: true
@@ -99,6 +103,7 @@ export type NotificationMaxAggregateInputType = {
   userId?: true
   fromUserId?: true
   postId?: true
+  chatId?: true
   commentId?: true
   likeId?: true
   shareId?: true
@@ -115,6 +120,7 @@ export type NotificationCountAggregateInputType = {
   userId?: true
   fromUserId?: true
   postId?: true
+  chatId?: true
   commentId?: true
   likeId?: true
   shareId?: true
@@ -204,6 +210,7 @@ export type NotificationGroupByOutputType = {
   userId: string
   fromUserId: string | null
   postId: string | null
+  chatId: string | null
   commentId: string | null
   likeId: string | null
   shareId: string | null
@@ -241,6 +248,7 @@ export type NotificationWhereInput = {
   userId?: Prisma.StringFilter<"Notification"> | string
   fromUserId?: Prisma.StringNullableFilter<"Notification"> | string | null
   postId?: Prisma.StringNullableFilter<"Notification"> | string | null
+  chatId?: Prisma.StringNullableFilter<"Notification"> | string | null
   commentId?: Prisma.StringNullableFilter<"Notification"> | string | null
   likeId?: Prisma.StringNullableFilter<"Notification"> | string | null
   shareId?: Prisma.StringNullableFilter<"Notification"> | string | null
@@ -249,6 +257,7 @@ export type NotificationWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   fromUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   post?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
+  chat?: Prisma.XOR<Prisma.ChatNullableScalarRelationFilter, Prisma.ChatWhereInput> | null
   comment?: Prisma.XOR<Prisma.CommentNullableScalarRelationFilter, Prisma.CommentWhereInput> | null
   like?: Prisma.XOR<Prisma.LikeNullableScalarRelationFilter, Prisma.LikeWhereInput> | null
   share?: Prisma.XOR<Prisma.ShareNullableScalarRelationFilter, Prisma.ShareWhereInput> | null
@@ -265,6 +274,7 @@ export type NotificationOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   fromUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   postId?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatId?: Prisma.SortOrderInput | Prisma.SortOrder
   commentId?: Prisma.SortOrderInput | Prisma.SortOrder
   likeId?: Prisma.SortOrderInput | Prisma.SortOrder
   shareId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -273,6 +283,7 @@ export type NotificationOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   fromUser?: Prisma.UserOrderByWithRelationInput
   post?: Prisma.PostOrderByWithRelationInput
+  chat?: Prisma.ChatOrderByWithRelationInput
   comment?: Prisma.CommentOrderByWithRelationInput
   like?: Prisma.LikeOrderByWithRelationInput
   share?: Prisma.ShareOrderByWithRelationInput
@@ -292,6 +303,7 @@ export type NotificationWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"Notification"> | string
   fromUserId?: Prisma.StringNullableFilter<"Notification"> | string | null
   postId?: Prisma.StringNullableFilter<"Notification"> | string | null
+  chatId?: Prisma.StringNullableFilter<"Notification"> | string | null
   commentId?: Prisma.StringNullableFilter<"Notification"> | string | null
   likeId?: Prisma.StringNullableFilter<"Notification"> | string | null
   shareId?: Prisma.StringNullableFilter<"Notification"> | string | null
@@ -300,6 +312,7 @@ export type NotificationWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   fromUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   post?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
+  chat?: Prisma.XOR<Prisma.ChatNullableScalarRelationFilter, Prisma.ChatWhereInput> | null
   comment?: Prisma.XOR<Prisma.CommentNullableScalarRelationFilter, Prisma.CommentWhereInput> | null
   like?: Prisma.XOR<Prisma.LikeNullableScalarRelationFilter, Prisma.LikeWhereInput> | null
   share?: Prisma.XOR<Prisma.ShareNullableScalarRelationFilter, Prisma.ShareWhereInput> | null
@@ -316,6 +329,7 @@ export type NotificationOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   fromUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   postId?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatId?: Prisma.SortOrderInput | Prisma.SortOrder
   commentId?: Prisma.SortOrderInput | Prisma.SortOrder
   likeId?: Prisma.SortOrderInput | Prisma.SortOrder
   shareId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -338,6 +352,7 @@ export type NotificationScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"Notification"> | string
   fromUserId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   postId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
+  chatId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   commentId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   likeId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   shareId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
@@ -354,6 +369,7 @@ export type NotificationCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
   post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
   like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
   share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
@@ -370,6 +386,7 @@ export type NotificationUncheckedCreateInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -386,6 +403,7 @@ export type NotificationUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
   post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
   like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
   share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
@@ -402,6 +420,7 @@ export type NotificationUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -418,6 +437,7 @@ export type NotificationCreateManyInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -442,6 +462,7 @@ export type NotificationUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -468,6 +489,7 @@ export type NotificationCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   fromUserId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
+  chatId?: Prisma.SortOrder
   commentId?: Prisma.SortOrder
   likeId?: Prisma.SortOrder
   shareId?: Prisma.SortOrder
@@ -484,6 +506,7 @@ export type NotificationMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   fromUserId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
+  chatId?: Prisma.SortOrder
   commentId?: Prisma.SortOrder
   likeId?: Prisma.SortOrder
   shareId?: Prisma.SortOrder
@@ -500,6 +523,7 @@ export type NotificationMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   fromUserId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
+  chatId?: Prisma.SortOrder
   commentId?: Prisma.SortOrder
   likeId?: Prisma.SortOrder
   shareId?: Prisma.SortOrder
@@ -801,6 +825,48 @@ export type NotificationUncheckedUpdateManyWithoutFollowNestedInput = {
   deleteMany?: Prisma.NotificationScalarWhereInput | Prisma.NotificationScalarWhereInput[]
 }
 
+export type NotificationCreateNestedManyWithoutChatInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutChatInput, Prisma.NotificationUncheckedCreateWithoutChatInput> | Prisma.NotificationCreateWithoutChatInput[] | Prisma.NotificationUncheckedCreateWithoutChatInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutChatInput | Prisma.NotificationCreateOrConnectWithoutChatInput[]
+  createMany?: Prisma.NotificationCreateManyChatInputEnvelope
+  connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+}
+
+export type NotificationUncheckedCreateNestedManyWithoutChatInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutChatInput, Prisma.NotificationUncheckedCreateWithoutChatInput> | Prisma.NotificationCreateWithoutChatInput[] | Prisma.NotificationUncheckedCreateWithoutChatInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutChatInput | Prisma.NotificationCreateOrConnectWithoutChatInput[]
+  createMany?: Prisma.NotificationCreateManyChatInputEnvelope
+  connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+}
+
+export type NotificationUpdateManyWithoutChatNestedInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutChatInput, Prisma.NotificationUncheckedCreateWithoutChatInput> | Prisma.NotificationCreateWithoutChatInput[] | Prisma.NotificationUncheckedCreateWithoutChatInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutChatInput | Prisma.NotificationCreateOrConnectWithoutChatInput[]
+  upsert?: Prisma.NotificationUpsertWithWhereUniqueWithoutChatInput | Prisma.NotificationUpsertWithWhereUniqueWithoutChatInput[]
+  createMany?: Prisma.NotificationCreateManyChatInputEnvelope
+  set?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  disconnect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  delete?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  update?: Prisma.NotificationUpdateWithWhereUniqueWithoutChatInput | Prisma.NotificationUpdateWithWhereUniqueWithoutChatInput[]
+  updateMany?: Prisma.NotificationUpdateManyWithWhereWithoutChatInput | Prisma.NotificationUpdateManyWithWhereWithoutChatInput[]
+  deleteMany?: Prisma.NotificationScalarWhereInput | Prisma.NotificationScalarWhereInput[]
+}
+
+export type NotificationUncheckedUpdateManyWithoutChatNestedInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutChatInput, Prisma.NotificationUncheckedCreateWithoutChatInput> | Prisma.NotificationCreateWithoutChatInput[] | Prisma.NotificationUncheckedCreateWithoutChatInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutChatInput | Prisma.NotificationCreateOrConnectWithoutChatInput[]
+  upsert?: Prisma.NotificationUpsertWithWhereUniqueWithoutChatInput | Prisma.NotificationUpsertWithWhereUniqueWithoutChatInput[]
+  createMany?: Prisma.NotificationCreateManyChatInputEnvelope
+  set?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  disconnect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  delete?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  update?: Prisma.NotificationUpdateWithWhereUniqueWithoutChatInput | Prisma.NotificationUpdateWithWhereUniqueWithoutChatInput[]
+  updateMany?: Prisma.NotificationUpdateManyWithWhereWithoutChatInput | Prisma.NotificationUpdateManyWithWhereWithoutChatInput[]
+  deleteMany?: Prisma.NotificationScalarWhereInput | Prisma.NotificationScalarWhereInput[]
+}
+
 export type NotificationCreateNestedManyWithoutMessageInput = {
   create?: Prisma.XOR<Prisma.NotificationCreateWithoutMessageInput, Prisma.NotificationUncheckedCreateWithoutMessageInput> | Prisma.NotificationCreateWithoutMessageInput[] | Prisma.NotificationUncheckedCreateWithoutMessageInput[]
   connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMessageInput | Prisma.NotificationCreateOrConnectWithoutMessageInput[]
@@ -855,6 +921,7 @@ export type NotificationCreateWithoutUserInput = {
   createdAt?: Date | string
   fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
   post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
   like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
   share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
@@ -870,6 +937,7 @@ export type NotificationUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -895,6 +963,7 @@ export type NotificationCreateWithoutFromUserInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
   like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
   share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
@@ -910,6 +979,7 @@ export type NotificationUncheckedCreateWithoutFromUserInput = {
   createdAt?: Date | string
   userId: string
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -955,6 +1025,7 @@ export type NotificationScalarWhereInput = {
   userId?: Prisma.StringFilter<"Notification"> | string
   fromUserId?: Prisma.StringNullableFilter<"Notification"> | string | null
   postId?: Prisma.StringNullableFilter<"Notification"> | string | null
+  chatId?: Prisma.StringNullableFilter<"Notification"> | string | null
   commentId?: Prisma.StringNullableFilter<"Notification"> | string | null
   likeId?: Prisma.StringNullableFilter<"Notification"> | string | null
   shareId?: Prisma.StringNullableFilter<"Notification"> | string | null
@@ -986,6 +1057,7 @@ export type NotificationCreateWithoutPostInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
   like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
   share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
@@ -1001,6 +1073,7 @@ export type NotificationUncheckedCreateWithoutPostInput = {
   createdAt?: Date | string
   userId: string
   fromUserId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -1043,6 +1116,7 @@ export type NotificationCreateWithoutLikeInput = {
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
   post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
   share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
   follow?: Prisma.FollowCreateNestedOneWithoutNotificationsInput
@@ -1058,6 +1132,7 @@ export type NotificationUncheckedCreateWithoutLikeInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   shareId?: string | null
   followId?: string | null
@@ -1099,6 +1174,7 @@ export type NotificationCreateWithoutCommentInput = {
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
   post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
   share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
   follow?: Prisma.FollowCreateNestedOneWithoutNotificationsInput
@@ -1114,6 +1190,7 @@ export type NotificationUncheckedCreateWithoutCommentInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   likeId?: string | null
   shareId?: string | null
   followId?: string | null
@@ -1155,6 +1232,7 @@ export type NotificationCreateWithoutShareInput = {
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
   post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
   like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
   follow?: Prisma.FollowCreateNestedOneWithoutNotificationsInput
@@ -1170,6 +1248,7 @@ export type NotificationUncheckedCreateWithoutShareInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   followId?: string | null
@@ -1211,6 +1290,7 @@ export type NotificationCreateWithoutFollowInput = {
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
   post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
   like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
   share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
@@ -1226,6 +1306,7 @@ export type NotificationUncheckedCreateWithoutFollowInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -1258,6 +1339,64 @@ export type NotificationUpdateManyWithWhereWithoutFollowInput = {
   data: Prisma.XOR<Prisma.NotificationUpdateManyMutationInput, Prisma.NotificationUncheckedUpdateManyWithoutFollowInput>
 }
 
+export type NotificationCreateWithoutChatInput = {
+  id?: string
+  type: $Enums.NotificationTypes
+  content?: string | null
+  read?: boolean
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutNotificationsInput
+  fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
+  post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
+  like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
+  share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
+  follow?: Prisma.FollowCreateNestedOneWithoutNotificationsInput
+  message?: Prisma.MessageCreateNestedOneWithoutNotificationsInput
+}
+
+export type NotificationUncheckedCreateWithoutChatInput = {
+  id?: string
+  type: $Enums.NotificationTypes
+  content?: string | null
+  read?: boolean
+  createdAt?: Date | string
+  userId: string
+  fromUserId?: string | null
+  postId?: string | null
+  commentId?: string | null
+  likeId?: string | null
+  shareId?: string | null
+  followId?: string | null
+  messageId?: string | null
+}
+
+export type NotificationCreateOrConnectWithoutChatInput = {
+  where: Prisma.NotificationWhereUniqueInput
+  create: Prisma.XOR<Prisma.NotificationCreateWithoutChatInput, Prisma.NotificationUncheckedCreateWithoutChatInput>
+}
+
+export type NotificationCreateManyChatInputEnvelope = {
+  data: Prisma.NotificationCreateManyChatInput | Prisma.NotificationCreateManyChatInput[]
+  skipDuplicates?: boolean
+}
+
+export type NotificationUpsertWithWhereUniqueWithoutChatInput = {
+  where: Prisma.NotificationWhereUniqueInput
+  update: Prisma.XOR<Prisma.NotificationUpdateWithoutChatInput, Prisma.NotificationUncheckedUpdateWithoutChatInput>
+  create: Prisma.XOR<Prisma.NotificationCreateWithoutChatInput, Prisma.NotificationUncheckedCreateWithoutChatInput>
+}
+
+export type NotificationUpdateWithWhereUniqueWithoutChatInput = {
+  where: Prisma.NotificationWhereUniqueInput
+  data: Prisma.XOR<Prisma.NotificationUpdateWithoutChatInput, Prisma.NotificationUncheckedUpdateWithoutChatInput>
+}
+
+export type NotificationUpdateManyWithWhereWithoutChatInput = {
+  where: Prisma.NotificationScalarWhereInput
+  data: Prisma.XOR<Prisma.NotificationUpdateManyMutationInput, Prisma.NotificationUncheckedUpdateManyWithoutChatInput>
+}
+
 export type NotificationCreateWithoutMessageInput = {
   id?: string
   type: $Enums.NotificationTypes
@@ -1267,6 +1406,7 @@ export type NotificationCreateWithoutMessageInput = {
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   fromUser?: Prisma.UserCreateNestedOneWithoutSentNotificationsInput
   post?: Prisma.PostCreateNestedOneWithoutNotificationsInput
+  chat?: Prisma.ChatCreateNestedOneWithoutNotificationsInput
   comment?: Prisma.CommentCreateNestedOneWithoutNotificationsInput
   like?: Prisma.LikeCreateNestedOneWithoutNotificationsInput
   share?: Prisma.ShareCreateNestedOneWithoutNotificationsInput
@@ -1282,6 +1422,7 @@ export type NotificationUncheckedCreateWithoutMessageInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -1322,6 +1463,7 @@ export type NotificationCreateManyUserInput = {
   createdAt?: Date | string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -1337,6 +1479,7 @@ export type NotificationCreateManyFromUserInput = {
   createdAt?: Date | string
   userId: string
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -1352,6 +1495,7 @@ export type NotificationUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
   post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
   like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
   share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
@@ -1367,6 +1511,7 @@ export type NotificationUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1382,6 +1527,7 @@ export type NotificationUncheckedUpdateManyWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1397,6 +1543,7 @@ export type NotificationUpdateWithoutFromUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
   like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
   share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
@@ -1412,6 +1559,7 @@ export type NotificationUncheckedUpdateWithoutFromUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1427,6 +1575,7 @@ export type NotificationUncheckedUpdateManyWithoutFromUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1442,6 +1591,7 @@ export type NotificationCreateManyPostInput = {
   createdAt?: Date | string
   userId: string
   fromUserId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -1457,6 +1607,7 @@ export type NotificationUpdateWithoutPostInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
   like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
   share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
@@ -1472,6 +1623,7 @@ export type NotificationUncheckedUpdateWithoutPostInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1487,6 +1639,7 @@ export type NotificationUncheckedUpdateManyWithoutPostInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1503,6 +1656,7 @@ export type NotificationCreateManyLikeInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   shareId?: string | null
   followId?: string | null
@@ -1518,6 +1672,7 @@ export type NotificationUpdateWithoutLikeInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
   post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
   share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
   follow?: Prisma.FollowUpdateOneWithoutNotificationsNestedInput
@@ -1533,6 +1688,7 @@ export type NotificationUncheckedUpdateWithoutLikeInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   followId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1548,6 +1704,7 @@ export type NotificationUncheckedUpdateManyWithoutLikeInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   followId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1563,6 +1720,7 @@ export type NotificationCreateManyCommentInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   likeId?: string | null
   shareId?: string | null
   followId?: string | null
@@ -1578,6 +1736,7 @@ export type NotificationUpdateWithoutCommentInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
   post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
   share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
   follow?: Prisma.FollowUpdateOneWithoutNotificationsNestedInput
@@ -1593,6 +1752,7 @@ export type NotificationUncheckedUpdateWithoutCommentInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   followId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1608,6 +1768,7 @@ export type NotificationUncheckedUpdateManyWithoutCommentInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   followId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1623,6 +1784,7 @@ export type NotificationCreateManyShareInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   followId?: string | null
@@ -1638,6 +1800,7 @@ export type NotificationUpdateWithoutShareInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
   post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
   like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
   follow?: Prisma.FollowUpdateOneWithoutNotificationsNestedInput
@@ -1653,6 +1816,7 @@ export type NotificationUncheckedUpdateWithoutShareInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   followId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1668,6 +1832,7 @@ export type NotificationUncheckedUpdateManyWithoutShareInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   followId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1683,6 +1848,7 @@ export type NotificationCreateManyFollowInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -1698,6 +1864,7 @@ export type NotificationUpdateWithoutFollowInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
   post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
   like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
   share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
@@ -1713,6 +1880,7 @@ export type NotificationUncheckedUpdateWithoutFollowInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1728,9 +1896,74 @@ export type NotificationUncheckedUpdateManyWithoutFollowInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type NotificationCreateManyChatInput = {
+  id?: string
+  type: $Enums.NotificationTypes
+  content?: string | null
+  read?: boolean
+  createdAt?: Date | string
+  userId: string
+  fromUserId?: string | null
+  postId?: string | null
+  commentId?: string | null
+  likeId?: string | null
+  shareId?: string | null
+  followId?: string | null
+  messageId?: string | null
+}
+
+export type NotificationUpdateWithoutChatInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumNotificationTypesFieldUpdateOperationsInput | $Enums.NotificationTypes
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
+  fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
+  post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
+  like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
+  share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
+  follow?: Prisma.FollowUpdateOneWithoutNotificationsNestedInput
+  message?: Prisma.MessageUpdateOneWithoutNotificationsNestedInput
+}
+
+export type NotificationUncheckedUpdateWithoutChatInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumNotificationTypesFieldUpdateOperationsInput | $Enums.NotificationTypes
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  followId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type NotificationUncheckedUpdateManyWithoutChatInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumNotificationTypesFieldUpdateOperationsInput | $Enums.NotificationTypes
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  followId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -1743,6 +1976,7 @@ export type NotificationCreateManyMessageInput = {
   userId: string
   fromUserId?: string | null
   postId?: string | null
+  chatId?: string | null
   commentId?: string | null
   likeId?: string | null
   shareId?: string | null
@@ -1758,6 +1992,7 @@ export type NotificationUpdateWithoutMessageInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   fromUser?: Prisma.UserUpdateOneWithoutSentNotificationsNestedInput
   post?: Prisma.PostUpdateOneWithoutNotificationsNestedInput
+  chat?: Prisma.ChatUpdateOneWithoutNotificationsNestedInput
   comment?: Prisma.CommentUpdateOneWithoutNotificationsNestedInput
   like?: Prisma.LikeUpdateOneWithoutNotificationsNestedInput
   share?: Prisma.ShareUpdateOneWithoutNotificationsNestedInput
@@ -1773,6 +2008,7 @@ export type NotificationUncheckedUpdateWithoutMessageInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1788,6 +2024,7 @@ export type NotificationUncheckedUpdateManyWithoutMessageInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   likeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1805,6 +2042,7 @@ export type NotificationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   userId?: boolean
   fromUserId?: boolean
   postId?: boolean
+  chatId?: boolean
   commentId?: boolean
   likeId?: boolean
   shareId?: boolean
@@ -1813,6 +2051,7 @@ export type NotificationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   fromUser?: boolean | Prisma.Notification$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.Notification$postArgs<ExtArgs>
+  chat?: boolean | Prisma.Notification$chatArgs<ExtArgs>
   comment?: boolean | Prisma.Notification$commentArgs<ExtArgs>
   like?: boolean | Prisma.Notification$likeArgs<ExtArgs>
   share?: boolean | Prisma.Notification$shareArgs<ExtArgs>
@@ -1829,6 +2068,7 @@ export type NotificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   userId?: boolean
   fromUserId?: boolean
   postId?: boolean
+  chatId?: boolean
   commentId?: boolean
   likeId?: boolean
   shareId?: boolean
@@ -1837,6 +2077,7 @@ export type NotificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   fromUser?: boolean | Prisma.Notification$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.Notification$postArgs<ExtArgs>
+  chat?: boolean | Prisma.Notification$chatArgs<ExtArgs>
   comment?: boolean | Prisma.Notification$commentArgs<ExtArgs>
   like?: boolean | Prisma.Notification$likeArgs<ExtArgs>
   share?: boolean | Prisma.Notification$shareArgs<ExtArgs>
@@ -1853,6 +2094,7 @@ export type NotificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   userId?: boolean
   fromUserId?: boolean
   postId?: boolean
+  chatId?: boolean
   commentId?: boolean
   likeId?: boolean
   shareId?: boolean
@@ -1861,6 +2103,7 @@ export type NotificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   fromUser?: boolean | Prisma.Notification$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.Notification$postArgs<ExtArgs>
+  chat?: boolean | Prisma.Notification$chatArgs<ExtArgs>
   comment?: boolean | Prisma.Notification$commentArgs<ExtArgs>
   like?: boolean | Prisma.Notification$likeArgs<ExtArgs>
   share?: boolean | Prisma.Notification$shareArgs<ExtArgs>
@@ -1877,6 +2120,7 @@ export type NotificationSelectScalar = {
   userId?: boolean
   fromUserId?: boolean
   postId?: boolean
+  chatId?: boolean
   commentId?: boolean
   likeId?: boolean
   shareId?: boolean
@@ -1884,11 +2128,12 @@ export type NotificationSelectScalar = {
   messageId?: boolean
 }
 
-export type NotificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "content" | "read" | "createdAt" | "userId" | "fromUserId" | "postId" | "commentId" | "likeId" | "shareId" | "followId" | "messageId", ExtArgs["result"]["notification"]>
+export type NotificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "content" | "read" | "createdAt" | "userId" | "fromUserId" | "postId" | "chatId" | "commentId" | "likeId" | "shareId" | "followId" | "messageId", ExtArgs["result"]["notification"]>
 export type NotificationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   fromUser?: boolean | Prisma.Notification$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.Notification$postArgs<ExtArgs>
+  chat?: boolean | Prisma.Notification$chatArgs<ExtArgs>
   comment?: boolean | Prisma.Notification$commentArgs<ExtArgs>
   like?: boolean | Prisma.Notification$likeArgs<ExtArgs>
   share?: boolean | Prisma.Notification$shareArgs<ExtArgs>
@@ -1899,6 +2144,7 @@ export type NotificationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   fromUser?: boolean | Prisma.Notification$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.Notification$postArgs<ExtArgs>
+  chat?: boolean | Prisma.Notification$chatArgs<ExtArgs>
   comment?: boolean | Prisma.Notification$commentArgs<ExtArgs>
   like?: boolean | Prisma.Notification$likeArgs<ExtArgs>
   share?: boolean | Prisma.Notification$shareArgs<ExtArgs>
@@ -1909,6 +2155,7 @@ export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   fromUser?: boolean | Prisma.Notification$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.Notification$postArgs<ExtArgs>
+  chat?: boolean | Prisma.Notification$chatArgs<ExtArgs>
   comment?: boolean | Prisma.Notification$commentArgs<ExtArgs>
   like?: boolean | Prisma.Notification$likeArgs<ExtArgs>
   share?: boolean | Prisma.Notification$shareArgs<ExtArgs>
@@ -1922,6 +2169,7 @@ export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     user: Prisma.$UserPayload<ExtArgs>
     fromUser: Prisma.$UserPayload<ExtArgs> | null
     post: Prisma.$PostPayload<ExtArgs> | null
+    chat: Prisma.$ChatPayload<ExtArgs> | null
     comment: Prisma.$CommentPayload<ExtArgs> | null
     like: Prisma.$LikePayload<ExtArgs> | null
     share: Prisma.$SharePayload<ExtArgs> | null
@@ -1937,6 +2185,7 @@ export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     userId: string
     fromUserId: string | null
     postId: string | null
+    chatId: string | null
     commentId: string | null
     likeId: string | null
     shareId: string | null
@@ -2339,6 +2588,7 @@ export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends run
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   fromUser<T extends Prisma.Notification$fromUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$fromUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   post<T extends Prisma.Notification$postArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$postArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  chat<T extends Prisma.Notification$chatArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$chatArgs<ExtArgs>>): Prisma.Prisma__ChatClient<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   comment<T extends Prisma.Notification$commentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$commentArgs<ExtArgs>>): Prisma.Prisma__CommentClient<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   like<T extends Prisma.Notification$likeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$likeArgs<ExtArgs>>): Prisma.Prisma__LikeClient<runtime.Types.Result.GetResult<Prisma.$LikePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   share<T extends Prisma.Notification$shareArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$shareArgs<ExtArgs>>): Prisma.Prisma__ShareClient<runtime.Types.Result.GetResult<Prisma.$SharePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -2381,6 +2631,7 @@ export interface NotificationFieldRefs {
   readonly userId: Prisma.FieldRef<"Notification", 'String'>
   readonly fromUserId: Prisma.FieldRef<"Notification", 'String'>
   readonly postId: Prisma.FieldRef<"Notification", 'String'>
+  readonly chatId: Prisma.FieldRef<"Notification", 'String'>
   readonly commentId: Prisma.FieldRef<"Notification", 'String'>
   readonly likeId: Prisma.FieldRef<"Notification", 'String'>
   readonly shareId: Prisma.FieldRef<"Notification", 'String'>
@@ -2582,6 +2833,11 @@ export type NotificationFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` Notifications.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Notifications.
+   */
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
@@ -2817,6 +3073,25 @@ export type Notification$postArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.PostInclude<ExtArgs> | null
   where?: Prisma.PostWhereInput
+}
+
+/**
+ * Notification.chat
+ */
+export type Notification$chatArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Chat
+   */
+  select?: Prisma.ChatSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Chat
+   */
+  omit?: Prisma.ChatOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatInclude<ExtArgs> | null
+  where?: Prisma.ChatWhereInput
 }
 
 /**

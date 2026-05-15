@@ -116,6 +116,7 @@ model Share {
   post            Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   notifications   Notification[]
+  mentions        Mention[]
 
   @@unique([userId, postId])
 }
@@ -146,12 +147,13 @@ model Favorite {
 }
 
 model Chat {
-  id            String    @id @default(uuid())
-  createdAt     DateTime  @default(now())
+  id              String    @id @default(uuid())
+  createdAt       DateTime  @default(now())
 
-  participants  ChatParticipant[]
-  messages      Message[]
-  hiddenBy      ChatHidden[] @relation("chatHidden")
+  participants    ChatParticipant[]
+  messages        Message[]
+  notifications   Notification[]
+  hiddenBy        ChatHidden[] @relation("chatHidden")
 }
 
 model ChatParticipant {
@@ -210,6 +212,9 @@ model Notification {
   // OPT DEPENDING ON TYPE
   postId        String?
   post          Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  chatId        String?
+  chat          Chat?     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   
   commentId     String?
   comment       Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
@@ -233,6 +238,9 @@ model Mention {
 
   post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId        String
+
+  share         Share?    @relation(fields: [shareId], references: [id], onDelete: Cascade)
+  shareId       String?
 
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String

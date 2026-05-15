@@ -160,6 +160,7 @@ export type ChatWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
   participants?: Prisma.ChatParticipantListRelationFilter
   messages?: Prisma.MessageListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   hiddenBy?: Prisma.ChatHiddenListRelationFilter
 }
 
@@ -168,6 +169,7 @@ export type ChatOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   participants?: Prisma.ChatParticipantOrderByRelationAggregateInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
   hiddenBy?: Prisma.ChatHiddenOrderByRelationAggregateInput
 }
 
@@ -179,6 +181,7 @@ export type ChatWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Chat"> | Date | string
   participants?: Prisma.ChatParticipantListRelationFilter
   messages?: Prisma.MessageListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   hiddenBy?: Prisma.ChatHiddenListRelationFilter
 }, "id">
 
@@ -203,6 +206,7 @@ export type ChatCreateInput = {
   createdAt?: Date | string
   participants?: Prisma.ChatParticipantCreateNestedManyWithoutChatInput
   messages?: Prisma.MessageCreateNestedManyWithoutChatInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutChatInput
   hiddenBy?: Prisma.ChatHiddenCreateNestedManyWithoutChatInput
 }
 
@@ -211,6 +215,7 @@ export type ChatUncheckedCreateInput = {
   createdAt?: Date | string
   participants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutChatInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatInput
   hiddenBy?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutChatInput
 }
 
@@ -219,6 +224,7 @@ export type ChatUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   participants?: Prisma.ChatParticipantUpdateManyWithoutChatNestedInput
   messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutChatNestedInput
   hiddenBy?: Prisma.ChatHiddenUpdateManyWithoutChatNestedInput
 }
 
@@ -227,6 +233,7 @@ export type ChatUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   participants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutChatNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatNestedInput
   hiddenBy?: Prisma.ChatHiddenUncheckedUpdateManyWithoutChatNestedInput
 }
 
@@ -263,6 +270,11 @@ export type ChatMinOrderByAggregateInput = {
 export type ChatScalarRelationFilter = {
   is?: Prisma.ChatWhereInput
   isNot?: Prisma.ChatWhereInput
+}
+
+export type ChatNullableScalarRelationFilter = {
+  is?: Prisma.ChatWhereInput | null
+  isNot?: Prisma.ChatWhereInput | null
 }
 
 export type ChatCreateNestedOneWithoutParticipantsInput = {
@@ -307,10 +319,27 @@ export type ChatUpdateOneRequiredWithoutMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ChatUpdateToOneWithWhereWithoutMessagesInput, Prisma.ChatUpdateWithoutMessagesInput>, Prisma.ChatUncheckedUpdateWithoutMessagesInput>
 }
 
+export type ChatCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.ChatCreateWithoutNotificationsInput, Prisma.ChatUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.ChatCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.ChatWhereUniqueInput
+}
+
+export type ChatUpdateOneWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatCreateWithoutNotificationsInput, Prisma.ChatUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.ChatCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.ChatUpsertWithoutNotificationsInput
+  disconnect?: Prisma.ChatWhereInput | boolean
+  delete?: Prisma.ChatWhereInput | boolean
+  connect?: Prisma.ChatWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ChatUpdateToOneWithWhereWithoutNotificationsInput, Prisma.ChatUpdateWithoutNotificationsInput>, Prisma.ChatUncheckedUpdateWithoutNotificationsInput>
+}
+
 export type ChatCreateWithoutParticipantsInput = {
   id?: string
   createdAt?: Date | string
   messages?: Prisma.MessageCreateNestedManyWithoutChatInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutChatInput
   hiddenBy?: Prisma.ChatHiddenCreateNestedManyWithoutChatInput
 }
 
@@ -318,6 +347,7 @@ export type ChatUncheckedCreateWithoutParticipantsInput = {
   id?: string
   createdAt?: Date | string
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatInput
   hiddenBy?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutChatInput
 }
 
@@ -341,6 +371,7 @@ export type ChatUpdateWithoutParticipantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutChatNestedInput
   hiddenBy?: Prisma.ChatHiddenUpdateManyWithoutChatNestedInput
 }
 
@@ -348,6 +379,7 @@ export type ChatUncheckedUpdateWithoutParticipantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatNestedInput
   hiddenBy?: Prisma.ChatHiddenUncheckedUpdateManyWithoutChatNestedInput
 }
 
@@ -356,6 +388,7 @@ export type ChatCreateWithoutHiddenByInput = {
   createdAt?: Date | string
   participants?: Prisma.ChatParticipantCreateNestedManyWithoutChatInput
   messages?: Prisma.MessageCreateNestedManyWithoutChatInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutChatInput
 }
 
 export type ChatUncheckedCreateWithoutHiddenByInput = {
@@ -363,6 +396,7 @@ export type ChatUncheckedCreateWithoutHiddenByInput = {
   createdAt?: Date | string
   participants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutChatInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatInput
 }
 
 export type ChatCreateOrConnectWithoutHiddenByInput = {
@@ -386,6 +420,7 @@ export type ChatUpdateWithoutHiddenByInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   participants?: Prisma.ChatParticipantUpdateManyWithoutChatNestedInput
   messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutChatNestedInput
 }
 
 export type ChatUncheckedUpdateWithoutHiddenByInput = {
@@ -393,12 +428,14 @@ export type ChatUncheckedUpdateWithoutHiddenByInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   participants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutChatNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatNestedInput
 }
 
 export type ChatCreateWithoutMessagesInput = {
   id?: string
   createdAt?: Date | string
   participants?: Prisma.ChatParticipantCreateNestedManyWithoutChatInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutChatInput
   hiddenBy?: Prisma.ChatHiddenCreateNestedManyWithoutChatInput
 }
 
@@ -406,6 +443,7 @@ export type ChatUncheckedCreateWithoutMessagesInput = {
   id?: string
   createdAt?: Date | string
   participants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutChatInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatInput
   hiddenBy?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutChatInput
 }
 
@@ -429,6 +467,7 @@ export type ChatUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   participants?: Prisma.ChatParticipantUpdateManyWithoutChatNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutChatNestedInput
   hiddenBy?: Prisma.ChatHiddenUpdateManyWithoutChatNestedInput
 }
 
@@ -436,6 +475,55 @@ export type ChatUncheckedUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   participants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutChatNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatNestedInput
+  hiddenBy?: Prisma.ChatHiddenUncheckedUpdateManyWithoutChatNestedInput
+}
+
+export type ChatCreateWithoutNotificationsInput = {
+  id?: string
+  createdAt?: Date | string
+  participants?: Prisma.ChatParticipantCreateNestedManyWithoutChatInput
+  messages?: Prisma.MessageCreateNestedManyWithoutChatInput
+  hiddenBy?: Prisma.ChatHiddenCreateNestedManyWithoutChatInput
+}
+
+export type ChatUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  createdAt?: Date | string
+  participants?: Prisma.ChatParticipantUncheckedCreateNestedManyWithoutChatInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatInput
+  hiddenBy?: Prisma.ChatHiddenUncheckedCreateNestedManyWithoutChatInput
+}
+
+export type ChatCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.ChatWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChatCreateWithoutNotificationsInput, Prisma.ChatUncheckedCreateWithoutNotificationsInput>
+}
+
+export type ChatUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.ChatUpdateWithoutNotificationsInput, Prisma.ChatUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.ChatCreateWithoutNotificationsInput, Prisma.ChatUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.ChatWhereInput
+}
+
+export type ChatUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.ChatWhereInput
+  data: Prisma.XOR<Prisma.ChatUpdateWithoutNotificationsInput, Prisma.ChatUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type ChatUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.ChatParticipantUpdateManyWithoutChatNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutChatNestedInput
+  hiddenBy?: Prisma.ChatHiddenUpdateManyWithoutChatNestedInput
+}
+
+export type ChatUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.ChatParticipantUncheckedUpdateManyWithoutChatNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutChatNestedInput
   hiddenBy?: Prisma.ChatHiddenUncheckedUpdateManyWithoutChatNestedInput
 }
 
@@ -447,12 +535,14 @@ export type ChatUncheckedUpdateWithoutMessagesInput = {
 export type ChatCountOutputType = {
   participants: number
   messages: number
+  notifications: number
   hiddenBy: number
 }
 
 export type ChatCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   participants?: boolean | ChatCountOutputTypeCountParticipantsArgs
   messages?: boolean | ChatCountOutputTypeCountMessagesArgs
+  notifications?: boolean | ChatCountOutputTypeCountNotificationsArgs
   hiddenBy?: boolean | ChatCountOutputTypeCountHiddenByArgs
 }
 
@@ -483,6 +573,13 @@ export type ChatCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.E
 /**
  * ChatCountOutputType without action
  */
+export type ChatCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
+/**
+ * ChatCountOutputType without action
+ */
 export type ChatCountOutputTypeCountHiddenByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ChatHiddenWhereInput
 }
@@ -493,6 +590,7 @@ export type ChatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   participants?: boolean | Prisma.Chat$participantsArgs<ExtArgs>
   messages?: boolean | Prisma.Chat$messagesArgs<ExtArgs>
+  notifications?: boolean | Prisma.Chat$notificationsArgs<ExtArgs>
   hiddenBy?: boolean | Prisma.Chat$hiddenByArgs<ExtArgs>
   _count?: boolean | Prisma.ChatCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chat"]>
@@ -516,6 +614,7 @@ export type ChatOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type ChatInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   participants?: boolean | Prisma.Chat$participantsArgs<ExtArgs>
   messages?: boolean | Prisma.Chat$messagesArgs<ExtArgs>
+  notifications?: boolean | Prisma.Chat$notificationsArgs<ExtArgs>
   hiddenBy?: boolean | Prisma.Chat$hiddenByArgs<ExtArgs>
   _count?: boolean | Prisma.ChatCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -527,6 +626,7 @@ export type $ChatPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     participants: Prisma.$ChatParticipantPayload<ExtArgs>[]
     messages: Prisma.$MessagePayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
     hiddenBy: Prisma.$ChatHiddenPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -928,6 +1028,7 @@ export interface Prisma__ChatClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   participants<T extends Prisma.Chat$participantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chat$participantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.Chat$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chat$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.Chat$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chat$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   hiddenBy<T extends Prisma.Chat$hiddenByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chat$hiddenByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatHiddenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1156,6 +1257,11 @@ export type ChatFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Chats.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Chats.
+   */
   distinct?: Prisma.ChatScalarFieldEnum | Prisma.ChatScalarFieldEnum[]
 }
 
@@ -1393,6 +1499,30 @@ export type Chat$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
+}
+
+/**
+ * Chat.notifications
+ */
+export type Chat$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

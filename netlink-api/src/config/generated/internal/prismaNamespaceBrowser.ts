@@ -210,6 +210,7 @@ export const NotificationScalarFieldEnum = {
   userId: 'userId',
   fromUserId: 'fromUserId',
   postId: 'postId',
+  chatId: 'chatId',
   commentId: 'commentId',
   likeId: 'likeId',
   shareId: 'shareId',
@@ -224,6 +225,7 @@ export const MentionScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   postId: 'postId',
+  shareId: 'shareId',
   userId: 'userId'
 } as const
 
