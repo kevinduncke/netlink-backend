@@ -3,6 +3,7 @@ import { prisma } from '../config/prisma';
 
 export async function createPost(req: Request, res: Response, next: NextFunction) {
     try {
+        const currentUserId = (req as any).user.id;
         const {
             content,
             location,
@@ -34,7 +35,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
                 hideLikes,
                 disableComments,
                 author: {
-                    connect: { id: (req as any).user.id }
+                    connect: { id: currentUserId }
                 },
 
                 // ONLY CONNECT IF VISIBILITY IS SPECIFIC TO
@@ -64,14 +65,15 @@ export async function createPost(req: Request, res: Response, next: NextFunction
         await prisma.mention.createMany({
             data: mentionData.map(m => ({
                 userId: m.userId,
-                postId: post.id
+                postId: post.id,
+                fromUserId: currentUserId,
             }))
         });
 
         await prisma.notification.createMany({
             data: mentionedUsers.map(user => ({
                 userId: user.id,
-                fromUserId: (req as any).user.id,
+                fromUserId: currentUserId,
                 type: 'MENTION',
                 postId: post.id,
                 content: 'mentioned you in a post.'
@@ -112,7 +114,17 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                         hideLikes: true,
                         disableComments: true,
                         createdAt: true,
-
+                        mentions: {
+                            select: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                    }
+                                }
+                            }
+                        },
                         _count: {
                             select: {
                                 comments: true,
@@ -126,7 +138,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                     select: {
                         postId: true
                     }
-                }
+                },
             }
         });
 
@@ -152,6 +164,17 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                                 name: true,
                                 username: true,
                                 avatarUrl: true
+                            }
+                        },
+                        mentions: {
+                            select: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                    }
+                                }
                             }
                         },
                         _count: {
@@ -189,7 +212,12 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                 comments: post._count.comments,
                 likes: post._count.likes,
                 shares: post._count.shares
-            }
+            },
+            mentions: post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            }))
         }));
 
         const myReposts = reposts.map(r => ({
@@ -221,7 +249,12 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                 username: r.user.username,
                 avatarUrl: r.user.avatarUrl,
                 bio: r.user.bio,
-            }
+            },
+            mentions: r.post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            }))
         }));
 
         const merged = [...myPosts, ...myReposts.sort((a, b) => {
@@ -346,7 +379,18 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                         likes: true,
                         shares: true
                     }
-                }
+                },
+                mentions: {
+                    select: {
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                            }
+                        }
+                    }
+                },
             }
         });
 
@@ -373,7 +417,12 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 likes: post._count.likes,
                 shares: post._count.shares
             },
-            postsCount: posts.length
+            postsCount: posts.length,
+            mentions: post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            }))
         }));
 
         const reposts = await prisma.share.findMany({
@@ -410,7 +459,18 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                                 likes: true,
                                 shares: true
                             }
-                        }
+                        },
+                        mentions: {
+                            select: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                    }
+                                }
+                            }
+                        },
                     }
                 },
                 user: true,
@@ -446,7 +506,12 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 username: r.user.username,
                 avatarUrl: r.user.avatarUrl,
                 bio: r.user.bio,
-            }
+            },
+            mentions: r.post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            }))
         }));
 
         const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
@@ -691,6 +756,17 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                         likes: true,
                         shares: true
                     }
+                },
+                mentions: {
+                    select: {
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -718,6 +794,17 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                         likes: {
                             where: { userId: currentUserId },
                             select: { id: true }
+                        },
+                        mentions: {
+                            select: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                    }
+                                }
+                            }
                         },
                         _count: {
                             select: {
@@ -752,7 +839,12 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                 likes: post._count.likes,
                 shares: post._count.shares
             },
-            postsCount: posts.length
+            postsCount: posts.length,
+            mentions: post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            }))
         }));
 
         const mappedReposts = reposts.map(r => ({
@@ -784,7 +876,12 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                 username: r.user.username,
                 avatarUrl: r.user.avatarUrl,
                 bio: r.user.bio,
-            }
+            },
+            mentions: r.post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            }))
         }));
 
         const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
@@ -851,7 +948,18 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                         likes: true,
                         shares: true
                     }
-                }
+                },
+                mentions: {
+                    select: {
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                            }
+                        }
+                    }
+                },
             }
         });
 
@@ -886,7 +994,18 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                                 likes: true,
                                 shares: true
                             }
-                        }
+                        },
+                        mentions: {
+                            select: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                    }
+                                }
+                            }
+                        },
                     }
                 },
                 user: true,
@@ -914,6 +1033,11 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                 likes: post._count.likes,
                 shares: post._count.shares
             },
+            mentions: post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            })),
             postsCount: posts.length
         }));
 
@@ -946,7 +1070,12 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                 username: r.user.username,
                 avatarUrl: r.user.avatarUrl,
                 bio: r.user.bio,
-            }
+            },
+            mentions: r.post.mentions.map(m => ({
+                id: m.user.id,
+                name: m.user.name,
+                username: m.user.username,
+            })),
         }));
 
         const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {

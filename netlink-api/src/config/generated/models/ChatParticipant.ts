@@ -179,16 +179,16 @@ export type ChatParticipantOrderByWithRelationInput = {
 }
 
 export type ChatParticipantWhereUniqueInput = Prisma.AtLeast<{
+  id?: string
   chatId_userId?: Prisma.ChatParticipantChatIdUserIdCompoundUniqueInput
   AND?: Prisma.ChatParticipantWhereInput | Prisma.ChatParticipantWhereInput[]
   OR?: Prisma.ChatParticipantWhereInput[]
   NOT?: Prisma.ChatParticipantWhereInput | Prisma.ChatParticipantWhereInput[]
-  id?: Prisma.StringFilter<"ChatParticipant"> | string
   chatId?: Prisma.StringFilter<"ChatParticipant"> | string
   userId?: Prisma.StringFilter<"ChatParticipant"> | string
   chat?: Prisma.XOR<Prisma.ChatScalarRelationFilter, Prisma.ChatWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "chatId_userId">
+}, "id" | "chatId_userId">
 
 export type ChatParticipantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

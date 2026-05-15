@@ -224,6 +224,7 @@ export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[k
 export const MentionScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
+  fromUserId: 'fromUserId',
   postId: 'postId',
   shareId: 'shareId',
   userId: 'userId'

@@ -27,6 +27,7 @@ export type AggregateMention = {
 export type MentionMinAggregateOutputType = {
   id: string | null
   createdAt: Date | null
+  fromUserId: string | null
   postId: string | null
   shareId: string | null
   userId: string | null
@@ -35,6 +36,7 @@ export type MentionMinAggregateOutputType = {
 export type MentionMaxAggregateOutputType = {
   id: string | null
   createdAt: Date | null
+  fromUserId: string | null
   postId: string | null
   shareId: string | null
   userId: string | null
@@ -43,6 +45,7 @@ export type MentionMaxAggregateOutputType = {
 export type MentionCountAggregateOutputType = {
   id: number
   createdAt: number
+  fromUserId: number
   postId: number
   shareId: number
   userId: number
@@ -53,6 +56,7 @@ export type MentionCountAggregateOutputType = {
 export type MentionMinAggregateInputType = {
   id?: true
   createdAt?: true
+  fromUserId?: true
   postId?: true
   shareId?: true
   userId?: true
@@ -61,6 +65,7 @@ export type MentionMinAggregateInputType = {
 export type MentionMaxAggregateInputType = {
   id?: true
   createdAt?: true
+  fromUserId?: true
   postId?: true
   shareId?: true
   userId?: true
@@ -69,6 +74,7 @@ export type MentionMaxAggregateInputType = {
 export type MentionCountAggregateInputType = {
   id?: true
   createdAt?: true
+  fromUserId?: true
   postId?: true
   shareId?: true
   userId?: true
@@ -150,6 +156,7 @@ export type MentionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type MentionGroupByOutputType = {
   id: string
   createdAt: Date
+  fromUserId: string | null
   postId: string
   shareId: string | null
   userId: string
@@ -179,9 +186,11 @@ export type MentionWhereInput = {
   NOT?: Prisma.MentionWhereInput | Prisma.MentionWhereInput[]
   id?: Prisma.StringFilter<"Mention"> | string
   createdAt?: Prisma.DateTimeFilter<"Mention"> | Date | string
+  fromUserId?: Prisma.StringNullableFilter<"Mention"> | string | null
   postId?: Prisma.StringFilter<"Mention"> | string
   shareId?: Prisma.StringNullableFilter<"Mention"> | string | null
   userId?: Prisma.StringFilter<"Mention"> | string
+  fromUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
   share?: Prisma.XOR<Prisma.ShareNullableScalarRelationFilter, Prisma.ShareWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -190,9 +199,11 @@ export type MentionWhereInput = {
 export type MentionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  fromUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   postId?: Prisma.SortOrder
   shareId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
+  fromUser?: Prisma.UserOrderByWithRelationInput
   post?: Prisma.PostOrderByWithRelationInput
   share?: Prisma.ShareOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
@@ -205,9 +216,11 @@ export type MentionWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MentionWhereInput[]
   NOT?: Prisma.MentionWhereInput | Prisma.MentionWhereInput[]
   createdAt?: Prisma.DateTimeFilter<"Mention"> | Date | string
+  fromUserId?: Prisma.StringNullableFilter<"Mention"> | string | null
   postId?: Prisma.StringFilter<"Mention"> | string
   shareId?: Prisma.StringNullableFilter<"Mention"> | string | null
   userId?: Prisma.StringFilter<"Mention"> | string
+  fromUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
   share?: Prisma.XOR<Prisma.ShareNullableScalarRelationFilter, Prisma.ShareWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -216,6 +229,7 @@ export type MentionWhereUniqueInput = Prisma.AtLeast<{
 export type MentionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  fromUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   postId?: Prisma.SortOrder
   shareId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -230,6 +244,7 @@ export type MentionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MentionScalarWhereWithAggregatesInput | Prisma.MentionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Mention"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Mention"> | Date | string
+  fromUserId?: Prisma.StringNullableWithAggregatesFilter<"Mention"> | string | null
   postId?: Prisma.StringWithAggregatesFilter<"Mention"> | string
   shareId?: Prisma.StringNullableWithAggregatesFilter<"Mention"> | string | null
   userId?: Prisma.StringWithAggregatesFilter<"Mention"> | string
@@ -238,6 +253,7 @@ export type MentionScalarWhereWithAggregatesInput = {
 export type MentionCreateInput = {
   id?: string
   createdAt?: Date | string
+  fromUser?: Prisma.UserCreateNestedOneWithoutSentMentionsInput
   post: Prisma.PostCreateNestedOneWithoutMentionsInput
   share?: Prisma.ShareCreateNestedOneWithoutMentionsInput
   user: Prisma.UserCreateNestedOneWithoutMentionsInput
@@ -246,6 +262,7 @@ export type MentionCreateInput = {
 export type MentionUncheckedCreateInput = {
   id?: string
   createdAt?: Date | string
+  fromUserId?: string | null
   postId: string
   shareId?: string | null
   userId: string
@@ -254,6 +271,7 @@ export type MentionUncheckedCreateInput = {
 export type MentionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUser?: Prisma.UserUpdateOneWithoutSentMentionsNestedInput
   post?: Prisma.PostUpdateOneRequiredWithoutMentionsNestedInput
   share?: Prisma.ShareUpdateOneWithoutMentionsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMentionsNestedInput
@@ -262,6 +280,7 @@ export type MentionUpdateInput = {
 export type MentionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -270,6 +289,7 @@ export type MentionUncheckedUpdateInput = {
 export type MentionCreateManyInput = {
   id?: string
   createdAt?: Date | string
+  fromUserId?: string | null
   postId: string
   shareId?: string | null
   userId: string
@@ -283,6 +303,7 @@ export type MentionUpdateManyMutationInput = {
 export type MentionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -306,6 +327,7 @@ export type MentionPostIdUserIdCompoundUniqueInput = {
 export type MentionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  fromUserId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   shareId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -314,6 +336,7 @@ export type MentionCountOrderByAggregateInput = {
 export type MentionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  fromUserId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   shareId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -322,6 +345,7 @@ export type MentionMaxOrderByAggregateInput = {
 export type MentionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  fromUserId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   shareId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -334,10 +358,24 @@ export type MentionCreateNestedManyWithoutUserInput = {
   connect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
 }
 
+export type MentionCreateNestedManyWithoutFromUserInput = {
+  create?: Prisma.XOR<Prisma.MentionCreateWithoutFromUserInput, Prisma.MentionUncheckedCreateWithoutFromUserInput> | Prisma.MentionCreateWithoutFromUserInput[] | Prisma.MentionUncheckedCreateWithoutFromUserInput[]
+  connectOrCreate?: Prisma.MentionCreateOrConnectWithoutFromUserInput | Prisma.MentionCreateOrConnectWithoutFromUserInput[]
+  createMany?: Prisma.MentionCreateManyFromUserInputEnvelope
+  connect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+}
+
 export type MentionUncheckedCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.MentionCreateWithoutUserInput, Prisma.MentionUncheckedCreateWithoutUserInput> | Prisma.MentionCreateWithoutUserInput[] | Prisma.MentionUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.MentionCreateOrConnectWithoutUserInput | Prisma.MentionCreateOrConnectWithoutUserInput[]
   createMany?: Prisma.MentionCreateManyUserInputEnvelope
+  connect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+}
+
+export type MentionUncheckedCreateNestedManyWithoutFromUserInput = {
+  create?: Prisma.XOR<Prisma.MentionCreateWithoutFromUserInput, Prisma.MentionUncheckedCreateWithoutFromUserInput> | Prisma.MentionCreateWithoutFromUserInput[] | Prisma.MentionUncheckedCreateWithoutFromUserInput[]
+  connectOrCreate?: Prisma.MentionCreateOrConnectWithoutFromUserInput | Prisma.MentionCreateOrConnectWithoutFromUserInput[]
+  createMany?: Prisma.MentionCreateManyFromUserInputEnvelope
   connect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
 }
 
@@ -355,6 +393,20 @@ export type MentionUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.MentionScalarWhereInput | Prisma.MentionScalarWhereInput[]
 }
 
+export type MentionUpdateManyWithoutFromUserNestedInput = {
+  create?: Prisma.XOR<Prisma.MentionCreateWithoutFromUserInput, Prisma.MentionUncheckedCreateWithoutFromUserInput> | Prisma.MentionCreateWithoutFromUserInput[] | Prisma.MentionUncheckedCreateWithoutFromUserInput[]
+  connectOrCreate?: Prisma.MentionCreateOrConnectWithoutFromUserInput | Prisma.MentionCreateOrConnectWithoutFromUserInput[]
+  upsert?: Prisma.MentionUpsertWithWhereUniqueWithoutFromUserInput | Prisma.MentionUpsertWithWhereUniqueWithoutFromUserInput[]
+  createMany?: Prisma.MentionCreateManyFromUserInputEnvelope
+  set?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+  disconnect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+  delete?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+  connect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+  update?: Prisma.MentionUpdateWithWhereUniqueWithoutFromUserInput | Prisma.MentionUpdateWithWhereUniqueWithoutFromUserInput[]
+  updateMany?: Prisma.MentionUpdateManyWithWhereWithoutFromUserInput | Prisma.MentionUpdateManyWithWhereWithoutFromUserInput[]
+  deleteMany?: Prisma.MentionScalarWhereInput | Prisma.MentionScalarWhereInput[]
+}
+
 export type MentionUncheckedUpdateManyWithoutUserNestedInput = {
   create?: Prisma.XOR<Prisma.MentionCreateWithoutUserInput, Prisma.MentionUncheckedCreateWithoutUserInput> | Prisma.MentionCreateWithoutUserInput[] | Prisma.MentionUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.MentionCreateOrConnectWithoutUserInput | Prisma.MentionCreateOrConnectWithoutUserInput[]
@@ -366,6 +418,20 @@ export type MentionUncheckedUpdateManyWithoutUserNestedInput = {
   connect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
   update?: Prisma.MentionUpdateWithWhereUniqueWithoutUserInput | Prisma.MentionUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.MentionUpdateManyWithWhereWithoutUserInput | Prisma.MentionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.MentionScalarWhereInput | Prisma.MentionScalarWhereInput[]
+}
+
+export type MentionUncheckedUpdateManyWithoutFromUserNestedInput = {
+  create?: Prisma.XOR<Prisma.MentionCreateWithoutFromUserInput, Prisma.MentionUncheckedCreateWithoutFromUserInput> | Prisma.MentionCreateWithoutFromUserInput[] | Prisma.MentionUncheckedCreateWithoutFromUserInput[]
+  connectOrCreate?: Prisma.MentionCreateOrConnectWithoutFromUserInput | Prisma.MentionCreateOrConnectWithoutFromUserInput[]
+  upsert?: Prisma.MentionUpsertWithWhereUniqueWithoutFromUserInput | Prisma.MentionUpsertWithWhereUniqueWithoutFromUserInput[]
+  createMany?: Prisma.MentionCreateManyFromUserInputEnvelope
+  set?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+  disconnect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+  delete?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+  connect?: Prisma.MentionWhereUniqueInput | Prisma.MentionWhereUniqueInput[]
+  update?: Prisma.MentionUpdateWithWhereUniqueWithoutFromUserInput | Prisma.MentionUpdateWithWhereUniqueWithoutFromUserInput[]
+  updateMany?: Prisma.MentionUpdateManyWithWhereWithoutFromUserInput | Prisma.MentionUpdateManyWithWhereWithoutFromUserInput[]
   deleteMany?: Prisma.MentionScalarWhereInput | Prisma.MentionScalarWhereInput[]
 }
 
@@ -456,6 +522,7 @@ export type MentionUncheckedUpdateManyWithoutShareNestedInput = {
 export type MentionCreateWithoutUserInput = {
   id?: string
   createdAt?: Date | string
+  fromUser?: Prisma.UserCreateNestedOneWithoutSentMentionsInput
   post: Prisma.PostCreateNestedOneWithoutMentionsInput
   share?: Prisma.ShareCreateNestedOneWithoutMentionsInput
 }
@@ -463,6 +530,7 @@ export type MentionCreateWithoutUserInput = {
 export type MentionUncheckedCreateWithoutUserInput = {
   id?: string
   createdAt?: Date | string
+  fromUserId?: string | null
   postId: string
   shareId?: string | null
 }
@@ -474,6 +542,32 @@ export type MentionCreateOrConnectWithoutUserInput = {
 
 export type MentionCreateManyUserInputEnvelope = {
   data: Prisma.MentionCreateManyUserInput | Prisma.MentionCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type MentionCreateWithoutFromUserInput = {
+  id?: string
+  createdAt?: Date | string
+  post: Prisma.PostCreateNestedOneWithoutMentionsInput
+  share?: Prisma.ShareCreateNestedOneWithoutMentionsInput
+  user: Prisma.UserCreateNestedOneWithoutMentionsInput
+}
+
+export type MentionUncheckedCreateWithoutFromUserInput = {
+  id?: string
+  createdAt?: Date | string
+  postId: string
+  shareId?: string | null
+  userId: string
+}
+
+export type MentionCreateOrConnectWithoutFromUserInput = {
+  where: Prisma.MentionWhereUniqueInput
+  create: Prisma.XOR<Prisma.MentionCreateWithoutFromUserInput, Prisma.MentionUncheckedCreateWithoutFromUserInput>
+}
+
+export type MentionCreateManyFromUserInputEnvelope = {
+  data: Prisma.MentionCreateManyFromUserInput | Prisma.MentionCreateManyFromUserInput[]
   skipDuplicates?: boolean
 }
 
@@ -499,14 +593,32 @@ export type MentionScalarWhereInput = {
   NOT?: Prisma.MentionScalarWhereInput | Prisma.MentionScalarWhereInput[]
   id?: Prisma.StringFilter<"Mention"> | string
   createdAt?: Prisma.DateTimeFilter<"Mention"> | Date | string
+  fromUserId?: Prisma.StringNullableFilter<"Mention"> | string | null
   postId?: Prisma.StringFilter<"Mention"> | string
   shareId?: Prisma.StringNullableFilter<"Mention"> | string | null
   userId?: Prisma.StringFilter<"Mention"> | string
 }
 
+export type MentionUpsertWithWhereUniqueWithoutFromUserInput = {
+  where: Prisma.MentionWhereUniqueInput
+  update: Prisma.XOR<Prisma.MentionUpdateWithoutFromUserInput, Prisma.MentionUncheckedUpdateWithoutFromUserInput>
+  create: Prisma.XOR<Prisma.MentionCreateWithoutFromUserInput, Prisma.MentionUncheckedCreateWithoutFromUserInput>
+}
+
+export type MentionUpdateWithWhereUniqueWithoutFromUserInput = {
+  where: Prisma.MentionWhereUniqueInput
+  data: Prisma.XOR<Prisma.MentionUpdateWithoutFromUserInput, Prisma.MentionUncheckedUpdateWithoutFromUserInput>
+}
+
+export type MentionUpdateManyWithWhereWithoutFromUserInput = {
+  where: Prisma.MentionScalarWhereInput
+  data: Prisma.XOR<Prisma.MentionUpdateManyMutationInput, Prisma.MentionUncheckedUpdateManyWithoutFromUserInput>
+}
+
 export type MentionCreateWithoutPostInput = {
   id?: string
   createdAt?: Date | string
+  fromUser?: Prisma.UserCreateNestedOneWithoutSentMentionsInput
   share?: Prisma.ShareCreateNestedOneWithoutMentionsInput
   user: Prisma.UserCreateNestedOneWithoutMentionsInput
 }
@@ -514,6 +626,7 @@ export type MentionCreateWithoutPostInput = {
 export type MentionUncheckedCreateWithoutPostInput = {
   id?: string
   createdAt?: Date | string
+  fromUserId?: string | null
   shareId?: string | null
   userId: string
 }
@@ -547,6 +660,7 @@ export type MentionUpdateManyWithWhereWithoutPostInput = {
 export type MentionCreateWithoutShareInput = {
   id?: string
   createdAt?: Date | string
+  fromUser?: Prisma.UserCreateNestedOneWithoutSentMentionsInput
   post: Prisma.PostCreateNestedOneWithoutMentionsInput
   user: Prisma.UserCreateNestedOneWithoutMentionsInput
 }
@@ -554,6 +668,7 @@ export type MentionCreateWithoutShareInput = {
 export type MentionUncheckedCreateWithoutShareInput = {
   id?: string
   createdAt?: Date | string
+  fromUserId?: string | null
   postId: string
   userId: string
 }
@@ -587,13 +702,23 @@ export type MentionUpdateManyWithWhereWithoutShareInput = {
 export type MentionCreateManyUserInput = {
   id?: string
   createdAt?: Date | string
+  fromUserId?: string | null
   postId: string
   shareId?: string | null
+}
+
+export type MentionCreateManyFromUserInput = {
+  id?: string
+  createdAt?: Date | string
+  postId: string
+  shareId?: string | null
+  userId: string
 }
 
 export type MentionUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUser?: Prisma.UserUpdateOneWithoutSentMentionsNestedInput
   post?: Prisma.PostUpdateOneRequiredWithoutMentionsNestedInput
   share?: Prisma.ShareUpdateOneWithoutMentionsNestedInput
 }
@@ -601,6 +726,7 @@ export type MentionUpdateWithoutUserInput = {
 export type MentionUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -608,13 +734,39 @@ export type MentionUncheckedUpdateWithoutUserInput = {
 export type MentionUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type MentionUpdateWithoutFromUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  post?: Prisma.PostUpdateOneRequiredWithoutMentionsNestedInput
+  share?: Prisma.ShareUpdateOneWithoutMentionsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMentionsNestedInput
+}
+
+export type MentionUncheckedUpdateWithoutFromUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  postId?: Prisma.StringFieldUpdateOperationsInput | string
+  shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type MentionUncheckedUpdateManyWithoutFromUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  postId?: Prisma.StringFieldUpdateOperationsInput | string
+  shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type MentionCreateManyPostInput = {
   id?: string
   createdAt?: Date | string
+  fromUserId?: string | null
   shareId?: string | null
   userId: string
 }
@@ -622,6 +774,7 @@ export type MentionCreateManyPostInput = {
 export type MentionUpdateWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUser?: Prisma.UserUpdateOneWithoutSentMentionsNestedInput
   share?: Prisma.ShareUpdateOneWithoutMentionsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMentionsNestedInput
 }
@@ -629,6 +782,7 @@ export type MentionUpdateWithoutPostInput = {
 export type MentionUncheckedUpdateWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -636,6 +790,7 @@ export type MentionUncheckedUpdateWithoutPostInput = {
 export type MentionUncheckedUpdateManyWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -643,6 +798,7 @@ export type MentionUncheckedUpdateManyWithoutPostInput = {
 export type MentionCreateManyShareInput = {
   id?: string
   createdAt?: Date | string
+  fromUserId?: string | null
   postId: string
   userId: string
 }
@@ -650,6 +806,7 @@ export type MentionCreateManyShareInput = {
 export type MentionUpdateWithoutShareInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUser?: Prisma.UserUpdateOneWithoutSentMentionsNestedInput
   post?: Prisma.PostUpdateOneRequiredWithoutMentionsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMentionsNestedInput
 }
@@ -657,6 +814,7 @@ export type MentionUpdateWithoutShareInput = {
 export type MentionUncheckedUpdateWithoutShareInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -664,6 +822,7 @@ export type MentionUncheckedUpdateWithoutShareInput = {
 export type MentionUncheckedUpdateManyWithoutShareInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fromUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -673,9 +832,11 @@ export type MentionUncheckedUpdateManyWithoutShareInput = {
 export type MentionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   createdAt?: boolean
+  fromUserId?: boolean
   postId?: boolean
   shareId?: boolean
   userId?: boolean
+  fromUser?: boolean | Prisma.Mention$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
   share?: boolean | Prisma.Mention$shareArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -684,9 +845,11 @@ export type MentionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type MentionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   createdAt?: boolean
+  fromUserId?: boolean
   postId?: boolean
   shareId?: boolean
   userId?: boolean
+  fromUser?: boolean | Prisma.Mention$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
   share?: boolean | Prisma.Mention$shareArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -695,9 +858,11 @@ export type MentionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type MentionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   createdAt?: boolean
+  fromUserId?: boolean
   postId?: boolean
   shareId?: boolean
   userId?: boolean
+  fromUser?: boolean | Prisma.Mention$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
   share?: boolean | Prisma.Mention$shareArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -706,23 +871,27 @@ export type MentionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type MentionSelectScalar = {
   id?: boolean
   createdAt?: boolean
+  fromUserId?: boolean
   postId?: boolean
   shareId?: boolean
   userId?: boolean
 }
 
-export type MentionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "postId" | "shareId" | "userId", ExtArgs["result"]["mention"]>
+export type MentionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "fromUserId" | "postId" | "shareId" | "userId", ExtArgs["result"]["mention"]>
 export type MentionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  fromUser?: boolean | Prisma.Mention$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
   share?: boolean | Prisma.Mention$shareArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type MentionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  fromUser?: boolean | Prisma.Mention$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
   share?: boolean | Prisma.Mention$shareArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type MentionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  fromUser?: boolean | Prisma.Mention$fromUserArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
   share?: boolean | Prisma.Mention$shareArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -731,6 +900,7 @@ export type MentionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $MentionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Mention"
   objects: {
+    fromUser: Prisma.$UserPayload<ExtArgs> | null
     post: Prisma.$PostPayload<ExtArgs>
     share: Prisma.$SharePayload<ExtArgs> | null
     user: Prisma.$UserPayload<ExtArgs>
@@ -738,6 +908,7 @@ export type $MentionPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     createdAt: Date
+    fromUserId: string | null
     postId: string
     shareId: string | null
     userId: string
@@ -1135,6 +1306,7 @@ readonly fields: MentionFieldRefs;
  */
 export interface Prisma__MentionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  fromUser<T extends Prisma.Mention$fromUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Mention$fromUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   post<T extends Prisma.PostDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostDefaultArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   share<T extends Prisma.Mention$shareArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Mention$shareArgs<ExtArgs>>): Prisma.Prisma__ShareClient<runtime.Types.Result.GetResult<Prisma.$SharePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -1169,6 +1341,7 @@ export interface Prisma__MentionClient<T, Null = never, ExtArgs extends runtime.
 export interface MentionFieldRefs {
   readonly id: Prisma.FieldRef<"Mention", 'String'>
   readonly createdAt: Prisma.FieldRef<"Mention", 'DateTime'>
+  readonly fromUserId: Prisma.FieldRef<"Mention", 'String'>
   readonly postId: Prisma.FieldRef<"Mention", 'String'>
   readonly shareId: Prisma.FieldRef<"Mention", 'String'>
   readonly userId: Prisma.FieldRef<"Mention", 'String'>
@@ -1570,6 +1743,25 @@ export type MentionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Mentions to delete.
    */
   limit?: number
+}
+
+/**
+ * Mention.fromUser
+ */
+export type Mention$fromUserArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**
