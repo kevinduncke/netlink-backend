@@ -55,7 +55,38 @@ export async function getNotifications(req: Request, res: Response, next: NextFu
             }
         });
 
-        res.json(notifications);
+        // Get all fromUserIds to fetch follows in one query
+        const fromUserIds = notifications
+            .map(n => n.fromUserId)
+            .filter((id): id is string => id !== null);
+
+        const follows = await prisma.follow.findMany({
+            where: {
+                followerId: (req as any).user!.id,
+                followingId: { in: fromUserIds }
+            },
+            select: { followingId: true }
+        });
+
+        const followingSet = new Set(follows.map(f => f.followingId));
+
+        const mappedNotifications = notifications.map(n => ({
+            id: n.id,
+            type: n.type,
+            content: n.content,
+            read: n.read,
+            createdAt: n.createdAt,
+            fromUser: n.fromUser ? {
+                id: n.fromUser.id,
+                name: n.fromUser.name,
+                username: n.fromUser.username,
+                avatarUrl: n.fromUser.avatarUrl,
+            } : null,
+            // CHECK IF I FOLLOW THE USER WHO GEN THE NOTIFICATION (fromUser)
+            isFollowedByMe: n.fromUser ? followingSet.has(n.fromUser.id) : null
+        }))
+
+        res.json(mappedNotifications);
     } catch (error) {
         next(error);
     }

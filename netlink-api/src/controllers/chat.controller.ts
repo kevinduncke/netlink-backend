@@ -59,11 +59,39 @@ export async function createChat(req: Request, res: Response, next: NextFunction
                 },
             },
             include: {
-                participants: true
-            },
+                participants: {
+                    select: {
+                        userId: true,
+                        user: {
+                            select: {
+                                id: true,
+                                username: true,
+                                name: true,
+                                avatarUrl: true
+                            }
+                        }
+                    }
+                }
+            }
         });
 
-        res.status(201).json(chat);
+        const receiver = chat.participants.find(p => p.userId === userId);
+        if (!receiver) {
+            return res.status(500).json({ error: 'Receiver not found in chat.' });
+        }
+
+        const mappedChat = {
+            id: chat.id,
+            createdAt: chat.createdAt,
+            receiver: {
+                id: receiver.user.id,
+                username: receiver.user.username,
+                name: receiver.user.name,
+                avatarUrl: receiver.user.avatarUrl ?? undefined
+            }
+        }
+
+        res.status(201).json(mappedChat);
     } catch (error) {
         next(error);
     }
@@ -112,7 +140,8 @@ export async function getUserChats(req: Request, res: Response, next: NextFuncti
         // SHOW THE OTHER USER AS A SINGLE OBJECT INSTEAD OF AN ARRAY
         const formattedChats = chats
             .map(chat => {
-                const receiverParticipant = chat.participants.find(participant => participant.userId !== userId);
+                const receiverParticipant = chat.participants.find(
+                    participant => participant.userId !== userId);
 
                 if (!receiverParticipant) {
                     return null;
@@ -121,7 +150,8 @@ export async function getUserChats(req: Request, res: Response, next: NextFuncti
                 const receiver = receiverParticipant.user;
 
                 return {
-                    chatId: chat.id,
+                    id: chat.id,
+                    createdAt: chat.createdAt,
                     receiver: {
                         id: receiver.id,
                         username: receiver.username,

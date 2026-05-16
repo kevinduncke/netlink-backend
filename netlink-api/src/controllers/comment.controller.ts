@@ -71,8 +71,34 @@ export async function getAllPostComments(req: Request, res: Response, next: Next
             return res.status(400).json({ error: 'Invalid post ID.' });
         }
 
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+            select: { id: true }
+        });
+
+        const repost = post
+            ? null
+            : await prisma.share.findUnique({
+                where: { id: postId },
+                select: {
+                    id: true,
+                    postId: true,
+                    createdAt: true,
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            avatarUrl: true
+                        }
+                    }
+                }
+            });
+
+        const resolvedPostId = post?.id ?? repost?.postId ?? postId;
+
         const comments = await prisma.comment.findMany({
-            where: { postId },
+            where: { postId: resolvedPostId },
             include: {
                 author: {
                     select: {
@@ -94,7 +120,9 @@ export async function getAllPostComments(req: Request, res: Response, next: Next
             author: comment.author
         }));
 
-        res.json({ comments: mapped });
+        res.json({
+            comments: mapped
+        });
     } catch (error) {
         next(error);
     }

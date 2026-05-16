@@ -37,16 +37,19 @@ export async function likePost(req: Request, res: Response, next: NextFunction) 
             where: { id: currentUserId },
         });
 
-        await prisma.notification.create({
-            data: {
-                userId: post!.authorId,
-                fromUserId: currentUserId,
-                type: 'LIKE',
-                postId: postId,
-                likeId: like.id,
-                content: 'liked your post.',
-            }
-        });
+        // post.authorId !== currentUserId, to avoid self-notifications
+        if (post && post.authorId !== currentUserData?.id) {
+            await prisma.notification.create({
+                data: {
+                    userId: post!.authorId,
+                    fromUserId: currentUserId,
+                    type: 'LIKE',
+                    postId: postId,
+                    likeId: like.id,
+                    content: 'liked your post.',
+                }
+            });
+        }
 
         res.status(201).json(like);
     } catch (error) {
