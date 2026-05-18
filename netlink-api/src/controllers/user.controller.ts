@@ -3,7 +3,12 @@ import { prisma } from '../config/prisma';
 
 export async function getUserProfile(req: Request, res: Response, next: NextFunction) {
     try {
+        const currentUserId = (req as any).user?.id;
         const userId = req.params.id;
+
+        if (!currentUserId || typeof currentUserId !== 'string') {
+            return res.status(401).json({ error: 'Unauthorized.' });
+        }
 
         if (!userId || typeof userId !== 'string') {
             return res.status(400).json({
@@ -25,12 +30,18 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
 
                 // FOLLOWERS COUNT
                 followers: {
-                    select: { id: true }
+                    select: {
+                        id: true,
+                        followingId: true
+                    }
                 },
 
                 // FOLLOWING COUNT
                 following: {
-                    select: { id: true }
+                    select: {
+                        id: true,
+                        followerId: true
+                    }
                 },
 
                 // POSTS
@@ -59,10 +70,17 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
             url: user.url,
             avatarUrl: user.avatarUrl,
             createdAt: user.createdAt,
-            followersCount: user.followers.length,
-            followingCount: user.following.length,
+            followersCount: user.following.length,
+            followingCount: user.followers.length,
             postsCount: user.posts.length,
-            posts: user.posts
+            posts: user.posts,
+
+            // FOLLOWERS
+            following: user.followers.map(f => f.followingId),            
+
+            // FOLLOWING
+            followers: user.following.map(f => f.followerId),
+            isFollowedByMe: currentUserId ? user.following.some(f => f.followerId === currentUserId) : false,            
         });
     } catch (error) {
         next(`Error fetching user profile: ${error}`);

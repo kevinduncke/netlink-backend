@@ -30,6 +30,6 @@ router.patch('/me', authenticate, updateUserProfile);
 router.delete('/me', authenticate, deleteMyAccount);
 
 // USER PROFILE BY ID (catch-all, must be last)
-router.get('/:id', getUserProfile);
+router.get('/:id', authenticate, getUserProfile);
 
 export default router;  
