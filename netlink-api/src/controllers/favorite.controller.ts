@@ -47,12 +47,27 @@ export async function getSuggestedFavoriteUsers(req: Request, res: Response, nex
             select: { favoriteId: true }
         });
 
-        // GET SUGGESTED USERS WHERE NOT IN FAVORITES OR IT'S THE CURRENT USER
+        const following = await prisma.follow.findMany({
+            where: { followerId: currentUserId },
+            select: { followingId: true }
+        });
+
+        const followingIds = following.map(f => f.followingId);
+
+        if (followingIds.length === 0) {
+            return res.json({
+                count: 0,
+                users: []
+            });
+        }
+
+        // GET SUGGESTED USERS FROM FOLLOWING WHERE NOT IN FAVORITES OR IT'S THE CURRENT USER
         const excludedIds = [...favorites.map(f => f.favoriteId), currentUserId];
 
         const suggestedUsers = await prisma.user.findMany({
             where: {
                 id: {
+                    in: followingIds,
                     notIn: excludedIds
                 }
             },
