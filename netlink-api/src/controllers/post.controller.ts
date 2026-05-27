@@ -1,6 +1,28 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/prisma';
 
+async function resolveRepostTarget(id: string) {
+    const post = await prisma.post.findUnique({
+        where: { id },
+        include: { author: true }
+    });
+
+    if (post) {
+        return post;
+    }
+
+    const share = await prisma.share.findUnique({
+        where: { id },
+        include: {
+            post: {
+                include: { author: true }
+            }
+        }        
+    });
+
+    return share?.post ?? null;
+}
+
 export async function createPost(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user.id;
@@ -200,6 +222,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             isRepost: false,
+            repostedByMe: false,
             repostedAt: null,
             author: {
                 id: user.id,
@@ -230,6 +253,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             hideLikes: r.post.hideLikes,
             disableComments: r.post.disableComments,
             isRepost: true,
+            repostedByMe: r.user.id === currentUserId,
             repostedAt: r.createdAt,
             author: {
                 id: r.post.author.id,
@@ -402,6 +426,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             isRepost: false,
+            repostedByMe: false,
             repostedAt: null,
             author: {
                 id: post.author.id,
@@ -488,6 +513,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             disableComments: r.post.disableComments,
             isRepost: true,
             repostedAt: r.createdAt,
+            repostedByMe: r.post.author.id === currentUserId,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -663,6 +689,7 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             isRepost: false,
+            repostedByMe: false,
             repostedAt: null,
             author: {
                 id: post.author.id,
@@ -694,6 +721,7 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             hideLikes: r.post.hideLikes,
             disableComments: r.post.disableComments,
             isRepost: true,
+            repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
             author: {
                 id: r.post.author.id,
@@ -842,6 +870,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             isRepost: false,
+            repostedByMe: false,
             repostedAt: null,
             author: {
                 id: post.author.id,
@@ -873,6 +902,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             hideLikes: r.post.hideLikes,
             disableComments: r.post.disableComments,
             isRepost: true,
+            repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
             author: {
                 id: r.post.author.id,
@@ -1049,6 +1079,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
             isRepost: false,
+            repostedByMe: false,
             repostedAt: null,
             author: {
                 id: post.author.id,
@@ -1080,6 +1111,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             hideLikes: r.post.hideLikes,
             disableComments: r.post.disableComments,
             isRepost: true,
+            repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
             author: {
                 id: r.post.author.id,
@@ -1211,10 +1243,16 @@ export async function createRepost(req: Request, res: Response, next: NextFuncti
             });
         }
 
+        const post = await resolveRepostTarget(postId);
+
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found.' });
+        }
+
         const alreadyRepost = await prisma.share.findFirst({
             where: {
                 userId: currentUserId,
-                postId: postId
+                postId: post.id,
             }
         });
 
@@ -1226,16 +1264,16 @@ export async function createRepost(req: Request, res: Response, next: NextFuncti
         const repost = await prisma.share.create({
             data: {
                 userId: currentUserId,
-                postId: postId
+                postId: post.id
             }
         });
 
         await prisma.notification.create({
             data: {
-                userId: (await prisma.post.findUnique({ where: { id: postId } }))!.authorId,
+                userId: (await prisma.post.findUnique({ where: { id: post.id } }))!.authorId,
                 fromUserId: currentUserId,
                 type: 'REPOST',
-                postId: postId,
+                postId: post.id,
                 shareId: repost.id,
                 content: 'reposted your post.'
             }

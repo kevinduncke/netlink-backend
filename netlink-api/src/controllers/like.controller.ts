@@ -1,6 +1,28 @@
 import { Request, Response, NextFunction } from "express";
 import { prisma } from '../config/prisma';
 
+async function resolveLikeTarget(id: string) {
+    const post = await prisma.post.findUnique({
+        where: { id },
+        include: { author: true }
+    });
+
+    if (post) {
+        return post;
+    }
+
+    const share = await prisma.share.findUnique({
+        where: { id },
+        include: {
+            post: {
+                include: { author: true }
+            }
+        }
+    });
+
+    return share?.post ?? null;
+}
+
 export async function likePost(req: Request, res: Response, next: NextFunction) {
     try {
         const postId = req.params.id;
@@ -14,37 +36,34 @@ export async function likePost(req: Request, res: Response, next: NextFunction) 
             return res.status(400).json({ error: 'Invalid user ID.' });
         }
 
+        const post = await resolveLikeTarget(postId);
+
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found.' });
+        }
+
         const like = await prisma.like.upsert({
             where: {
                 userId_postId: {
                     userId: currentUserId,
-                    postId,
+                    postId: post.id,
                 }
             },
             update: {},
             create: {
                 userId: currentUserId,
-                postId,
+                postId: post.id,
             }
         });
 
-        const post = await prisma.post.findUnique({
-            where: { id: postId },
-            include: { author: true }
-        });
-
-        const currentUserData = await prisma.user.findUnique({
-            where: { id: currentUserId },
-        });
-
         // post.authorId !== currentUserId, to avoid self-notifications
-        if (post && post.authorId !== currentUserData?.id) {
+        if (post.authorId !== currentUserId) {
             await prisma.notification.create({
                 data: {
-                    userId: post!.authorId,
+                    userId: post.authorId,
                     fromUserId: currentUserId,
                     type: 'LIKE',
-                    postId: postId,
+                    postId: post.id,
                     likeId: like.id,
                     content: 'liked your post.',
                 }
@@ -71,10 +90,16 @@ export async function unlikePost(req: Request, res: Response, next: NextFunction
             return res.status(400).json({ error: 'Invalid user ID.' });
         }
 
+        const post = await resolveLikeTarget(postId);
+
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found.' });
+        }
+
         await prisma.like.deleteMany({
             where: {
                 userId,
-                postId
+                postId: post.id
             }
         });
 

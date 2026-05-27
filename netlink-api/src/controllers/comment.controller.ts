@@ -1,6 +1,28 @@
 import { Request, Response, NextFunction } from "express";
 import { prisma } from '../config/prisma';
 
+async function resolveCommentTarget(id: string) {
+    const post = await prisma.post.findUnique({
+        where: { id },
+        include: { author: true }
+    });
+
+    if (post) {
+        return post;
+    }
+
+    const share = await prisma.share.findUnique({
+        where: { id },
+        include: {
+            post: {
+                include: { author: true }
+            }
+        }
+    });
+
+    return share?.post ?? null;
+}
+
 export async function createComment(req: Request, res: Response, next: NextFunction) {
     try {
         const { content } = req.body;
@@ -21,12 +43,18 @@ export async function createComment(req: Request, res: Response, next: NextFunct
 
         if (content.length > 500) {
             return res.status(400).json({ error: 'Comment cannot exceed 500 characters.' });
-        }
+        }       
+        
+        const post = await resolveCommentTarget(postId);
+
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found.' });
+        }        
 
         const comment = await prisma.comment.create({
             data: {
                 content: content.trim(),
-                postId,
+                postId: post.id,
                 authorId
             },
             include: {
@@ -43,10 +71,10 @@ export async function createComment(req: Request, res: Response, next: NextFunct
 
         await prisma.notification.create({
             data: {
-                userId: (await prisma.post.findUnique({ where: { id: postId } }))!.authorId,
+                userId: (await prisma.post.findUnique({ where: { id: post.id } }))!.authorId,
                 fromUserId: authorId,
                 type: 'COMMENT',
-                postId: postId,
+                postId: post.id,
                 commentId: comment.id,
                 content: 'commented on your post.'
             }
