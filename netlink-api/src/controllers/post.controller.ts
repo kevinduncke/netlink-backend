@@ -10,10 +10,10 @@ export async function createPost(req: Request, res: Response, next: NextFunction
             imageUrl,
             hideLikes,
             disableComments,
-            mentions
+            mentions,
+            specificFollowers // AN ARRAY OF USER IDS
         } = req.body;
 
-        const specificFollowers = req.body.specificTo; // AN ARRAY OF USER IDS
         const visibility = req.body.visibility;
 
         // CHECH IF CONTENT IS PROVIDED
@@ -41,7 +41,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
                 // ONLY CONNECT IF VISIBILITY IS SPECIFIC TO
                 ...(visibility === 'SPECIFIC' && {
                     specificTo: {
-                        connect: specificFollowers.map((id: string) => ({ id }))
+                        connect: specificFollowers.map((id: string) => (id))
                     }
                 })
             },
@@ -548,7 +548,23 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
         };
 
         const posts = await prisma.post.findMany({
-            where: { authorId: userId, visibility: { in: ['PUBLIC', 'FOLLOWERS'] } },
+            where: {
+                OR: [
+                    {
+                        authorId: userId,
+                        visibility: { in: ['PUBLIC', 'FOLLOWERS'] },
+                    },
+                    {
+                        authorId: userId,
+                        visibility: 'SPECIFIC',
+                        specificTo: {
+                            some: {
+                                id: currentUserId,
+                            },
+                        },
+                    }
+                ]
+            },
             orderBy: { createdAt: 'desc' },
             select: {
                 id: true,
@@ -919,8 +935,21 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
         // Query posts authored by users the current user follows
         const posts = await prisma.post.findMany({
             where: {
-                authorId: { in: followingIds },
-                visibility: { in: ['PUBLIC', 'FOLLOWERS'] }
+                OR: [
+                    {
+                        authorId: { in: followingIds },
+                        visibility: { in: ['PUBLIC', 'FOLLOWERS'] },
+                    },
+                    {
+                        authorId: { in: followingIds },
+                        visibility: 'SPECIFIC',
+                        specificTo: {
+                            some: {
+                                id: currentUserId,
+                            },
+                        },
+                    }
+                ]
             },
             orderBy: { createdAt: 'desc' },
             select: {
