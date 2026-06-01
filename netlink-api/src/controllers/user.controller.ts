@@ -26,6 +26,7 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
                 bio: true,
                 url: true,
                 avatarUrl: true,
+                privacyMode: true,
                 createdAt: true,
 
                 // FOLLOWERS COUNT
@@ -70,13 +71,14 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
             url: user.url,
             avatarUrl: user.avatarUrl,
             createdAt: user.createdAt,
+            privacyMode: user.privacyMode,
             followersCount: user.following.length,
             followingCount: user.followers.length,
             postsCount: user.posts.length,
             posts: user.posts,
 
             // FOLLOWERS
-            following: user.followers.map(f => f.followingId),            
+            following: user.followers.map(f => f.followingId),
 
             // FOLLOWING
             followers: user.following.map(f => f.followerId),
@@ -107,6 +109,7 @@ export async function getMyProfile(req: Request, res: Response, next: NextFuncti
                 bio: true,
                 url: true,
                 avatarUrl: true,
+                privacyMode: true,
 
                 // POSTS
                 posts: {
@@ -129,7 +132,7 @@ export async function getMyProfile(req: Request, res: Response, next: NextFuncti
                         id: true,
                         name: true,
                         username: true,
-                        avatarUrl: true
+                        avatarUrl: true,
                     }
                 }
             }
@@ -161,6 +164,7 @@ export async function getMyProfile(req: Request, res: Response, next: NextFuncti
             bio: user.bio,
             url: user.url,
             avatarUrl: user.avatarUrl,
+            privacyMode: user.privacyMode,
             followers: followers.map(f => f.follower),
             followersCount: followers.length,
             following: following.map(f => f.following),
@@ -264,6 +268,32 @@ export async function getSuggestedUsers(req: Request, res: Response, next: NextF
         });
 
         res.json(usersToFollow);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function changePrivacyMode(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = (req as any).user!.id;
+        const { privacyMode } = req.body;
+
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({
+                error: 'Valid user ID is required.'
+            });
+        };
+
+        const user = await prisma.user.update({
+            where: { id: userId },
+            data: {
+                privacyMode: {
+                    set: privacyMode
+                }
+            }
+        });
+
+        res.json(user);
     } catch (error) {
         next(error);
     }

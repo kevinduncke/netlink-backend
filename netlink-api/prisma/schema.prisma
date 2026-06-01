@@ -19,6 +19,7 @@ model User {
   bio                 String?
   url                 String?
   avatarUrl           String?
+  privacyMode         Boolean                 @default(false)
 
   // Relations 
   posts               Post[]

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.middleware";
-import { getMyProfile, getUserProfile, updateUserProfile, getListOfUsers, getSuggestedUsers, deleteMyAccount } from "../controllers/user.controller";
+import { getMyProfile, getUserProfile, updateUserProfile, getListOfUsers, getSuggestedUsers, deleteMyAccount, changePrivacyMode } from "../controllers/user.controller";
 import { getNotifications, markAsRead } from "../controllers/notification.controller";
 
 const router = Router();
@@ -25,6 +25,7 @@ router.patch('/notifications/:id/read', authenticate, markAsRead);
 // USER PROFILE
 router.get('/me', authenticate, getMyProfile);
 router.patch('/me', authenticate, updateUserProfile);
+router.patch('/me/privacy', authenticate, changePrivacyMode);
 
 // USER DELETE
 router.delete('/me', authenticate, deleteMyAccount);
