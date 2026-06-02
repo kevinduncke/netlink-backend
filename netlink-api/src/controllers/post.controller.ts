@@ -17,7 +17,7 @@ async function resolveRepostTarget(id: string) {
             post: {
                 include: { author: true }
             }
-        }        
+        }
     });
 
     return share?.post ?? null;
@@ -322,16 +322,6 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             toDate,
         } = req.query;
 
-        // ONLY FILTER BY PUBLIC POSTS FOR NOW..
-        const where: any = {
-            visibility: 'PUBLIC',
-            content: {
-                contains: query,
-                mode: 'insensitive'
-            },
-            authorId: { not: currentUserId }
-        };
-
         // FILTER POSTS BY AUTHOR OR FOLLOWING IDK
         const following = await prisma.follow.findMany({
             where: { followerId: currentUserId },
@@ -340,13 +330,30 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
 
         const followingIds = following.map(f => f.followingId);
 
+        // ONLY FILTER BY PUBLIC POSTS FOR NOW..
+        // FILTER POSTS FROM USER THAT HAS PRIVACY MODE ENABLED (TRUE) AND IS NOT FOLLOWED BY CURRENT USER (FALSE)
+        const where: any = {
+            visibility: 'PUBLIC',
+            content: {
+                contains: query,
+                mode: 'insensitive'
+            },
+            authorId: { not: currentUserId },
+            AND: [
+                {
+                    OR: [
+                        { author: { privacyMode: false } },
+                        { authorId: { in: followingIds } }
+                    ]
+                }
+            ]
+        };
+
         if (people === 'following') {
             where.authorId = {
                 in: followingIds
             };
         }
-
-
 
         // DATE FILTERS
         if (fromDate) {
@@ -434,7 +441,6 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 username: post.author.username,
                 avatarUrl: post.author.avatarUrl,
                 followers: post.author.followers,
-                isFollowedByMe: post.author.followers.length > 0,
                 liked: post.likes.length > 0,
             },
             _count: {
@@ -455,6 +461,17 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 userId: {
                     in: followingIds
                 },
+                post: {
+                    AND: [
+                        { visibility: 'PUBLIC' },
+                        {
+                            OR: [
+                                { author: { privacyMode: false } },
+                                { authorId: { in: followingIds } },
+                            ]
+                        }
+                    ]
+                }
             },
             include: {
                 post: {
@@ -471,7 +488,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                                 id: true,
                                 name: true,
                                 username: true,
-                                avatarUrl: true
+                                avatarUrl: true,
                             }
                         },
                         likes: {
@@ -573,8 +590,37 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             });
         };
 
+        // FILTER POSTS BY AUTHOR OR FOLLOWING IDK
+        const following = await prisma.follow.findMany({
+            where: { followerId: currentUserId },
+            select: { followingId: true }
+        });
+
+        const followingIds = following.map(f => f.followingId);
+
+        // FILTER POSTS FROM USER THAT HAS PRIVACY MODE ENABLED (TRUE) AND IS NOT FOLLOWED BY CURRENT USER (FALSE)
+        const privacyFilter = followingIds.length > 0 ? {
+            OR: [
+                { author: { privacyMode: false } },
+                { authorId: { in: followingIds } }
+            ]
+        } : {
+            author: { privacyMode: false }
+        };
+
+        // FILTER REPOSTS BY THE USER WHO CREATED THE SHARE, NOT BY THE ORIGINAL POST AUTHOR
+        const repostPrivacyFilter = followingIds.length > 0 ? {
+            OR: [
+                { privacyMode: false },
+                { id: { in: followingIds } }
+            ]
+        } : {
+            privacyMode: false
+        };
+
         const posts = await prisma.post.findMany({
             where: {
+                AND: [privacyFilter],
                 OR: [
                     {
                         authorId: userId,
@@ -634,7 +680,10 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
         });
 
         const reposts = await prisma.share.findMany({
-            where: { userId: userId },
+            where: { 
+                userId: userId, 
+                user: repostPrivacyFilter,
+            },
             include: {
                 post: {
                     select: {
@@ -770,10 +819,25 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             });
         };
 
+        const following = await prisma.follow.findMany({
+            where: { followerId: currentUserId },
+            select: { followingId: true }
+        });
+
+        const followingIds = following.map(f => f.followingId);
+
         const posts = await prisma.post.findMany({
             where: {
                 visibility: 'PUBLIC',
-                authorId: { not: currentUserId }
+                authorId: { not: currentUserId },
+                AND: [
+                    {
+                        OR: [
+                            { author: { privacyMode: false } },
+                            { authorId: { in: followingIds } },
+                        ]
+                    }
+                ]
             },
             orderBy: { createdAt: 'desc' },
             select: {
@@ -788,6 +852,13 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                         name: true,
                         username: true,
                         avatarUrl: true,
+                        privacyMode: true,
+                        following: {
+                            select: {
+                                id: true,
+                                followerId: true
+                            }
+                        }
                     }
                 },
                 likes: {
@@ -816,7 +887,20 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
         });
 
         const reposts = await prisma.share.findMany({
-            where: { userId: { not: currentUserId } },
+            where: {
+                userId: { not: currentUserId },
+                post: {
+                    AND: [
+                        { visibility: 'PUBLIC' },
+                        {
+                            OR: [
+                                { author: { privacyMode: false } },
+                                { authorId: { in: followingIds } },
+                            ]
+                        }
+                    ]
+                }
+            },
             include: {
                 post: {
                     select: {
@@ -832,7 +916,14 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                                 id: true,
                                 name: true,
                                 username: true,
-                                avatarUrl: true
+                                avatarUrl: true,
+                                privacyMode: true,
+                                following: {
+                                    select: {
+                                        id: true,
+                                        followerId: true
+                                    }
+                                }
                             }
                         },
                         likes: {
@@ -889,7 +980,8 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                 id: m.user.id,
                 name: m.user.name,
                 username: m.user.username,
-            }))
+            })),
+
         }));
 
         const mappedReposts = reposts.map(r => ({
