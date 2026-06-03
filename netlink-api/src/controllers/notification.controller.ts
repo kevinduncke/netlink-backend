@@ -70,6 +70,8 @@ export async function getNotifications(req: Request, res: Response, next: NextFu
 
         const followingSet = new Set(follows.map(f => f.followingId));
 
+        const unReadNotificationsCount = notifications.filter(n => !n.read).length;
+
         const mappedNotifications = notifications.map(n => ({
             id: n.id,
             type: n.type,
@@ -84,29 +86,58 @@ export async function getNotifications(req: Request, res: Response, next: NextFu
             } : null,
             // CHECK IF I FOLLOW THE USER WHO GEN THE NOTIFICATION (fromUser)
             isFollowedByMe: n.fromUser ? followingSet.has(n.fromUser.id) : null
-        }))
+        }));
 
-        res.json(mappedNotifications);
+        type MappedNotification = (typeof mappedNotifications)[number];
+
+        // MAP NOTIFICATIONS BASED ON THE DATE: TODAY, YESTERDAY.
+        const newtime = new Date();
+        const startOfToday = new Date(newtime.getFullYear(), newtime.getMonth(), newtime.getDate());
+        const startOfYesterday = new Date(startOfToday);
+        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+
+        const groupedNotifications = mappedNotifications.reduce(
+            (acc: { today: MappedNotification[]; yesterday: MappedNotification[]; older: MappedNotification[] }, notification) => {
+                const createdAt = new Date(notification.createdAt);
+
+                if (createdAt >= startOfToday) {
+                    acc.today.push(notification);
+                } else if (createdAt >= startOfYesterday) {
+                    acc.yesterday.push(notification);
+                } else {
+                    acc.older.push(notification);
+                }
+                return acc;
+            },
+            { today: [] as MappedNotification[], yesterday: [] as MappedNotification[], older: [] as MappedNotification[] }
+        )
+
+        res.json({
+            today: groupedNotifications.today,
+            yesterday: groupedNotifications.yesterday,
+            older: groupedNotifications.older.slice(0, 3),
+            unReadNotifications: unReadNotificationsCount
+        });
     } catch (error) {
         next(error);
     }
 };
 
 // MARK A NOTIFICATION AS READ
-export async function markAsRead(req: Request, res: Response, next: NextFunction) {
+export async function markAllAsRead(req: Request, res: Response, next: NextFunction) {
     try {
-        const id = req.params.id;
+        const userId = (req as any).user!.id;
 
-        if (!id || typeof id !== 'string') {
-            return res.status(400).json({ error: 'Invalid notification ID.' });
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({ error: 'Invalid user ID.' });
         }
 
-        await prisma.notification.update({
-            where: { id },
+        await prisma.notification.updateMany({
+            where: { userId, read: false },
             data: { read: true },
         });
 
-        res.json({ success: true, message: 'Notification marked as read.' });
+        res.json({ success: true, message: 'All notifications marked as read.' });
     } catch (error) {
         next(error);
     }

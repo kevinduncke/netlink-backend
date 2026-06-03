@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Message" ADD COLUMN     "read" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "received" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "sent" BOOLEAN NOT NULL DEFAULT false;

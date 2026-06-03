@@ -1530,6 +1530,9 @@ export const MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
   createdAt: 'createdAt',
+  sent: 'sent',
+  received: 'received',
+  read: 'read',
   chatId: 'chatId',
   senderId: 'senderId'
 } as const

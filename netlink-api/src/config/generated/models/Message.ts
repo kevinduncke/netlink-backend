@@ -28,6 +28,9 @@ export type MessageMinAggregateOutputType = {
   id: string | null
   content: string | null
   createdAt: Date | null
+  sent: boolean | null
+  received: boolean | null
+  read: boolean | null
   chatId: string | null
   senderId: string | null
 }
@@ -36,6 +39,9 @@ export type MessageMaxAggregateOutputType = {
   id: string | null
   content: string | null
   createdAt: Date | null
+  sent: boolean | null
+  received: boolean | null
+  read: boolean | null
   chatId: string | null
   senderId: string | null
 }
@@ -44,6 +50,9 @@ export type MessageCountAggregateOutputType = {
   id: number
   content: number
   createdAt: number
+  sent: number
+  received: number
+  read: number
   chatId: number
   senderId: number
   _all: number
@@ -54,6 +63,9 @@ export type MessageMinAggregateInputType = {
   id?: true
   content?: true
   createdAt?: true
+  sent?: true
+  received?: true
+  read?: true
   chatId?: true
   senderId?: true
 }
@@ -62,6 +74,9 @@ export type MessageMaxAggregateInputType = {
   id?: true
   content?: true
   createdAt?: true
+  sent?: true
+  received?: true
+  read?: true
   chatId?: true
   senderId?: true
 }
@@ -70,6 +85,9 @@ export type MessageCountAggregateInputType = {
   id?: true
   content?: true
   createdAt?: true
+  sent?: true
+  received?: true
+  read?: true
   chatId?: true
   senderId?: true
   _all?: true
@@ -151,6 +169,9 @@ export type MessageGroupByOutputType = {
   id: string
   content: string
   createdAt: Date
+  sent: boolean
+  received: boolean
+  read: boolean
   chatId: string
   senderId: string
   _count: MessageCountAggregateOutputType | null
@@ -180,6 +201,9 @@ export type MessageWhereInput = {
   id?: Prisma.StringFilter<"Message"> | string
   content?: Prisma.StringFilter<"Message"> | string
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  sent?: Prisma.BoolFilter<"Message"> | boolean
+  received?: Prisma.BoolFilter<"Message"> | boolean
+  read?: Prisma.BoolFilter<"Message"> | boolean
   chatId?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
   chat?: Prisma.XOR<Prisma.ChatScalarRelationFilter, Prisma.ChatWhereInput>
@@ -191,6 +215,9 @@ export type MessageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  sent?: Prisma.SortOrder
+  received?: Prisma.SortOrder
+  read?: Prisma.SortOrder
   chatId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
   chat?: Prisma.ChatOrderByWithRelationInput
@@ -205,6 +232,9 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   content?: Prisma.StringFilter<"Message"> | string
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  sent?: Prisma.BoolFilter<"Message"> | boolean
+  received?: Prisma.BoolFilter<"Message"> | boolean
+  read?: Prisma.BoolFilter<"Message"> | boolean
   chatId?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
   chat?: Prisma.XOR<Prisma.ChatScalarRelationFilter, Prisma.ChatWhereInput>
@@ -216,6 +246,9 @@ export type MessageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  sent?: Prisma.SortOrder
+  received?: Prisma.SortOrder
+  read?: Prisma.SortOrder
   chatId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
   _count?: Prisma.MessageCountOrderByAggregateInput
@@ -230,6 +263,9 @@ export type MessageScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Message"> | string
   content?: Prisma.StringWithAggregatesFilter<"Message"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
+  sent?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
+  received?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
+  read?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
   chatId?: Prisma.StringWithAggregatesFilter<"Message"> | string
   senderId?: Prisma.StringWithAggregatesFilter<"Message"> | string
 }
@@ -238,6 +274,9 @@ export type MessageCreateInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chat: Prisma.ChatCreateNestedOneWithoutMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutMessagesInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutMessageInput
@@ -247,6 +286,9 @@ export type MessageUncheckedCreateInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId: string
   senderId: string
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutMessageInput
@@ -256,6 +298,9 @@ export type MessageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chat?: Prisma.ChatUpdateOneRequiredWithoutMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutMessageNestedInput
@@ -265,6 +310,9 @@ export type MessageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chatId?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutMessageNestedInput
@@ -274,6 +322,9 @@ export type MessageCreateManyInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId: string
   senderId: string
 }
@@ -282,12 +333,18 @@ export type MessageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type MessageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chatId?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -306,6 +363,9 @@ export type MessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  sent?: Prisma.SortOrder
+  received?: Prisma.SortOrder
+  read?: Prisma.SortOrder
   chatId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
 }
@@ -314,6 +374,9 @@ export type MessageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  sent?: Prisma.SortOrder
+  received?: Prisma.SortOrder
+  read?: Prisma.SortOrder
   chatId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
 }
@@ -322,6 +385,9 @@ export type MessageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  sent?: Prisma.SortOrder
+  received?: Prisma.SortOrder
+  read?: Prisma.SortOrder
   chatId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
 }
@@ -435,6 +501,9 @@ export type MessageCreateWithoutSenderInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chat: Prisma.ChatCreateNestedOneWithoutMessagesInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutMessageInput
 }
@@ -443,6 +512,9 @@ export type MessageUncheckedCreateWithoutSenderInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId: string
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutMessageInput
 }
@@ -480,6 +552,9 @@ export type MessageScalarWhereInput = {
   id?: Prisma.StringFilter<"Message"> | string
   content?: Prisma.StringFilter<"Message"> | string
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  sent?: Prisma.BoolFilter<"Message"> | boolean
+  received?: Prisma.BoolFilter<"Message"> | boolean
+  read?: Prisma.BoolFilter<"Message"> | boolean
   chatId?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
 }
@@ -488,6 +563,9 @@ export type MessageCreateWithoutChatInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   sender: Prisma.UserCreateNestedOneWithoutMessagesInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutMessageInput
 }
@@ -496,6 +574,9 @@ export type MessageUncheckedCreateWithoutChatInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   senderId: string
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutMessageInput
 }
@@ -530,6 +611,9 @@ export type MessageCreateWithoutNotificationsInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chat: Prisma.ChatCreateNestedOneWithoutMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutMessagesInput
 }
@@ -538,6 +622,9 @@ export type MessageUncheckedCreateWithoutNotificationsInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId: string
   senderId: string
 }
@@ -562,6 +649,9 @@ export type MessageUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chat?: Prisma.ChatUpdateOneRequiredWithoutMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
 }
@@ -570,6 +660,9 @@ export type MessageUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chatId?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -578,6 +671,9 @@ export type MessageCreateManySenderInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId: string
 }
 
@@ -585,6 +681,9 @@ export type MessageUpdateWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chat?: Prisma.ChatUpdateOneRequiredWithoutMessagesNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutMessageNestedInput
 }
@@ -593,6 +692,9 @@ export type MessageUncheckedUpdateWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chatId?: Prisma.StringFieldUpdateOperationsInput | string
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutMessageNestedInput
 }
@@ -601,6 +703,9 @@ export type MessageUncheckedUpdateManyWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chatId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -608,6 +713,9 @@ export type MessageCreateManyChatInput = {
   id?: string
   content: string
   createdAt?: Date | string
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   senderId: string
 }
 
@@ -615,6 +723,9 @@ export type MessageUpdateWithoutChatInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutMessageNestedInput
 }
@@ -623,6 +734,9 @@ export type MessageUncheckedUpdateWithoutChatInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutMessageNestedInput
 }
@@ -631,6 +745,9 @@ export type MessageUncheckedUpdateManyWithoutChatInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -669,6 +786,9 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id?: boolean
   content?: boolean
   createdAt?: boolean
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId?: boolean
   senderId?: boolean
   chat?: boolean | Prisma.ChatDefaultArgs<ExtArgs>
@@ -681,6 +801,9 @@ export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   content?: boolean
   createdAt?: boolean
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId?: boolean
   senderId?: boolean
   chat?: boolean | Prisma.ChatDefaultArgs<ExtArgs>
@@ -691,6 +814,9 @@ export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   content?: boolean
   createdAt?: boolean
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId?: boolean
   senderId?: boolean
   chat?: boolean | Prisma.ChatDefaultArgs<ExtArgs>
@@ -701,11 +827,14 @@ export type MessageSelectScalar = {
   id?: boolean
   content?: boolean
   createdAt?: boolean
+  sent?: boolean
+  received?: boolean
+  read?: boolean
   chatId?: boolean
   senderId?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "createdAt" | "chatId" | "senderId", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "createdAt" | "sent" | "received" | "read" | "chatId" | "senderId", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   chat?: boolean | Prisma.ChatDefaultArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -732,6 +861,9 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     content: string
     createdAt: Date
+    sent: boolean
+    received: boolean
+    read: boolean
     chatId: string
     senderId: string
   }, ExtArgs["result"]["message"]>
@@ -1163,6 +1295,9 @@ export interface MessageFieldRefs {
   readonly id: Prisma.FieldRef<"Message", 'String'>
   readonly content: Prisma.FieldRef<"Message", 'String'>
   readonly createdAt: Prisma.FieldRef<"Message", 'DateTime'>
+  readonly sent: Prisma.FieldRef<"Message", 'Boolean'>
+  readonly received: Prisma.FieldRef<"Message", 'Boolean'>
+  readonly read: Prisma.FieldRef<"Message", 'Boolean'>
   readonly chatId: Prisma.FieldRef<"Message", 'String'>
   readonly senderId: Prisma.FieldRef<"Message", 'String'>
 }

@@ -203,7 +203,10 @@ export async function newMessage(req: Request, res: Response, next: NextFunction
             data: {
                 content,
                 chatId,
-                senderId
+                senderId,
+                sent: true,
+                received: false,
+                read: false
             },
         });
 
@@ -287,6 +290,19 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
             return res.status(500).json({ error: "Receiver not found in chat." });
         }
 
+        // MARK ONLY INCOMING UNREAD MESSAGES AS RECEIVED AND READ AFTER ACCESS IS VERIFIED
+        await prisma.message.updateMany({
+            where: {
+                chatId,
+                senderId: { not: userId },
+                read: false
+            },
+            data: {
+                read: true,
+                received: true
+            }
+        });
+
         const receiver = receiverParticipant.user;
 
         // FETCH MESSAGES
@@ -302,10 +318,45 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
                 username: receiver.username,
                 name: receiver.name,
                 avatarUrl: receiver.avatarUrl ?? undefined,
-                createdAt: receiver.createdAt
+                createdAt: receiver.createdAt,
             }
         });
 
+    } catch (error) {
+        next(error);
+    }
+}
+
+// GET COUNT OF UNREAD MESSAGES
+export async function getUnreadMessagesCount(req: Request, res: Response, next: NextFunction) {
+    try {
+        const currentUserId = getAuthenticatedUserId(req);
+
+        if (!currentUserId) {
+            return res.status(401).json({ error: 'Authentication required.' });
+        }
+
+        const chats = await prisma.chat.findMany({
+            where: {
+                participants: {
+                    some: { userId: currentUserId }
+                }
+            },
+        });
+
+        const messages = await prisma.message.findMany({
+            where: {
+                chatId: {
+                    in: chats.map(chat => chat.id)
+                },
+                senderId: { not: currentUserId },
+                read: false
+            }
+        });
+
+        const unreadCount = messages.length;
+
+        res.json(unreadCount);
     } catch (error) {
         next(error);
     }
