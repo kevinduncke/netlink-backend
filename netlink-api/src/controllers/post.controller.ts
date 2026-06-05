@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/prisma';
+import { encodeCursor, decodeCursor } from '../utils/cursor';
 
 async function resolveRepostTarget(id: string) {
     const post = await prisma.post.findUnique({
@@ -112,12 +113,17 @@ export async function createPost(req: Request, res: Response, next: NextFunction
 export async function getMyPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user.id;
+        const { cursor, limit = '10' } = req.query;
+        const take = parseInt(limit as string, 10);
 
         if (!currentUserId || typeof currentUserId !== 'string') {
             return res.status(400).json({
                 error: 'Valid user ID is required.'
             });
         };
+
+        const cursorDate = cursor ? decodeCursor(cursor as string) : undefined;
+        const overFetch = take * 2;
 
         const user = await prisma.user.findUnique({
             where: { id: currentUserId },
@@ -126,94 +132,106 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
                 name: true,
                 username: true,
                 avatarUrl: true,
-                posts: {
-                    orderBy: { createdAt: 'desc' },
-                    select: {
-                        id: true,
-                        content: true,
-                        location: true,
-                        imageUrl: true,
-                        hideLikes: true,
-                        disableComments: true,
-                        createdAt: true,
-                        mentions: {
-                            select: {
-                                user: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        username: true,
-                                    }
-                                }
-                            }
-                        },
-                        _count: {
-                            select: {
-                                comments: true,
-                                likes: true,
-                                shares: true
-                            }
-                        }
-                    }
-                },
                 likes: {
                     select: {
                         postId: true
                     }
-                },
+                }
             }
         });
 
         if (!user) {
-            return res.status(404).json({ error: `User not found: ${currentUserId}` });
+            return res.status(404).json({ error: 'User not found' });
         }
 
-        const reposts = await prisma.share.findMany({
-            where: { userId: currentUserId },
-            include: {
-                post: {
-                    select: {
-                        id: true,
-                        content: true,
-                        location: true,
-                        imageUrl: true,
-                        hideLikes: true,
-                        disableComments: true,
-                        createdAt: true,
-                        author: {
-                            select: {
-                                id: true,
-                                name: true,
-                                username: true,
-                                avatarUrl: true
-                            }
-                        },
-                        mentions: {
-                            select: {
-                                user: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        username: true,
-                                    }
+        // BOTH QUERIES
+        const [posts, reposts] = await Promise.all([
+            prisma.post.findMany({
+                where: {
+                    authorId: currentUserId,
+                    ...(cursorDate ? { createdAt: { lt: cursorDate } } : {})
+                },
+                orderBy: { createdAt: 'desc' },
+                take: overFetch,
+                select: {
+                    id: true,
+                    content: true,
+                    location: true,
+                    imageUrl: true,
+                    hideLikes: true,
+                    disableComments: true,
+                    createdAt: true,
+                    mentions: {
+                        select: {
+                            user: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
                                 }
                             }
-                        },
-                        _count: {
-                            select: {
-                                comments: true,
-                                likes: true,
-                                shares: true
-                            }
+                        }
+                    },
+                    _count: {
+                        select: {
+                            comments: true,
+                            likes: true,
+                            shares: true
                         }
                     }
+                }
+            }),
+            prisma.share.findMany({
+                where: {
+                    userId: currentUserId,
+                    ...(cursorDate ? { createdAt: { lt: cursorDate } } : {})
                 },
-                user: true,
-            }
-        });
+                orderBy: { createdAt: 'desc' },
+                take: overFetch,
+                include: {
+                    post: {
+                        select: {
+                            id: true,
+                            content: true,
+                            location: true,
+                            imageUrl: true,
+                            hideLikes: true,
+                            disableComments: true,
+                            createdAt: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
+                                    avatarUrl: true
+                                }
+                            },
+                            mentions: {
+                                select: {
+                                    user: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            username: true,
+                                        }
+                                    }
+                                }
+                            },
+                            _count: {
+                                select: {
+                                    comments: true,
+                                    likes: true,
+                                    shares: true
+                                }
+                            }
+                        }
+                    },
+                    user: true,
+                }
+            })
+        ]);
 
-        // MAPs
-        const myPosts = user.posts.map(post => ({
+        const mappedPosts = posts.map(post => ({
             id: post.id,
             content: post.content,
             imageUrl: post.imageUrl,
@@ -224,6 +242,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             isRepost: false,
             repostedByMe: false,
             repostedAt: null,
+            feedDate: post.createdAt,
             author: {
                 id: user.id,
                 name: user.name,
@@ -243,7 +262,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             }))
         }));
 
-        const myReposts = reposts.map(r => ({
+        const mappedReposts = reposts.map(r => ({
             id: r.id,
             postId: r.post.id,
             content: r.post.content,
@@ -255,6 +274,7 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             isRepost: true,
             repostedByMe: r.user.id === currentUserId,
             repostedAt: r.createdAt,
+            feedDate: r.createdAt,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -281,20 +301,23 @@ export async function getMyPosts(req: Request, res: Response, next: NextFunction
             }))
         }));
 
-        const merged = [...myPosts, ...myReposts.sort((a, b) => {
-            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
-            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
-            return new Date(dateB).getTime() - new Date(dateA).getTime();
-        })];
+        const merged = [...mappedPosts, ...mappedReposts].sort((a, b) => new Date(b.feedDate).getTime() - new Date(a.feedDate).getTime()).slice(0, take);
 
-        res.json(merged);
+        const lastItem = merged[merged.length - 1];
+        const nextCursor = merged.length === take && lastItem ? encodeCursor(lastItem.feedDate) : null;
+
+        res.json({ posts: merged, nextCursor });
     } catch (error) {
         next(error);
     }
 }
 export async function searchPosts(req: Request, res: Response, next: NextFunction) {
     try {
-        const currentUserId = (req as any).user.id;
+        const currentUserId = (req as any).user?.id;
+
+        if (!currentUserId || typeof currentUserId !== 'string') {
+            return res.status(401).json({ error: 'Unauthorized.' });
+        }
 
         const parseDateParam = (value: unknown, endOfDay = false): Date | null => {
             if (typeof value !== 'string' || value.trim().length === 0) {
@@ -435,6 +458,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             isRepost: false,
             repostedByMe: false,
             repostedAt: null,
+            feedDate: post.createdAt,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -531,6 +555,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             isRepost: true,
             repostedAt: r.createdAt,
             repostedByMe: r.post.author.id === currentUserId,
+            feedDate: r.createdAt,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -557,16 +582,14 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             }))
         }));
 
-        const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
-            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
-            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
-            return new Date(dateB).getTime() - new Date(dateA).getTime();
-        })];
+        const merged = [...mappedPosts, ...mappedReposts].sort(
+            (a, b) => new Date(b.feedDate).getTime() - new Date(a.feedDate).getTime()
+        );
 
         if (shared === 'posts') {
-            res.json(mappedPosts);
+            res.json({ posts: mappedPosts, nextCursor: null });
         } else {
-            res.json(merged);
+            res.json({ posts: merged, nextCursor: null });
         }
     } catch (error) {
         next(error);
@@ -575,6 +598,9 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
 export async function getUserPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user?.id;
+        const userId = req.params.id;
+        const { cursor, limit = '10' } = req.query;
+        const take = parseInt(limit as string, 10);
 
         if (!currentUserId || typeof currentUserId !== 'string') {
             return res.status(401).json({
@@ -582,13 +608,14 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             });
         };
 
-        const userId = req.params.id;
-
         if (!userId || typeof userId !== 'string') {
             return res.status(400).json({
                 error: 'Valid user ID is required.'
             });
         };
+
+        const cursorDate = cursor ? decodeCursor(cursor as string) : undefined;
+        const overFetch = take * 2;
 
         // FILTER POSTS BY AUTHOR OR FOLLOWING IDK
         const following = await prisma.follow.findMany({
@@ -618,117 +645,124 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             privacyMode: false
         };
 
-        const posts = await prisma.post.findMany({
-            where: {
-                AND: [privacyFilter],
-                OR: [
-                    {
-                        authorId: userId,
-                        visibility: { in: ['PUBLIC', 'FOLLOWERS'] },
-                    },
-                    {
-                        authorId: userId,
-                        visibility: 'SPECIFIC',
-                        specificTo: {
-                            some: {
-                                id: currentUserId,
+        const [posts, reposts] = await Promise.all([
+            prisma.post.findMany({
+                where: {
+                    AND: [privacyFilter],
+                    OR: [
+                        {
+                            authorId: userId,
+                            visibility: { in: ['PUBLIC', 'FOLLOWERS'] },
+                        },
+                        {
+                            authorId: userId,
+                            visibility: 'SPECIFIC',
+                            specificTo: {
+                                some: {
+                                    id: currentUserId,
+                                },
                             },
-                        },
-                    }
-                ]
-            },
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                content: true,
-                location: true,
-                createdAt: true,
-                hideLikes: true,
-                disableComments: true,
-                author: {
-                    select: {
-                        id: true,
-                        name: true,
-                        username: true,
-                        avatarUrl: true
-                    }
-                },
-                likes: {
-                    where: { userId: currentUserId },
-                    select: { id: true }
-                },
-                mentions: {
-                    select: {
-                        userId: true,
-                        user: {
-                            select: {
-                                id: true,
-                                name: true,
-                                username: true,
-                            }
                         }
-                    }
+                    ],
+                    ...(cursorDate ? { createdAt: { lt: cursorDate } } : {})
                 },
-                _count: {
-                    select: {
-                        comments: true,
-                        likes: true,
-                        shares: true
-                    }
-                }
-            }
-        });
-
-        const reposts = await prisma.share.findMany({
-            where: { 
-                userId: userId, 
-                user: repostPrivacyFilter,
-            },
-            include: {
-                post: {
-                    select: {
-                        id: true,
-                        content: true,
-                        location: true,
-                        imageUrl: true,
-                        hideLikes: true,
-                        disableComments: true,
-                        createdAt: true,
-                        author: {
-                            select: {
-                                id: true,
-                                name: true,
-                                username: true,
-                                avatarUrl: true
-                            }
-                        },
-                        likes: {
-                            where: { userId: currentUserId },
-                            select: { id: true }
-                        },
-                        mentions: {
-                            select: {
-                                user: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        username: true,
-                                    }
+                orderBy: { createdAt: 'desc' },
+                take: overFetch,
+                select: {
+                    id: true,
+                    content: true,
+                    location: true,
+                    createdAt: true,
+                    hideLikes: true,
+                    disableComments: true,
+                    author: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            avatarUrl: true
+                        }
+                    },
+                    likes: {
+                        where: { userId: currentUserId },
+                        select: { id: true }
+                    },
+                    mentions: {
+                        select: {
+                            userId: true,
+                            user: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
                                 }
                             }
-                        },
-                        _count: {
-                            select: {
-                                comments: true,
-                                likes: true,
-                                shares: true
-                            }
+                        }
+                    },
+                    _count: {
+                        select: {
+                            comments: true,
+                            likes: true,
+                            shares: true
                         }
                     }
+                }
+            }),
+
+            prisma.share.findMany({
+                where: {
+                    userId: userId,
+                    user: repostPrivacyFilter,
+                    ...(cursorDate ? { createdAt: { lt: cursorDate } } : {})
                 },
-                user: true,
-            }
-        });
+                orderBy: { createdAt: 'desc' },
+                take: overFetch,
+                include: {
+                    post: {
+                        select: {
+                            id: true,
+                            content: true,
+                            location: true,
+                            imageUrl: true,
+                            hideLikes: true,
+                            disableComments: true,
+                            createdAt: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
+                                    avatarUrl: true
+                                }
+                            },
+                            likes: {
+                                where: { userId: currentUserId },
+                                select: { id: true }
+                            },
+                            mentions: {
+                                select: {
+                                    user: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            username: true,
+                                        }
+                                    }
+                                }
+                            },
+                            _count: {
+                                select: {
+                                    comments: true,
+                                    likes: true,
+                                    shares: true
+                                }
+                            }
+                        }
+                    },
+                    user: true,
+                }
+            })
+        ]);
 
         // MAPs    
         const mappedPosts = posts.map(post => ({
@@ -740,6 +774,7 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             isRepost: false,
             repostedByMe: false,
             repostedAt: null,
+            feedDate: post.createdAt,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -772,6 +807,7 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             isRepost: true,
             repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
+            feedDate: r.createdAt,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -798,13 +834,12 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             }
         }));
 
-        const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
-            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
-            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
-            return new Date(dateB).getTime() - new Date(dateA).getTime();
-        })];
+        const merged = [...mappedPosts, ...mappedReposts].sort((a, b) => new Date(b.feedDate).getTime() - new Date(a.feedDate).getTime()).slice(0, take);
 
-        res.json(merged);
+        const lastItem = merged[merged.length - 1];
+        const nextCursor = merged.length === take && lastItem ? encodeCursor(lastItem.feedDate) : null;
+
+        res.json({ posts: merged, nextCursor });
     } catch (error) {
         next(error);
     }
@@ -812,12 +847,17 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
 export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user?.id;
+        const { cursor, limit = '10' } = req.query;
+        const take = parseInt(limit as string, 10);
 
         if (!currentUserId || typeof currentUserId !== 'string') {
             return res.status(401).json({
                 error: 'Unauthorized.'
             });
         };
+
+        // DECODE CURSOR
+        const cursorDate = cursor ? decodeCursor(cursor as string) : undefined;
 
         const following = await prisma.follow.findMany({
             where: { followerId: currentUserId },
@@ -826,133 +866,140 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
 
         const followingIds = following.map(f => f.followingId);
 
-        const posts = await prisma.post.findMany({
-            where: {
-                visibility: 'PUBLIC',
-                authorId: { not: currentUserId },
-                AND: [
-                    {
-                        OR: [
-                            { author: { privacyMode: false } },
-                            { authorId: { in: followingIds } },
+        const visibilityFilter = {
+            OR: [
+                { author: { privacyMode: false } },
+                { authorId: { in: followingIds } }
+            ]
+        };
+
+        // Over-fetching both queries using cursor as a date boundary.
+        const overFetch = take * 2;
+
+        const [posts, reposts] = await Promise.all([
+            prisma.post.findMany({
+                where: {
+                    visibility: 'PUBLIC',
+                    authorId: { not: currentUserId },
+                    AND: [
+                        visibilityFilter,
+                        ...(cursorDate ? [{ createdAt: { lt: cursorDate } }] : [])
+                    ]
+                },
+                orderBy: { createdAt: 'desc' },
+                take: overFetch,
+                select: {
+                    id: true,
+                    content: true,
+                    createdAt: true,
+                    hideLikes: true,
+                    disableComments: true,
+                    author: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            avatarUrl: true,
+                            privacyMode: true,
+                            following: {
+                                select: {
+                                    id: true,
+                                    followerId: true
+                                }
+                            }
+                        }
+                    },
+                    likes: {
+                        where: { userId: currentUserId },
+                        select: { id: true }
+                    },
+                    _count: {
+                        select: {
+                            comments: true,
+                            likes: true,
+                            shares: true
+                        }
+                    },
+                    mentions: {
+                        select: {
+                            user: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
+                                }
+                            }
+                        }
+                    }
+                }
+            }),
+
+            prisma.share.findMany({
+                where: {
+                    userId: { not: currentUserId },
+                    ...(cursorDate ? { createdAt: { lt: cursorDate } } : {}),
+                    post: {
+                        AND: [
+                            { visibility: 'PUBLIC' },
+                            visibilityFilter,
                         ]
                     }
-                ]
-            },
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                content: true,
-                createdAt: true,
-                hideLikes: true,
-                disableComments: true,
-                author: {
-                    select: {
-                        id: true,
-                        name: true,
-                        username: true,
-                        avatarUrl: true,
-                        privacyMode: true,
-                        following: {
-                            select: {
-                                id: true,
-                                followerId: true
-                            }
-                        }
-                    }
                 },
-                likes: {
-                    where: { userId: currentUserId },
-                    select: { id: true }
-                },
-                _count: {
-                    select: {
-                        comments: true,
-                        likes: true,
-                        shares: true
-                    }
-                },
-                mentions: {
-                    select: {
-                        user: {
-                            select: {
-                                id: true,
-                                name: true,
-                                username: true,
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        const reposts = await prisma.share.findMany({
-            where: {
-                userId: { not: currentUserId },
-                post: {
-                    AND: [
-                        { visibility: 'PUBLIC' },
-                        {
-                            OR: [
-                                { author: { privacyMode: false } },
-                                { authorId: { in: followingIds } },
-                            ]
-                        }
-                    ]
-                }
-            },
-            include: {
-                post: {
-                    select: {
-                        id: true,
-                        content: true,
-                        location: true,
-                        imageUrl: true,
-                        hideLikes: true,
-                        disableComments: true,
-                        createdAt: true,
-                        author: {
-                            select: {
-                                id: true,
-                                name: true,
-                                username: true,
-                                avatarUrl: true,
-                                privacyMode: true,
-                                following: {
-                                    select: {
-                                        id: true,
-                                        followerId: true
+                orderBy: { createdAt: 'desc' },
+                take: overFetch,
+                include: {
+                    post: {
+                        select: {
+                            id: true,
+                            content: true,
+                            location: true,
+                            imageUrl: true,
+                            hideLikes: true,
+                            disableComments: true,
+                            createdAt: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
+                                    avatarUrl: true,
+                                    privacyMode: true,
+                                    following: {
+                                        select: {
+                                            id: true,
+                                            followerId: true
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        likes: {
-                            where: { userId: currentUserId },
-                            select: { id: true }
-                        },
-                        mentions: {
-                            select: {
-                                user: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        username: true,
+                            },
+                            likes: {
+                                where: { userId: currentUserId },
+                                select: { id: true }
+                            },
+                            mentions: {
+                                select: {
+                                    user: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            username: true,
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        _count: {
-                            select: {
-                                comments: true,
-                                likes: true,
-                                shares: true
+                            },
+                            _count: {
+                                select: {
+                                    comments: true,
+                                    likes: true,
+                                    shares: true
+                                }
                             }
                         }
-                    }
-                },
-                user: true,
-            }
-        })
+                    },
+                    user: true,
+                }
+            })
+        ]);
 
         const mappedPosts = posts.map(post => ({
             id: post.id,
@@ -960,6 +1007,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             createdAt: post.createdAt,
             hideLikes: post.hideLikes,
             disableComments: post.disableComments,
+            feedDate: post.createdAt,
             isRepost: false,
             repostedByMe: false,
             repostedAt: null,
@@ -993,6 +1041,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             createdAt: r.post.createdAt,
             hideLikes: r.post.hideLikes,
             disableComments: r.post.disableComments,
+            feedDate: r.createdAt,
             isRepost: true,
             repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
@@ -1022,13 +1071,13 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             }))
         }));
 
-        const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
-            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
-            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
-            return new Date(dateB).getTime() - new Date(dateA).getTime();
-        })];
+        const merged = [...mappedPosts, ...mappedReposts].sort((a, b) => new Date(b.feedDate).getTime() - new Date(a.feedDate).getTime()).slice(0, take);
 
-        res.json(merged);
+        const lastMergedItem = merged[merged.length - 1];
+        const nextCursor = merged.length === take && lastMergedItem
+            ? encodeCursor(lastMergedItem.feedDate) : null;
+
+        res.json({ posts: merged, nextCursor });
     } catch (error) {
         next(error);
     }
@@ -1036,6 +1085,8 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
 export async function getFollowingPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user?.id;
+        const { cursor, limit = '10' } = req.query;
+        const take = parseInt(limit as string, 10);
 
         if (!currentUserId || typeof currentUserId !== 'string') {
             return res.status(401).json({
@@ -1049,119 +1100,128 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
         });
 
         const followingIds = following.map(f => f.followingId);
-        // If user follows no one, return empty list early
         if (followingIds.length === 0) {
             return res.json([]);
         }
 
-        // Query posts authored by users the current user follows
-        const posts = await prisma.post.findMany({
-            where: {
-                OR: [
-                    {
-                        authorId: { in: followingIds },
-                        visibility: { in: ['PUBLIC', 'FOLLOWERS'] },
-                    },
-                    {
-                        authorId: { in: followingIds },
-                        visibility: 'SPECIFIC',
-                        specificTo: {
-                            some: {
-                                id: currentUserId,
-                            },
-                        },
-                    }
-                ]
-            },
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                content: true,
-                location: true,
-                createdAt: true,
-                hideLikes: true,
-                disableComments: true,
-                author: {
-                    select: {
-                        id: true,
-                        name: true,
-                        username: true,
-                        avatarUrl: true
-                    }
-                },
-                likes: {
-                    where: { userId: currentUserId },
-                    select: { id: true }
-                },
-                _count: {
-                    select: {
-                        comments: true,
-                        likes: true,
-                        shares: true
-                    }
-                },
-                mentions: {
-                    select: {
-                        user: {
-                            select: {
-                                id: true,
-                                name: true,
-                                username: true,
-                            }
-                        }
-                    }
-                },
-            }
-        });
+        const cursorDate = cursor ? decodeCursor(cursor as string) : undefined;
+        const overFetch = take * 2;
 
-        // Also include reposts (shares) made by users the current user follows
-        const reposts = await prisma.share.findMany({
-            where: { userId: { in: followingIds } },
-            include: {
-                post: {
-                    select: {
-                        id: true,
-                        content: true,
-                        location: true,
-                        imageUrl: true,
-                        hideLikes: true,
-                        disableComments: true,
-                        createdAt: true,
-                        author: {
-                            select: {
-                                id: true,
-                                name: true,
-                                username: true,
-                                avatarUrl: true
-                            }
+        const [posts, reposts] = await Promise.all([
+            prisma.post.findMany({
+                where: {
+                    OR: [
+                        {
+                            authorId: { in: followingIds },
+                            visibility: { in: ['PUBLIC', 'FOLLOWERS'] },
                         },
-                        likes: {
-                            where: { userId: currentUserId },
-                            select: { id: true }
-                        },
-                        _count: {
-                            select: {
-                                comments: true,
-                                likes: true,
-                                shares: true
-                            }
-                        },
-                        mentions: {
-                            select: {
-                                user: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        username: true,
-                                    }
+                        {
+                            authorId: { in: followingIds },
+                            visibility: 'SPECIFIC',
+                            specificTo: {
+                                some: {
+                                    id: currentUserId,
+                                },
+                            },
+                        }
+                    ],
+                    ...(cursorDate ? { createdAt: { lt: cursorDate } } : {})
+                },
+                orderBy: { createdAt: 'desc' },
+                take: overFetch,
+                select: {
+                    id: true,
+                    content: true,
+                    location: true,
+                    createdAt: true,
+                    hideLikes: true,
+                    disableComments: true,
+                    author: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            avatarUrl: true
+                        }
+                    },
+                    likes: {
+                        where: { userId: currentUserId },
+                        select: { id: true }
+                    },
+                    _count: {
+                        select: {
+                            comments: true,
+                            likes: true,
+                            shares: true
+                        }
+                    },
+                    mentions: {
+                        select: {
+                            user: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
                                 }
                             }
-                        },
-                    }
+                        }
+                    },
+                }
+            }),
+
+            prisma.share.findMany({
+                where: {
+                    userId: { in: followingIds },
+                    ...(cursorDate ? { createdAt: { lt: cursorDate } } : {})
                 },
-                user: true,
-            }
-        });
+                orderBy: { createdAt: 'desc' },
+                take: overFetch,
+                include: {
+                    post: {
+                        select: {
+                            id: true,
+                            content: true,
+                            location: true,
+                            imageUrl: true,
+                            hideLikes: true,
+                            disableComments: true,
+                            createdAt: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
+                                    avatarUrl: true
+                                }
+                            },
+                            likes: {
+                                where: { userId: currentUserId },
+                                select: { id: true }
+                            },
+                            _count: {
+                                select: {
+                                    comments: true,
+                                    likes: true,
+                                    shares: true
+                                }
+                            },
+                            mentions: {
+                                select: {
+                                    user: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            username: true,
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    },
+                    user: true,
+                }
+            })
+        ]);
 
         const mappedPosts = posts.map(post => ({
             id: post.id,
@@ -1173,6 +1233,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             isRepost: false,
             repostedByMe: false,
             repostedAt: null,
+            feedDate: post.createdAt,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -1205,6 +1266,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             isRepost: true,
             repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
+            feedDate: r.createdAt,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -1231,13 +1293,12 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             })),
         }));
 
-        const merged = [...mappedPosts, ...mappedReposts.sort((a, b) => {
-            const dateA = a.isRepost ? a.repostedAt : a.createdAt;
-            const dateB = b.isRepost ? b.repostedAt : b.createdAt;
-            return new Date(dateB).getTime() - new Date(dateA).getTime();
-        })];
+        const merged = [...mappedPosts, ...mappedReposts].sort((a, b) => new Date(b.feedDate).getTime() - new Date(a.feedDate).getTime()).slice(0, take);
 
-        res.json(merged);
+        const lastItem = merged[merged.length - 1];
+        const nextCursor = merged.length === take && lastItem ? encodeCursor(lastItem.feedDate) : null;
+
+        res.json({ posts: merged, nextCursor });
     } catch (error) {
         next(error);
     }
