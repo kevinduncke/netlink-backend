@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import type { Prisma } from '../config/generated/client';
 import { prisma } from '../config/prisma';
+import { decodeCursor, encodeCursor } from "../utils/cursor";
 
 function getAuthenticatedUserId(req: Request) {
     const userId = (req as any).user?.id;
@@ -243,6 +244,8 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
         const rawChatId = req.params.id;
         const chatId = Array.isArray(rawChatId) ? rawChatId[0] : rawChatId;
         const userId = getAuthenticatedUserId(req);
+        const { cursor, limit = '20' } = req.query;
+        const take = parseInt(limit as string, 10);    
 
         if (!chatId) {
             return res.status(400).json({ error: 'Chat ID is required.' });
@@ -304,15 +307,27 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
         });
 
         const receiver = receiverParticipant.user;
-
+        const cursorDate = cursor ? decodeCursor(cursor as string) : undefined; 
+        
         // FETCH MESSAGES
-        const message = await prisma.message.findMany({
-            where: { chatId },
-            orderBy: { createdAt: 'asc' },
+        const rawMessages = await prisma.message.findMany({
+            where: {
+                chatId,
+                ...(cursorDate ? { createdAt: { lt: cursorDate } } : {})
+            },
+            orderBy: { createdAt: 'desc' }, // GET NEWEST MESSAGES #1
+            take,
         });
 
+        const messages = rawMessages.reverse(); // REVERSE TO RESTORE CHRONOLOGICAL ORDER #2
+        
+        // OLDERST MESSAGES
+        const oldestMessage = messages[0];
+        const nextCursor = rawMessages.length === take && oldestMessage ? encodeCursor(oldestMessage.createdAt) : null;
+
         res.json({
-            message,
+            messages,
+            nextCursor,
             receiver: {
                 id: receiver.id,
                 username: receiver.username,
