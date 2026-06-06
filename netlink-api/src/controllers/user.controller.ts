@@ -82,7 +82,7 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
 
             // FOLLOWING
             followers: user.following.map(f => f.followerId),
-            isFollowedByMe: currentUserId ? user.following.some(f => f.followerId === currentUserId) : false,            
+            isFollowedByMe: currentUserId ? user.following.some(f => f.followerId === currentUserId) : false,
         });
     } catch (error) {
         next(`Error fetching user profile: ${error}`);

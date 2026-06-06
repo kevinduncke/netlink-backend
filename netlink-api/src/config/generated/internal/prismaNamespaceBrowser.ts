@@ -56,6 +56,9 @@ export const ModelName = {
   Like: 'Like',
   Comment: 'Comment',
   Share: 'Share',
+  Block: 'Block',
+  Mute: 'Mute',
+  Report: 'Report',
   Follow: 'Follow',
   Favorite: 'Favorite',
   Chat: 'Chat',
@@ -142,6 +145,41 @@ export const ShareScalarFieldEnum = {
 } as const
 
 export type ShareScalarFieldEnum = (typeof ShareScalarFieldEnum)[keyof typeof ShareScalarFieldEnum]
+
+
+export const BlockScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  blockedId: 'blockedId'
+} as const
+
+export type BlockScalarFieldEnum = (typeof BlockScalarFieldEnum)[keyof typeof BlockScalarFieldEnum]
+
+
+export const MuteScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  mutedId: 'mutedId'
+} as const
+
+export type MuteScalarFieldEnum = (typeof MuteScalarFieldEnum)[keyof typeof MuteScalarFieldEnum]
+
+
+export const ReportScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  reporterId: 'reporterId',
+  targetUserId: 'targetUserId',
+  postId: 'postId',
+  commentId: 'commentId',
+  messageId: 'messageId',
+  reason: 'reason',
+  details: 'details'
+} as const
+
+export type ReportScalarFieldEnum = (typeof ReportScalarFieldEnum)[keyof typeof ReportScalarFieldEnum]
 
 
 export const FollowScalarFieldEnum = {

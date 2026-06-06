@@ -43,6 +43,21 @@ export type Comment = Prisma.CommentModel
  */
 export type Share = Prisma.ShareModel
 /**
+ * Model Block
+ * 
+ */
+export type Block = Prisma.BlockModel
+/**
+ * Model Mute
+ * 
+ */
+export type Mute = Prisma.MuteModel
+/**
+ * Model Report
+ * 
+ */
+export type Report = Prisma.ReportModel
+/**
  * Model Follow
  * 
  */

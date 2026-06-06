@@ -6,6 +6,7 @@ import postRouter from './post';
 import followRouter from './follow';
 import chatRouter from './chats';
 import favoriteRouter from './favorite';
+import privacyRouter from './privacy';
 
 // Register Routes Paths.
 export const registerRoutes = (app: Express) => {
@@ -16,4 +17,5 @@ export const registerRoutes = (app: Express) => {
     app.use('/post', postRouter);
     app.use('/follow', followRouter);
     app.use('/favorites', favoriteRouter);
+    app.use('/privacy', privacyRouter);
 };

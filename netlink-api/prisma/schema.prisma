@@ -34,7 +34,13 @@ model User {
   chatHides           ChatHidden[]            @relation("userChatHides")
   notifications       Notification[]
   sentNotifications   Notification[]          @relation("NotificationFromUser")
-  sentMentions        Mention[]               @relation("MentionFromUser")
+  sentMentions        Mention[]               @relation("MentionFromUser")  
+  blocker             Block[]                 @relation("userBlocking")
+  blocked             Block[]                 @relation("userBlocked")
+  muter               Mute[]                  @relation("UserMuting")
+  muted               Mute[]                  @relation("UserMuted")
+  reporters           Report[]                @relation("UserReporter")
+  reporteds           Report[]                @relation("UserReport")
   
   visiblePosts        Post[]                  @relation("SpecificVisibility")
 
@@ -71,12 +77,13 @@ model Post {
   // Relations
   author          User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId        String
-  specificTo      User[]           @relation("SpecificVisibility")
+  specificTo      User[]           @relation("SpecificVisibility")  
   likes           Like[]
   comments        Comment[]
   shares          Share[]
   mentions        Mention[]
-  notifications    Notification[]
+  notifications   Notification[]
+  reports         Report[]
 }
 
 model Like {
@@ -105,7 +112,8 @@ model Comment {
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
   
-  notifications Notification[]
+  notifications      Notification[]
+  reports            Report[]
 }
 
 model Share {
@@ -121,6 +129,57 @@ model Share {
   mentions        Mention[]
 
   @@unique([userId, postId])
+}
+
+model Block {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+
+  // USER BLOCKER
+  user          User      @relation("userBlocking", fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+
+  // USER BEING BLOCKED
+  blocked       User      @relation("userBlocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  blockedId     String
+
+  @@unique([userId, blockedId])
+}
+
+model Mute {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+
+  userId        String
+  user          User      @relation("UserMuting", fields: [userId], references: [id], onDelete: Cascade)
+
+  mutedId       String
+  muted         User      @relation("UserMuted", fields: [mutedId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mutedId])
+}
+
+model Report {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+
+  reporterId    String
+  reporter      User      @relation("UserReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  targetUserId  String?
+  targetUser    User?     @relation("UserReport", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  postId        String?
+  post          Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  commentId     String?
+  comment       Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  messageId     String?
+  message       Message?  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  reason        String
+  details       String?
 }
 
 model Follow {
@@ -197,6 +256,7 @@ model Message {
   senderId      String
 
   notifications   Notification[]
+  reports         Report[]
 }
 
 model Notification {
