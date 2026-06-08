@@ -353,6 +353,11 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
 
         const followingIds = following.map(f => f.followingId);
 
+        const blocked = await prisma.block.findMany({
+            where: { userId: currentUserId },
+            select: { blockedId: true }
+        });
+
         // ONLY FILTER BY PUBLIC POSTS FOR NOW..
         // FILTER POSTS FROM USER THAT HAS PRIVACY MODE ENABLED (TRUE) AND IS NOT FOLLOWED BY CURRENT USER (FALSE)
         const where: any = {
@@ -369,6 +374,9 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                         { authorId: { in: followingIds } }
                     ]
                 }
+            ],
+            NOT: [
+                { authorId: { in: blocked.map(b => b.blockedId) } }
             ]
         };
 
@@ -429,9 +437,21 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 },
                 _count: {
                     select: {
-                        comments: true,
-                        likes: true,
-                        shares: true
+                        comments: {
+                            where: {
+                                authorId: { notIn: blocked.map(b => b.blockedId) }
+                            }
+                        },
+                        likes: {
+                            where: {
+                                userId: { notIn: blocked.map(b => b.blockedId) }
+                            }
+                        },
+                        shares: {
+                            where: {
+                                userId: { notIn: blocked.map(b => b.blockedId) }
+                            }
+                        }
                     }
                 },
                 mentions: {
@@ -521,9 +541,21 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                         },
                         _count: {
                             select: {
-                                comments: true,
-                                likes: true,
-                                shares: true
+                                comments: {
+                                    where: {
+                                        authorId: { notIn: blocked.map(b => b.blockedId) }
+                                    }
+                                },
+                                likes: {
+                                    where: {
+                                        userId: { notIn: blocked.map(b => b.blockedId) }
+                                    }
+                                },
+                                shares: {
+                                    where: {
+                                        userId: { notIn: blocked.map(b => b.blockedId) }
+                                    }
+                                }
                             }
                         },
                         mentions: {
@@ -625,6 +657,24 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
 
         const followingIds = following.map(f => f.followingId);
 
+        const blocked = await prisma.block.findMany({
+            where: {
+                OR: [
+                    { userId: currentUserId },
+                    { blockedId: currentUserId }
+                ]
+            },
+            select: {
+                blockedId: true,
+                userId: true
+            }
+        });
+
+        let blockedIds = blocked.map(b => b.blockedId);
+        blockedIds.push(...blocked.map(b => b.userId));
+
+        const blockedComments = blockedIds.filter(id => id !== currentUserId);
+
         // FILTER POSTS FROM USER THAT HAS PRIVACY MODE ENABLED (TRUE) AND IS NOT FOLLOWED BY CURRENT USER (FALSE)
         const privacyFilter = followingIds.length > 0 ? {
             OR: [
@@ -701,11 +751,23 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                     },
                     _count: {
                         select: {
-                            comments: true,
-                            likes: true,
-                            shares: true
+                            comments: {
+                                where: {
+                                    authorId: { notIn: blockedComments }
+                                }
+                            },
+                            likes: {
+                                where: {
+                                    userId: { notIn: blocked.map(b => b.blockedId) }
+                                }
+                            },
+                            shares: {
+                                where: {
+                                    userId: { notIn: blocked.map(b => b.blockedId) }
+                                }
+                            }
                         }
-                    }
+                    },
                 }
             }),
 
@@ -752,11 +814,23 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                             },
                             _count: {
                                 select: {
-                                    comments: true,
-                                    likes: true,
-                                    shares: true
+                                    comments: {
+                                        where: {
+                                            authorId: { notIn: blockedComments }
+                                        }
+                                    },
+                                    likes: {
+                                        where: {
+                                            userId: { notIn: blocked.map(b => b.blockedId) }
+                                        }
+                                    },
+                                    shares: {
+                                        where: {
+                                            userId: { notIn: blocked.map(b => b.blockedId) }
+                                        }
+                                    }
                                 }
-                            }
+                            },
                         }
                     },
                     user: true,
@@ -866,10 +940,31 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
 
         const followingIds = following.map(f => f.followingId);
 
+        const blocked = await prisma.block.findMany({
+            where: {
+                OR: [
+                    { userId: currentUserId },
+                    { blockedId: currentUserId }
+                ]
+            },
+            select: {
+                blockedId: true,
+                userId: true
+            }
+        });
+
+        let blockedIds = blocked.map(b => b.blockedId);
+        blockedIds.push(...blocked.map(b => b.userId));
+
+        const blockedComments = blockedIds.filter(id => id !== currentUserId);
+
         const visibilityFilter = {
             OR: [
                 { author: { privacyMode: false } },
                 { authorId: { in: followingIds } }
+            ],
+            NOT: [
+                { authorId: { in: blocked.map(b => b.blockedId) } }
             ]
         };
 
@@ -915,9 +1010,21 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                     },
                     _count: {
                         select: {
-                            comments: true,
-                            likes: true,
-                            shares: true
+                            comments: {
+                                where: {
+                                    authorId: { notIn: blockedComments }
+                                }
+                            },
+                            likes: {
+                                where: {
+                                    userId: { notIn: blockedComments }
+                                }
+                            },
+                            shares: {
+                                where: {
+                                    userId: { notIn: blockedComments }
+                                }
+                            },
                         }
                     },
                     mentions: {
@@ -989,9 +1096,21 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                             },
                             _count: {
                                 select: {
-                                    comments: true,
-                                    likes: true,
-                                    shares: true
+                                    comments: {
+                                        where: {
+                                            authorId: { notIn: blockedComments }
+                                        }
+                                    },
+                                    likes: {
+                                        where: {
+                                            userId: { notIn: blockedComments }
+                                        }
+                                    },
+                                    shares: {
+                                        where: {
+                                            userId: { notIn: blockedComments }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1104,6 +1223,24 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             return res.json([]);
         }
 
+        const blocked = await prisma.block.findMany({
+            where: {
+                OR: [
+                    { userId: currentUserId },
+                    { blockedId: currentUserId }
+                ]
+            },
+            select: {
+                blockedId: true,
+                userId: true
+            }
+        });
+
+        let blockedIds = blocked.map(b => b.blockedId);
+        blockedIds.push(...blocked.map(b => b.userId));
+
+        const blockedComments = blockedIds.filter(id => id !== currentUserId);
+
         const cursorDate = cursor ? decodeCursor(cursor as string) : undefined;
         const overFetch = take * 2;
 
@@ -1150,9 +1287,21 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                     },
                     _count: {
                         select: {
-                            comments: true,
-                            likes: true,
-                            shares: true
+                            comments: {
+                                where: {
+                                    authorId: { notIn: blockedComments }
+                                }
+                            },
+                            likes: {
+                                where: {
+                                    userId: { notIn: blockedComments }
+                                }
+                            },
+                            shares: {
+                                where: {
+                                    userId: { notIn: blockedComments }
+                                }
+                            }
                         }
                     },
                     mentions: {
@@ -1200,9 +1349,21 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                             },
                             _count: {
                                 select: {
-                                    comments: true,
-                                    likes: true,
-                                    shares: true
+                                    comments: {
+                                        where: {
+                                            authorId: { notIn: blockedComments }
+                                        }
+                                    },
+                                    likes: {
+                                        where: {
+                                            userId: { notIn: blockedComments }
+                                        }
+                                    },
+                                    shares: {
+                                        where: {
+                                            userId: { notIn: blockedComments }
+                                        }
+                                    }
                                 }
                             },
                             mentions: {

@@ -54,6 +54,21 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
                         imageUrl: true,
                         createdAt: true,
                     }
+                },
+
+                blocked: {
+                    select: {
+                        id: true,
+                        blockedId: true
+                    }
+                },
+
+                // RESTRICTED
+                muted: {
+                    select: {
+                        id: true,
+                        mutedId: true
+                    }
                 }
             }
         });
@@ -61,6 +76,19 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+
+        // BLOCKED USER
+        // CHECK IF THE USER HAS BLOCKED BY THE CURRENT USER | RETURN TRUE/FALSE
+        const block = await prisma.block.findFirst({
+            where: {
+                blockedId: userId,
+                userId: currentUserId
+            },
+            select: {
+                id: true,
+                blockedId: true,
+            }
+        });
 
         res.json({
             id: user.id,
@@ -83,6 +111,12 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
             // FOLLOWING
             followers: user.following.map(f => f.followerId),
             isFollowedByMe: currentUserId ? user.following.some(f => f.followerId === currentUserId) : false,
+
+            // BLOCKED USER            
+            isBlockedByMe: user.blocked.some(b => b.blockedId === userId) ? true : false,
+
+            // RESTRICTED USER
+            isRestrictedByMe: user.muted.some(m => m.mutedId === userId) ? true : false
         });
     } catch (error) {
         next(`Error fetching user profile: ${error}`);
@@ -207,16 +241,32 @@ export async function getListOfUsers(req: Request, res: Response, next: NextFunc
     try {
         const query = req.query.query as string;
 
-        const userId = (req as any).user!.id;
+        const currentUserId = (req as any).user!.id;
 
         if (!query || query.trim() === '') {
             // RETURN EMPTY ARRAY LIST IF NO QUERY PROVIDED
             return res.json([]);
         }
 
+        const blocked = await prisma.block.findMany({
+            where: {
+                OR: [
+                    { userId: currentUserId },
+                    { blockedId: currentUserId }
+                ]
+            },
+            select: {
+                blockedId: true,
+                userId: true
+            }
+        });
+
+        let blockedIds = blocked.map(b => b.blockedId);        
+        blockedIds.push(...blocked.map(b => b.userId));        
+
         const users = await prisma.user.findMany({
             where: {
-                id: { not: userId },
+                id: { notIn: [currentUserId, ...blockedIds] },
                 OR: [
                     { username: { contains: query, mode: 'insensitive' } },
                     { name: { contains: query, mode: 'insensitive' } }
@@ -239,23 +289,43 @@ export async function getListOfUsers(req: Request, res: Response, next: NextFunc
 
 export async function getSuggestedUsers(req: Request, res: Response, next: NextFunction) {
     try {
-        const userId = (req as any).user?.id;
+        const currentUserId = (req as any).user?.id;
 
-        if (!userId || typeof userId !== 'string') {
+        if (!currentUserId || typeof currentUserId !== 'string') {
             return res.status(401).json({ error: 'Unauthorized.' });
         }
 
         const following = await prisma.follow.findMany({
-            where: { followerId: userId },
+            where: { followerId: currentUserId },
             select: { followingId: true }
         });
 
         const followingIds = following.map(f => f.followingId);
 
+        const blocked = await prisma.block.findMany({
+            where: {
+                OR: [
+                    { userId: currentUserId },
+                    { blockedId: currentUserId }
+                ]
+            },
+            select: {
+                blockedId: true,
+                userId: true
+            }
+        });
+
+        let blockedIds = blocked.map(b => b.blockedId);        
+        blockedIds.push(...blocked.map(b => b.userId));
+
         const usersToFollow = await prisma.user.findMany({
             where: {
                 id: {
-                    notIn: [...followingIds, userId]
+                    notIn: [
+                        currentUserId,
+                        ...followingIds,
+                        ...blockedIds,
+                    ]
                 }
             },
             select: {

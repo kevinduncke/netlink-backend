@@ -22,8 +22,8 @@ async function cleanUpBlocking(currentUserId: string, blockedUserId: string) {
     await prisma.favorite.deleteMany({
         where: {
             OR: [
-                { userId: currentUserId, post: { authorId: blockedUserId } },
-                { userId: blockedUserId, post: { authorId: currentUserId } }
+                { userId: currentUserId, favoriteId: blockedUserId },
+                { userId: blockedUserId, favoriteId: currentUserId }
             ]
         }
     });
@@ -79,8 +79,8 @@ async function cleanUpBlocking(currentUserId: string, blockedUserId: string) {
     await prisma.comment.deleteMany({
         where: {
             OR: [
-                { userId: currentUserId, post: { authorId: blockedUserId } },
-                { userId: blockedUserId, post: { authorId: currentUserId } }
+                { authorId: currentUserId, post: { authorId: blockedUserId } },
+                { authorId: blockedUserId, post: { authorId: currentUserId } }
             ]
         }
     });

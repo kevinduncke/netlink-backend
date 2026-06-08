@@ -43,13 +43,13 @@ export async function createComment(req: Request, res: Response, next: NextFunct
 
         if (content.length > 500) {
             return res.status(400).json({ error: 'Comment cannot exceed 500 characters.' });
-        }       
-        
+        }
+
         const post = await resolveCommentTarget(postId);
 
         if (!post) {
             return res.status(404).json({ error: 'Post not found.' });
-        }        
+        }
 
         const comment = await prisma.comment.create({
             data: {
@@ -94,10 +94,27 @@ export async function createComment(req: Request, res: Response, next: NextFunct
 export async function getAllPostComments(req: Request, res: Response, next: NextFunction) {
     try {
         const postId = req.params.id;
+        const currentUserId = (req as any).user!.id;
 
         if (!postId || typeof postId !== 'string') {
             return res.status(400).json({ error: 'Invalid post ID.' });
         }
+
+        const blocked = await prisma.block.findMany({
+            where: {
+                OR: [
+                    { userId: currentUserId },
+                    { blockedId: currentUserId }
+                ]
+            },
+            select: {
+                blockedId: true,
+                userId: true
+            }
+        });
+
+        let blockedIds = blocked.map(b => b.blockedId);
+        blockedIds.push(...blocked.map(b => b.userId));
 
         const post = await prisma.post.findUnique({
             where: { id: postId },
@@ -125,8 +142,13 @@ export async function getAllPostComments(req: Request, res: Response, next: Next
 
         const resolvedPostId = post?.id ?? repost?.postId ?? postId;
 
+        const blockedComments = blockedIds.filter(id => id !== currentUserId);
+
         const comments = await prisma.comment.findMany({
-            where: { postId: resolvedPostId },
+            where: { 
+                postId: resolvedPostId,                
+                authorId: { notIn: blockedComments }
+            },
             include: {
                 author: {
                     select: {

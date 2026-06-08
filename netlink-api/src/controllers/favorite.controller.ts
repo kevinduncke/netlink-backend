@@ -232,9 +232,25 @@ export async function searchFavoriteUsers(req: Request, res: Response, next: Nex
 
         const favoriteIds = favorites.map(f => f.favoriteId);
 
+        const blocked = await prisma.block.findMany({
+            where: {
+                OR: [
+                    { userId: currentUserId },
+                    { blockedId: currentUserId }
+                ]
+            },
+            select: {
+                blockedId: true,
+                userId: true
+            }
+        });
+
+        let blockedIds = blocked.map(b => b.blockedId);        
+        blockedIds.push(...blocked.map(b => b.userId));  
+
         const users = await prisma.user.findMany({
             where: {
-                id: { not: currentUserId },
+                id: { notIn: [currentUserId, ...blockedIds] },
                 OR: [
                     { name: { contains: query, mode: 'insensitive' } },
                     { username: { contains: query, mode: 'insensitive' } }
