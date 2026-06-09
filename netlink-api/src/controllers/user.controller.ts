@@ -55,21 +55,6 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
                         createdAt: true,
                     }
                 },
-
-                blocked: {
-                    select: {
-                        id: true,
-                        blockedId: true
-                    }
-                },
-
-                // RESTRICTED
-                muted: {
-                    select: {
-                        id: true,
-                        mutedId: true
-                    }
-                }
             }
         });
 
@@ -87,6 +72,31 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
             select: {
                 id: true,
                 blockedId: true,
+                userId: true
+            }
+        });
+
+        const restrictedUser = await prisma.mute.findFirst({
+            where: {
+                userId: userId,
+                mutedId: currentUserId
+            },
+            select: {
+                id: true,
+                mutedId: true,
+                userId: true
+            }
+        });
+
+        const muted = await prisma.mute.findFirst({
+            where: {
+                mutedId: userId,
+                userId: currentUserId
+            },
+            select: {
+                id: true,
+                mutedId: true,
+                userId: true
             }
         });
 
@@ -112,11 +122,14 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
             followers: user.following.map(f => f.followerId),
             isFollowedByMe: currentUserId ? user.following.some(f => f.followerId === currentUserId) : false,
 
-            // BLOCKED USER            
-            isBlockedByMe: user.blocked.some(b => b.blockedId === userId) ? true : false,
+            // BLOCKED USER
+            isBlockedByMe: block?.userId === currentUserId && block?.blockedId === userId,
 
             // RESTRICTED USER
-            isRestrictedByMe: user.muted.some(m => m.mutedId === userId) ? true : false
+            isRestrictedByMe: muted?.userId === currentUserId && muted?.mutedId === userId,
+
+            // THIS USER RESTRICTED ME
+            hasRestrictedMe: restrictedUser?.mutedId === currentUserId && restrictedUser?.userId === userId,
         });
     } catch (error) {
         next(`Error fetching user profile: ${error}`);
@@ -261,12 +274,21 @@ export async function getListOfUsers(req: Request, res: Response, next: NextFunc
             }
         });
 
-        let blockedIds = blocked.map(b => b.blockedId);        
-        blockedIds.push(...blocked.map(b => b.userId));        
+        let blockedIds = blocked.map(b => b.blockedId);
+        blockedIds.push(...blocked.map(b => b.userId));
+
+        const restrictedUser = await prisma.mute.findMany({
+            where: {
+                mutedId: currentUserId
+            },
+            select: {
+                userId: true
+            }
+        })
 
         const users = await prisma.user.findMany({
             where: {
-                id: { notIn: [currentUserId, ...blockedIds] },
+                id: { notIn: [currentUserId, ...blockedIds, ...restrictedUser.map(r => r.userId)] },
                 OR: [
                     { username: { contains: query, mode: 'insensitive' } },
                     { name: { contains: query, mode: 'insensitive' } }
@@ -315,7 +337,7 @@ export async function getSuggestedUsers(req: Request, res: Response, next: NextF
             }
         });
 
-        let blockedIds = blocked.map(b => b.blockedId);        
+        let blockedIds = blocked.map(b => b.blockedId);
         blockedIds.push(...blocked.map(b => b.userId));
 
         const usersToFollow = await prisma.user.findMany({

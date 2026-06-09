@@ -358,6 +358,16 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             select: { blockedId: true }
         });
 
+        const restrictedUser = await prisma.mute.findFirst({
+            where: {
+                mutedId: currentUserId
+            },
+            select: {
+                mutedId: true,
+                userId: true
+            }
+        });        
+
         // ONLY FILTER BY PUBLIC POSTS FOR NOW..
         // FILTER POSTS FROM USER THAT HAS PRIVACY MODE ENABLED (TRUE) AND IS NOT FOLLOWED BY CURRENT USER (FALSE)
         const where: any = {
@@ -479,6 +489,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             repostedByMe: false,
             repostedAt: null,
             feedDate: post.createdAt,
+            userRestrictedMe: post.author.id === restrictedUser?.userId,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -588,6 +599,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             repostedAt: r.createdAt,
             repostedByMe: r.post.author.id === currentUserId,
             feedDate: r.createdAt,
+            userRestrictedMe: r.post.author.id === restrictedUser?.userId,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -630,7 +642,7 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
 export async function getUserPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user?.id;
-        const userId = req.params.id;
+        const clientId = req.params.id;
         const { cursor, limit = '10' } = req.query;
         const take = parseInt(limit as string, 10);
 
@@ -640,9 +652,9 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             });
         };
 
-        if (!userId || typeof userId !== 'string') {
+        if (!clientId || typeof clientId !== 'string') {
             return res.status(400).json({
-                error: 'Valid user ID is required.'
+                error: 'Valid client ID is required.'
             });
         };
 
@@ -675,6 +687,19 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
 
         const blockedComments = blockedIds.filter(id => id !== currentUserId);
 
+        const restrictedUser = await prisma.mute.findUnique({
+            where: {
+                userId_mutedId: {
+                    userId: clientId,
+                    mutedId: currentUserId
+                }
+            },
+            select: {
+                mutedId: true,
+                userId: true
+            }
+        });
+
         // FILTER POSTS FROM USER THAT HAS PRIVACY MODE ENABLED (TRUE) AND IS NOT FOLLOWED BY CURRENT USER (FALSE)
         const privacyFilter = followingIds.length > 0 ? {
             OR: [
@@ -701,11 +726,11 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                     AND: [privacyFilter],
                     OR: [
                         {
-                            authorId: userId,
+                            authorId: clientId,
                             visibility: { in: ['PUBLIC', 'FOLLOWERS'] },
                         },
                         {
-                            authorId: userId,
+                            authorId: clientId,
                             visibility: 'SPECIFIC',
                             specificTo: {
                                 some: {
@@ -773,7 +798,7 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
 
             prisma.share.findMany({
                 where: {
-                    userId: userId,
+                    userId: clientId,
                     user: repostPrivacyFilter,
                     ...(cursorDate ? { createdAt: { lt: cursorDate } } : {})
                 },
@@ -866,7 +891,8 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                 likes: post._count.likes,
                 shares: post._count.shares
             },
-            postsCount: posts.length
+            postsCount: posts.length,
+            userRestrictedMe: post.author.id === restrictedUser?.userId
         }));
 
         const mappedReposts = reposts.map(r => ({
@@ -905,7 +931,8 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                 username: r.user.username,
                 avatarUrl: r.user.avatarUrl,
                 bio: r.user.bio,
-            }
+            },
+            userRestrictedMe: r.post.author.id === restrictedUser?.userId          
         }));
 
         const merged = [...mappedPosts, ...mappedReposts].sort((a, b) => new Date(b.feedDate).getTime() - new Date(a.feedDate).getTime()).slice(0, take);
@@ -957,6 +984,16 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
         blockedIds.push(...blocked.map(b => b.userId));
 
         const blockedComments = blockedIds.filter(id => id !== currentUserId);
+
+        const restrictedUser = await prisma.mute.findFirst({
+            where: {
+                mutedId: currentUserId
+            },
+            select: {
+                mutedId: true,
+                userId: true
+            }
+        });           
 
         const visibilityFilter = {
             OR: [
@@ -1130,6 +1167,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             isRepost: false,
             repostedByMe: false,
             repostedAt: null,
+            userRestrictedMe: post.author.id === restrictedUser?.userId,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -1164,6 +1202,7 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             isRepost: true,
             repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
+            userRestrictedMe: r.post.author.id === restrictedUser?.userId,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -1240,6 +1279,16 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
         blockedIds.push(...blocked.map(b => b.userId));
 
         const blockedComments = blockedIds.filter(id => id !== currentUserId);
+
+        const restrictedUser = await prisma.mute.findFirst({
+            where: {
+                mutedId: currentUserId
+            },
+            select: {
+                mutedId: true,
+                userId: true
+            }
+        });         
 
         const cursorDate = cursor ? decodeCursor(cursor as string) : undefined;
         const overFetch = take * 2;
@@ -1395,6 +1444,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             repostedByMe: false,
             repostedAt: null,
             feedDate: post.createdAt,
+            userRestrictedMe: post.author.id === restrictedUser?.userId,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -1428,6 +1478,7 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
             feedDate: r.createdAt,
+            userRestrictedMe: r.post.author.id === restrictedUser?.userId,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,

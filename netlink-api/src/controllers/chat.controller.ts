@@ -42,6 +42,15 @@ export async function createChat(req: Request, res: Response, next: NextFunction
             return res.status(401).json({ error: 'Authentication required.' });
         }
 
+        const restrictedUser = await prisma.mute.findUnique({
+            where: {
+                userId_mutedId: {
+                    userId: userId,
+                    mutedId: currentUserId
+                }
+            }
+        })
+
         const chat = await prisma.chat.create({
             data: {
                 participants: {
@@ -101,19 +110,19 @@ export async function createChat(req: Request, res: Response, next: NextFunction
 // GET ALL CHATS
 export async function getUserChats(req: Request, res: Response, next: NextFunction) {
     try {
-        const userId = getAuthenticatedUserId(req);
+        const currentUserId = getAuthenticatedUserId(req);
 
-        if (!userId) {
+        if (!currentUserId) {
             return res.status(401).json({ error: 'Authentication required.' });
         }
 
         const chats = await prisma.chat.findMany({
             where: {
                 participants: {
-                    some: { userId }
+                    some: { userId: currentUserId }
                 },
                 hiddenBy: {
-                    none: { userId }
+                    none: { userId: currentUserId }
                 }
             },
             include: {
@@ -142,7 +151,7 @@ export async function getUserChats(req: Request, res: Response, next: NextFuncti
         const formattedChats = chats
             .map(chat => {
                 const receiverParticipant = chat.participants.find(
-                    participant => participant.userId !== userId);
+                    participant => participant.userId !== currentUserId);
 
                 if (!receiverParticipant) {
                     return null;
@@ -245,7 +254,7 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
         const chatId = Array.isArray(rawChatId) ? rawChatId[0] : rawChatId;
         const userId = getAuthenticatedUserId(req);
         const { cursor, limit = '20' } = req.query;
-        const take = parseInt(limit as string, 10);    
+        const take = parseInt(limit as string, 10);
 
         if (!chatId) {
             return res.status(400).json({ error: 'Chat ID is required.' });
@@ -307,8 +316,8 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
         });
 
         const receiver = receiverParticipant.user;
-        const cursorDate = cursor ? decodeCursor(cursor as string) : undefined; 
-        
+        const cursorDate = cursor ? decodeCursor(cursor as string) : undefined;
+
         // FETCH MESSAGES
         const rawMessages = await prisma.message.findMany({
             where: {
@@ -320,7 +329,7 @@ export async function getChatMessages(req: Request, res: Response, next: NextFun
         });
 
         const messages = rawMessages.reverse(); // REVERSE TO RESTORE CHRONOLOGICAL ORDER #2
-        
+
         // OLDERST MESSAGES
         const oldestMessage = messages[0];
         const nextCursor = rawMessages.length === take && oldestMessage ? encodeCursor(oldestMessage.createdAt) : null;
