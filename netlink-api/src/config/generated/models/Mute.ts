@@ -1207,11 +1207,6 @@ export type MuteFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Mutes.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of Mutes.
-   */
   distinct?: Prisma.MuteScalarFieldEnum | Prisma.MuteScalarFieldEnum[]
 }
 

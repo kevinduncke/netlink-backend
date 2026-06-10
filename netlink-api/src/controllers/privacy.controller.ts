@@ -237,6 +237,7 @@ export async function reportUser(req: Request, res: Response, next: NextFunction
                 reporterId,
                 targetUserId,
                 postId,
+                commentId,
                 messageId,
                 reason,
                 details
