@@ -366,7 +366,18 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                 mutedId: true,
                 userId: true
             }
-        });        
+        });
+
+        const muted = await prisma.mute.findMany({
+            where: {
+                userId: currentUserId
+            },
+            select: {
+                id: true,
+                mutedId: true,
+                userId: true
+            }
+        });
 
         // ONLY FILTER BY PUBLIC POSTS FOR NOW..
         // FILTER POSTS FROM USER THAT HAS PRIVACY MODE ENABLED (TRUE) AND IS NOT FOLLOWED BY CURRENT USER (FALSE)
@@ -438,6 +449,13 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                         followers: {
                             where: { followerId: currentUserId },
                             select: { id: true }
+                        },
+                        following: {
+                            where: { followingId: currentUserId },
+                            select: {
+                                id: true,
+                                followerId: true,
+                            }
                         }
                     }
                 },
@@ -489,7 +507,9 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             repostedByMe: false,
             repostedAt: null,
             feedDate: post.createdAt,
+            isRestrictedByMe: muted.some(m => m.mutedId === post.author.id) && muted.some(m => m.userId === currentUserId),
             userRestrictedMe: post.author.id === restrictedUser?.userId,
+            isFollowedByMe: currentUserId ? post.author.following.some(f => f.followerId === currentUserId) : false,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -544,6 +564,13 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
                                 name: true,
                                 username: true,
                                 avatarUrl: true,
+                                following: {
+                                    where: { followingId: currentUserId },
+                                    select: {
+                                        id: true,
+                                        followerId: true,
+                                    }
+                                }
                             }
                         },
                         likes: {
@@ -599,7 +626,9 @@ export async function searchPosts(req: Request, res: Response, next: NextFunctio
             repostedAt: r.createdAt,
             repostedByMe: r.post.author.id === currentUserId,
             feedDate: r.createdAt,
+            isRestrictedByMe: muted.some(m => m.mutedId === r.post.author.id) && muted.some(m => m.userId === currentUserId),
             userRestrictedMe: r.post.author.id === restrictedUser?.userId,
+            isFollowedByMe: currentUserId ? r.post.author.following.some(f => f.followerId === currentUserId) : false,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -700,6 +729,17 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
             }
         });
 
+        const muted = await prisma.mute.findMany({
+            where: {
+                userId: currentUserId
+            },
+            select: {
+                id: true,
+                mutedId: true,
+                userId: true
+            }
+        });
+
         // FILTER POSTS FROM USER THAT HAS PRIVACY MODE ENABLED (TRUE) AND IS NOT FOLLOWED BY CURRENT USER (FALSE)
         const privacyFilter = followingIds.length > 0 ? {
             OR: [
@@ -755,7 +795,14 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                             id: true,
                             name: true,
                             username: true,
-                            avatarUrl: true
+                            avatarUrl: true,
+                            following: {
+                                where: { followingId: currentUserId },
+                                select: {
+                                    id: true,
+                                    followerId: true,
+                                }
+                            }
                         }
                     },
                     likes: {
@@ -819,7 +866,14 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                                     id: true,
                                     name: true,
                                     username: true,
-                                    avatarUrl: true
+                                    avatarUrl: true,
+                                    following: {
+                                        where: { followingId: currentUserId },
+                                        select: {
+                                            id: true,
+                                            followerId: true,
+                                        }
+                                    }
                                 }
                             },
                             likes: {
@@ -892,7 +946,9 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                 shares: post._count.shares
             },
             postsCount: posts.length,
-            userRestrictedMe: post.author.id === restrictedUser?.userId
+            isRestrictedByMe: muted.some(m => m.mutedId === post.author.id) && muted.some(m => m.userId === currentUserId),
+            userRestrictedMe: post.author.id === restrictedUser?.userId,
+            isFollowedByMe: currentUserId ? post.author.following.some(f => f.followerId === currentUserId) : false,
         }));
 
         const mappedReposts = reposts.map(r => ({
@@ -932,7 +988,9 @@ export async function getUserPosts(req: Request, res: Response, next: NextFuncti
                 avatarUrl: r.user.avatarUrl,
                 bio: r.user.bio,
             },
-            userRestrictedMe: r.post.author.id === restrictedUser?.userId          
+            isRestrictedByMe: muted.some(m => m.mutedId === r.post.author.id) && muted.some(m => m.userId === currentUserId),
+            userRestrictedMe: r.post.author.id === restrictedUser?.userId,
+            isFollowedByMe: currentUserId ? r.post.author.following.some(f => f.followerId === currentUserId) : false,
         }));
 
         const merged = [...mappedPosts, ...mappedReposts].sort((a, b) => new Date(b.feedDate).getTime() - new Date(a.feedDate).getTime()).slice(0, take);
@@ -993,7 +1051,18 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
                 mutedId: true,
                 userId: true
             }
-        });           
+        });
+
+        const muted = await prisma.mute.findMany({
+            where: {
+                userId: currentUserId
+            },
+            select: {
+                id: true,
+                mutedId: true,
+                userId: true
+            }
+        });
 
         const visibilityFilter = {
             OR: [
@@ -1167,7 +1236,9 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             isRepost: false,
             repostedByMe: false,
             repostedAt: null,
+            isRestrictedByMe: muted.some(m => m.mutedId === post.author.id) && muted.some(m => m.userId === currentUserId),
             userRestrictedMe: post.author.id === restrictedUser?.userId,
+            isFollowedByMe: currentUserId ? post.author.following.some(f => f.followerId === currentUserId) : false,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -1202,7 +1273,9 @@ export async function getAllPosts(req: Request, res: Response, next: NextFunctio
             isRepost: true,
             repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
+            isRestrictedByMe: muted.some(m => m.mutedId === r.post.author.id) && muted.some(m => m.userId === currentUserId),
             userRestrictedMe: r.post.author.id === restrictedUser?.userId,
+            isFollowedByMe: currentUserId ? r.post.author.following.some(f => f.followerId === currentUserId) : false,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
@@ -1288,7 +1361,18 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                 mutedId: true,
                 userId: true
             }
-        });         
+        });
+
+        const muted = await prisma.mute.findMany({
+            where: {
+                userId: currentUserId
+            },
+            select: {
+                id: true,
+                mutedId: true,
+                userId: true
+            }
+        });
 
         const cursorDate = cursor ? decodeCursor(cursor as string) : undefined;
         const overFetch = take * 2;
@@ -1327,7 +1411,14 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                             id: true,
                             name: true,
                             username: true,
-                            avatarUrl: true
+                            avatarUrl: true,
+                            following: {
+                                where: { followingId: currentUserId },
+                                select: {
+                                    id: true,
+                                    followerId: true,
+                                }
+                            }
                         }
                     },
                     likes: {
@@ -1389,7 +1480,14 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
                                     id: true,
                                     name: true,
                                     username: true,
-                                    avatarUrl: true
+                                    avatarUrl: true,
+                                    following: {
+                                        where: { followingId: currentUserId },
+                                        select: {
+                                            id: true,
+                                            followerId: true,
+                                        }
+                                    }
                                 }
                             },
                             likes: {
@@ -1444,7 +1542,9 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             repostedByMe: false,
             repostedAt: null,
             feedDate: post.createdAt,
+            isRestrictedByMe: muted.some(m => m.mutedId === post.author.id) && muted.some(m => m.userId === currentUserId),
             userRestrictedMe: post.author.id === restrictedUser?.userId,
+            isFollowedByMe: currentUserId ? post.author.following.some(f => f.followerId === currentUserId) : false,
             author: {
                 id: post.author.id,
                 name: post.author.name,
@@ -1478,7 +1578,9 @@ export async function getFollowingPosts(req: Request, res: Response, next: NextF
             repostedByMe: r.post.author.id === currentUserId,
             repostedAt: r.createdAt,
             feedDate: r.createdAt,
+            isRestrictedByMe: muted.some(m => m.mutedId === r.post.author.id) && muted.some(m => m.userId === currentUserId),
             userRestrictedMe: r.post.author.id === restrictedUser?.userId,
+            isFollowedByMe: currentUserId ? r.post.author.following.some(f => f.followerId === currentUserId) : false,
             author: {
                 id: r.post.author.id,
                 name: r.post.author.name,
