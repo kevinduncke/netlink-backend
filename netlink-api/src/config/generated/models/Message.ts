@@ -209,7 +209,6 @@ export type MessageWhereInput = {
   chat?: Prisma.XOR<Prisma.ChatScalarRelationFilter, Prisma.ChatWhereInput>
   sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   notifications?: Prisma.NotificationListRelationFilter
-  reports?: Prisma.ReportListRelationFilter
 }
 
 export type MessageOrderByWithRelationInput = {
@@ -224,7 +223,6 @@ export type MessageOrderByWithRelationInput = {
   chat?: Prisma.ChatOrderByWithRelationInput
   sender?: Prisma.UserOrderByWithRelationInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
-  reports?: Prisma.ReportOrderByRelationAggregateInput
 }
 
 export type MessageWhereUniqueInput = Prisma.AtLeast<{
@@ -242,7 +240,6 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   chat?: Prisma.XOR<Prisma.ChatScalarRelationFilter, Prisma.ChatWhereInput>
   sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   notifications?: Prisma.NotificationListRelationFilter
-  reports?: Prisma.ReportListRelationFilter
 }, "id">
 
 export type MessageOrderByWithAggregationInput = {
@@ -283,7 +280,6 @@ export type MessageCreateInput = {
   chat: Prisma.ChatCreateNestedOneWithoutMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutMessagesInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutMessageInput
-  reports?: Prisma.ReportCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateInput = {
@@ -296,7 +292,6 @@ export type MessageUncheckedCreateInput = {
   chatId: string
   senderId: string
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutMessageInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUpdateInput = {
@@ -309,7 +304,6 @@ export type MessageUpdateInput = {
   chat?: Prisma.ChatUpdateOneRequiredWithoutMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutMessageNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateInput = {
@@ -322,7 +316,6 @@ export type MessageUncheckedUpdateInput = {
   chatId?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutMessageNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageCreateManyInput = {
@@ -366,11 +359,6 @@ export type MessageOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type MessageNullableScalarRelationFilter = {
-  is?: Prisma.MessageWhereInput | null
-  isNot?: Prisma.MessageWhereInput | null
-}
-
 export type MessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
@@ -402,6 +390,11 @@ export type MessageMinOrderByAggregateInput = {
   read?: Prisma.SortOrder
   chatId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
+}
+
+export type MessageNullableScalarRelationFilter = {
+  is?: Prisma.MessageWhereInput | null
+  isNot?: Prisma.MessageWhereInput | null
 }
 
 export type MessageCreateNestedManyWithoutSenderInput = {
@@ -444,22 +437,6 @@ export type MessageUncheckedUpdateManyWithoutSenderNestedInput = {
   update?: Prisma.MessageUpdateWithWhereUniqueWithoutSenderInput | Prisma.MessageUpdateWithWhereUniqueWithoutSenderInput[]
   updateMany?: Prisma.MessageUpdateManyWithWhereWithoutSenderInput | Prisma.MessageUpdateManyWithWhereWithoutSenderInput[]
   deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-}
-
-export type MessageCreateNestedOneWithoutReportsInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutReportsInput, Prisma.MessageUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutReportsInput
-  connect?: Prisma.MessageWhereUniqueInput
-}
-
-export type MessageUpdateOneWithoutReportsNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutReportsInput, Prisma.MessageUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutReportsInput
-  upsert?: Prisma.MessageUpsertWithoutReportsInput
-  disconnect?: Prisma.MessageWhereInput | boolean
-  delete?: Prisma.MessageWhereInput | boolean
-  connect?: Prisma.MessageWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.MessageUpdateToOneWithWhereWithoutReportsInput, Prisma.MessageUpdateWithoutReportsInput>, Prisma.MessageUncheckedUpdateWithoutReportsInput>
 }
 
 export type MessageCreateNestedManyWithoutChatInput = {
@@ -529,7 +506,6 @@ export type MessageCreateWithoutSenderInput = {
   read?: boolean
   chat: Prisma.ChatCreateNestedOneWithoutMessagesInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutMessageInput
-  reports?: Prisma.ReportCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateWithoutSenderInput = {
@@ -541,7 +517,6 @@ export type MessageUncheckedCreateWithoutSenderInput = {
   read?: boolean
   chatId: string
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutMessageInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageCreateOrConnectWithoutSenderInput = {
@@ -584,70 +559,6 @@ export type MessageScalarWhereInput = {
   senderId?: Prisma.StringFilter<"Message"> | string
 }
 
-export type MessageCreateWithoutReportsInput = {
-  id?: string
-  content: string
-  createdAt?: Date | string
-  sent?: boolean
-  received?: boolean
-  read?: boolean
-  chat: Prisma.ChatCreateNestedOneWithoutMessagesInput
-  sender: Prisma.UserCreateNestedOneWithoutMessagesInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutMessageInput
-}
-
-export type MessageUncheckedCreateWithoutReportsInput = {
-  id?: string
-  content: string
-  createdAt?: Date | string
-  sent?: boolean
-  received?: boolean
-  read?: boolean
-  chatId: string
-  senderId: string
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutMessageInput
-}
-
-export type MessageCreateOrConnectWithoutReportsInput = {
-  where: Prisma.MessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageCreateWithoutReportsInput, Prisma.MessageUncheckedCreateWithoutReportsInput>
-}
-
-export type MessageUpsertWithoutReportsInput = {
-  update: Prisma.XOR<Prisma.MessageUpdateWithoutReportsInput, Prisma.MessageUncheckedUpdateWithoutReportsInput>
-  create: Prisma.XOR<Prisma.MessageCreateWithoutReportsInput, Prisma.MessageUncheckedCreateWithoutReportsInput>
-  where?: Prisma.MessageWhereInput
-}
-
-export type MessageUpdateToOneWithWhereWithoutReportsInput = {
-  where?: Prisma.MessageWhereInput
-  data: Prisma.XOR<Prisma.MessageUpdateWithoutReportsInput, Prisma.MessageUncheckedUpdateWithoutReportsInput>
-}
-
-export type MessageUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  chat?: Prisma.ChatUpdateOneRequiredWithoutMessagesNestedInput
-  sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutMessageNestedInput
-}
-
-export type MessageUncheckedUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sent?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  received?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  chatId?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutMessageNestedInput
-}
-
 export type MessageCreateWithoutChatInput = {
   id?: string
   content: string
@@ -657,7 +568,6 @@ export type MessageCreateWithoutChatInput = {
   read?: boolean
   sender: Prisma.UserCreateNestedOneWithoutMessagesInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutMessageInput
-  reports?: Prisma.ReportCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateWithoutChatInput = {
@@ -669,7 +579,6 @@ export type MessageUncheckedCreateWithoutChatInput = {
   read?: boolean
   senderId: string
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutMessageInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageCreateOrConnectWithoutChatInput = {
@@ -707,7 +616,6 @@ export type MessageCreateWithoutNotificationsInput = {
   read?: boolean
   chat: Prisma.ChatCreateNestedOneWithoutMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutMessagesInput
-  reports?: Prisma.ReportCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateWithoutNotificationsInput = {
@@ -719,7 +627,6 @@ export type MessageUncheckedCreateWithoutNotificationsInput = {
   read?: boolean
   chatId: string
   senderId: string
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageCreateOrConnectWithoutNotificationsInput = {
@@ -747,7 +654,6 @@ export type MessageUpdateWithoutNotificationsInput = {
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chat?: Prisma.ChatUpdateOneRequiredWithoutMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutNotificationsInput = {
@@ -759,7 +665,6 @@ export type MessageUncheckedUpdateWithoutNotificationsInput = {
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chatId?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageCreateManySenderInput = {
@@ -781,7 +686,6 @@ export type MessageUpdateWithoutSenderInput = {
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chat?: Prisma.ChatUpdateOneRequiredWithoutMessagesNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutMessageNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutSenderInput = {
@@ -793,7 +697,6 @@ export type MessageUncheckedUpdateWithoutSenderInput = {
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   chatId?: Prisma.StringFieldUpdateOperationsInput | string
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutMessageNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateManyWithoutSenderInput = {
@@ -825,7 +728,6 @@ export type MessageUpdateWithoutChatInput = {
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutMessageNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutChatInput = {
@@ -837,7 +739,6 @@ export type MessageUncheckedUpdateWithoutChatInput = {
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutMessageNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateManyWithoutChatInput = {
@@ -857,12 +758,10 @@ export type MessageUncheckedUpdateManyWithoutChatInput = {
 
 export type MessageCountOutputType = {
   notifications: number
-  reports: number
 }
 
 export type MessageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   notifications?: boolean | MessageCountOutputTypeCountNotificationsArgs
-  reports?: boolean | MessageCountOutputTypeCountReportsArgs
 }
 
 /**
@@ -882,13 +781,6 @@ export type MessageCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime
   where?: Prisma.NotificationWhereInput
 }
 
-/**
- * MessageCountOutputType without action
- */
-export type MessageCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReportWhereInput
-}
-
 
 export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -902,7 +794,6 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   chat?: boolean | Prisma.ChatDefaultArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   notifications?: boolean | Prisma.Message$notificationsArgs<ExtArgs>
-  reports?: boolean | Prisma.Message$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.MessageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
@@ -948,7 +839,6 @@ export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   chat?: boolean | Prisma.ChatDefaultArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   notifications?: boolean | Prisma.Message$notificationsArgs<ExtArgs>
-  reports?: boolean | Prisma.Message$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.MessageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -966,7 +856,6 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     chat: Prisma.$ChatPayload<ExtArgs>
     sender: Prisma.$UserPayload<ExtArgs>
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
-    reports: Prisma.$ReportPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1374,7 +1263,6 @@ export interface Prisma__MessageClient<T, Null = never, ExtArgs extends runtime.
   chat<T extends Prisma.ChatDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatDefaultArgs<ExtArgs>>): Prisma.Prisma__ChatClient<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   sender<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   notifications<T extends Prisma.Message$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reports<T extends Prisma.Message$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1608,6 +1496,11 @@ export type MessageFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Messages.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Messages.
+   */
   distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
 }
 
@@ -1829,30 +1722,6 @@ export type Message$notificationsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
-}
-
-/**
- * Message.reports
- */
-export type Message$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Report
-   */
-  select?: Prisma.ReportSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Report
-   */
-  omit?: Prisma.ReportOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ReportInclude<ExtArgs> | null
-  where?: Prisma.ReportWhereInput
-  orderBy?: Prisma.ReportOrderByWithRelationInput | Prisma.ReportOrderByWithRelationInput[]
-  cursor?: Prisma.ReportWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
 }
 
 /**

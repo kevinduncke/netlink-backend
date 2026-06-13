@@ -1207,6 +1207,11 @@ export type BlockFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Skip the first `n` Blocks.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Blocks.
+   */
   distinct?: Prisma.BlockScalarFieldEnum | Prisma.BlockScalarFieldEnum[]
 }
 

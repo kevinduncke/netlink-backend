@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.1
- * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+ * Prisma Client JS version: 7.5.0
+ * Query Engine version: 280c870be64f457428992c43c1f6d557fab6e29e
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.1",
-  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
+  client: "7.5.0",
+  engine: "280c870be64f457428992c43c1f6d557fab6e29e"
 }
 
 /**
@@ -1729,9 +1729,8 @@ export const ReportScalarFieldEnum = {
   createdAt: 'createdAt',
   reporterId: 'reporterId',
   targetUserId: 'targetUserId',
-  postId: 'postId',
-  commentId: 'commentId',
-  messageId: 'messageId',
+  referenceId: 'referenceId',
+  type: 'type',
   reason: 'reason',
   details: 'details'
 } as const

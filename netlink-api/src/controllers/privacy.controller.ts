@@ -230,15 +230,14 @@ export async function unmuteUser(req: Request, res: Response, next: NextFunction
 export async function reportUser(req: Request, res: Response, next: NextFunction) {
     try {
         const reporterId = (req as any).user!.id;
-        const { targetUserId, postId, commentId, messageId, reason, details } = req.body;
+        const { targetUserId, referenceId, type, reason, details } = req.body;
 
         const report = await prisma.report.create({
             data: {
                 reporterId,
                 targetUserId,
-                postId,
-                commentId,
-                messageId,
+                referenceId,
+                type,
                 reason,
                 details
             }

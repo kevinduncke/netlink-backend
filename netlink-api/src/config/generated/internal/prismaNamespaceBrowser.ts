@@ -172,9 +172,8 @@ export const ReportScalarFieldEnum = {
   createdAt: 'createdAt',
   reporterId: 'reporterId',
   targetUserId: 'targetUserId',
-  postId: 'postId',
-  commentId: 'commentId',
-  messageId: 'messageId',
+  referenceId: 'referenceId',
+  type: 'type',
   reason: 'reason',
   details: 'details'
 } as const

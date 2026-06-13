@@ -221,7 +221,6 @@ export type PostWhereInput = {
   shares?: Prisma.ShareListRelationFilter
   mentions?: Prisma.MentionListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
-  reports?: Prisma.ReportListRelationFilter
 }
 
 export type PostOrderByWithRelationInput = {
@@ -241,7 +240,6 @@ export type PostOrderByWithRelationInput = {
   shares?: Prisma.ShareOrderByRelationAggregateInput
   mentions?: Prisma.MentionOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
-  reports?: Prisma.ReportOrderByRelationAggregateInput
 }
 
 export type PostWhereUniqueInput = Prisma.AtLeast<{
@@ -264,7 +262,6 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   shares?: Prisma.ShareListRelationFilter
   mentions?: Prisma.MentionListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
-  reports?: Prisma.ReportListRelationFilter
 }, "id">
 
 export type PostOrderByWithAggregationInput = {
@@ -313,7 +310,6 @@ export type PostCreateInput = {
   shares?: Prisma.ShareCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateInput = {
@@ -332,7 +328,6 @@ export type PostUncheckedCreateInput = {
   shares?: Prisma.ShareUncheckedCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostUpdateInput = {
@@ -351,7 +346,6 @@ export type PostUpdateInput = {
   shares?: Prisma.ShareUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateInput = {
@@ -370,7 +364,6 @@ export type PostUncheckedUpdateInput = {
   shares?: Prisma.ShareUncheckedUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostCreateManyInput = {
@@ -590,22 +583,6 @@ export type PostUpdateOneRequiredWithoutSharesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutSharesInput, Prisma.PostUpdateWithoutSharesInput>, Prisma.PostUncheckedUpdateWithoutSharesInput>
 }
 
-export type PostCreateNestedOneWithoutReportsInput = {
-  create?: Prisma.XOR<Prisma.PostCreateWithoutReportsInput, Prisma.PostUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.PostCreateOrConnectWithoutReportsInput
-  connect?: Prisma.PostWhereUniqueInput
-}
-
-export type PostUpdateOneWithoutReportsNestedInput = {
-  create?: Prisma.XOR<Prisma.PostCreateWithoutReportsInput, Prisma.PostUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.PostCreateOrConnectWithoutReportsInput
-  upsert?: Prisma.PostUpsertWithoutReportsInput
-  disconnect?: Prisma.PostWhereInput | boolean
-  delete?: Prisma.PostWhereInput | boolean
-  connect?: Prisma.PostWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutReportsInput, Prisma.PostUpdateWithoutReportsInput>, Prisma.PostUncheckedUpdateWithoutReportsInput>
-}
-
 export type PostCreateNestedOneWithoutNotificationsInput = {
   create?: Prisma.XOR<Prisma.PostCreateWithoutNotificationsInput, Prisma.PostUncheckedCreateWithoutNotificationsInput>
   connectOrCreate?: Prisma.PostCreateOrConnectWithoutNotificationsInput
@@ -651,7 +628,6 @@ export type PostCreateWithoutAuthorInput = {
   shares?: Prisma.ShareCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutAuthorInput = {
@@ -669,7 +645,6 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   shares?: Prisma.ShareUncheckedCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutAuthorInput = {
@@ -697,7 +672,6 @@ export type PostCreateWithoutSpecificToInput = {
   shares?: Prisma.ShareCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutSpecificToInput = {
@@ -715,7 +689,6 @@ export type PostUncheckedCreateWithoutSpecificToInput = {
   shares?: Prisma.ShareUncheckedCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutSpecificToInput = {
@@ -785,7 +758,6 @@ export type PostCreateWithoutLikesInput = {
   shares?: Prisma.ShareCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutLikesInput = {
@@ -803,7 +775,6 @@ export type PostUncheckedCreateWithoutLikesInput = {
   shares?: Prisma.ShareUncheckedCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutLikesInput = {
@@ -837,7 +808,6 @@ export type PostUpdateWithoutLikesInput = {
   shares?: Prisma.ShareUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutLikesInput = {
@@ -855,7 +825,6 @@ export type PostUncheckedUpdateWithoutLikesInput = {
   shares?: Prisma.ShareUncheckedUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostCreateWithoutCommentsInput = {
@@ -873,7 +842,6 @@ export type PostCreateWithoutCommentsInput = {
   shares?: Prisma.ShareCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutCommentsInput = {
@@ -891,7 +859,6 @@ export type PostUncheckedCreateWithoutCommentsInput = {
   shares?: Prisma.ShareUncheckedCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutCommentsInput = {
@@ -925,7 +892,6 @@ export type PostUpdateWithoutCommentsInput = {
   shares?: Prisma.ShareUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutCommentsInput = {
@@ -943,7 +909,6 @@ export type PostUncheckedUpdateWithoutCommentsInput = {
   shares?: Prisma.ShareUncheckedUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostCreateWithoutSharesInput = {
@@ -961,7 +926,6 @@ export type PostCreateWithoutSharesInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutSharesInput = {
@@ -979,7 +943,6 @@ export type PostUncheckedCreateWithoutSharesInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutSharesInput = {
@@ -1013,7 +976,6 @@ export type PostUpdateWithoutSharesInput = {
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutSharesInput = {
@@ -1029,95 +991,6 @@ export type PostUncheckedUpdateWithoutSharesInput = {
   specificTo?: Prisma.UserUncheckedUpdateManyWithoutVisiblePostsNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
-  mentions?: Prisma.MentionUncheckedUpdateManyWithoutPostNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutPostNestedInput
-}
-
-export type PostCreateWithoutReportsInput = {
-  id?: string
-  content: string
-  location?: string | null
-  visibility?: $Enums.PostVisibility
-  hideLikes?: boolean
-  disableComments?: boolean
-  imageUrl?: string | null
-  createdAt?: Date | string
-  author: Prisma.UserCreateNestedOneWithoutPostsInput
-  specificTo?: Prisma.UserCreateNestedManyWithoutVisiblePostsInput
-  likes?: Prisma.LikeCreateNestedManyWithoutPostInput
-  comments?: Prisma.CommentCreateNestedManyWithoutPostInput
-  shares?: Prisma.ShareCreateNestedManyWithoutPostInput
-  mentions?: Prisma.MentionCreateNestedManyWithoutPostInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutPostInput
-}
-
-export type PostUncheckedCreateWithoutReportsInput = {
-  id?: string
-  content: string
-  location?: string | null
-  visibility?: $Enums.PostVisibility
-  hideLikes?: boolean
-  disableComments?: boolean
-  imageUrl?: string | null
-  createdAt?: Date | string
-  authorId: string
-  specificTo?: Prisma.UserUncheckedCreateNestedManyWithoutVisiblePostsInput
-  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
-  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
-  shares?: Prisma.ShareUncheckedCreateNestedManyWithoutPostInput
-  mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutPostInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutPostInput
-}
-
-export type PostCreateOrConnectWithoutReportsInput = {
-  where: Prisma.PostWhereUniqueInput
-  create: Prisma.XOR<Prisma.PostCreateWithoutReportsInput, Prisma.PostUncheckedCreateWithoutReportsInput>
-}
-
-export type PostUpsertWithoutReportsInput = {
-  update: Prisma.XOR<Prisma.PostUpdateWithoutReportsInput, Prisma.PostUncheckedUpdateWithoutReportsInput>
-  create: Prisma.XOR<Prisma.PostCreateWithoutReportsInput, Prisma.PostUncheckedCreateWithoutReportsInput>
-  where?: Prisma.PostWhereInput
-}
-
-export type PostUpdateToOneWithWhereWithoutReportsInput = {
-  where?: Prisma.PostWhereInput
-  data: Prisma.XOR<Prisma.PostUpdateWithoutReportsInput, Prisma.PostUncheckedUpdateWithoutReportsInput>
-}
-
-export type PostUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  visibility?: Prisma.EnumPostVisibilityFieldUpdateOperationsInput | $Enums.PostVisibility
-  hideLikes?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
-  specificTo?: Prisma.UserUpdateManyWithoutVisiblePostsNestedInput
-  likes?: Prisma.LikeUpdateManyWithoutPostNestedInput
-  comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
-  shares?: Prisma.ShareUpdateManyWithoutPostNestedInput
-  mentions?: Prisma.MentionUpdateManyWithoutPostNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutPostNestedInput
-}
-
-export type PostUncheckedUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  visibility?: Prisma.EnumPostVisibilityFieldUpdateOperationsInput | $Enums.PostVisibility
-  hideLikes?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  disableComments?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  authorId?: Prisma.StringFieldUpdateOperationsInput | string
-  specificTo?: Prisma.UserUncheckedUpdateManyWithoutVisiblePostsNestedInput
-  likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
-  comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
-  shares?: Prisma.ShareUncheckedUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutPostNestedInput
 }
@@ -1137,7 +1010,6 @@ export type PostCreateWithoutNotificationsInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
   shares?: Prisma.ShareCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutNotificationsInput = {
@@ -1155,7 +1027,6 @@ export type PostUncheckedCreateWithoutNotificationsInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
   shares?: Prisma.ShareUncheckedCreateNestedManyWithoutPostInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutNotificationsInput = {
@@ -1189,7 +1060,6 @@ export type PostUpdateWithoutNotificationsInput = {
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
   shares?: Prisma.ShareUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutNotificationsInput = {
@@ -1207,7 +1077,6 @@ export type PostUncheckedUpdateWithoutNotificationsInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
   shares?: Prisma.ShareUncheckedUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostCreateWithoutMentionsInput = {
@@ -1225,7 +1094,6 @@ export type PostCreateWithoutMentionsInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput
   shares?: Prisma.ShareCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportCreateNestedManyWithoutPostInput
 }
 
 export type PostUncheckedCreateWithoutMentionsInput = {
@@ -1243,7 +1111,6 @@ export type PostUncheckedCreateWithoutMentionsInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
   shares?: Prisma.ShareUncheckedCreateNestedManyWithoutPostInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutPostInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutPostInput
 }
 
 export type PostCreateOrConnectWithoutMentionsInput = {
@@ -1277,7 +1144,6 @@ export type PostUpdateWithoutMentionsInput = {
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput
   shares?: Prisma.ShareUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutMentionsInput = {
@@ -1295,7 +1161,6 @@ export type PostUncheckedUpdateWithoutMentionsInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
   shares?: Prisma.ShareUncheckedUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostCreateManyAuthorInput = {
@@ -1324,7 +1189,6 @@ export type PostUpdateWithoutAuthorInput = {
   shares?: Prisma.ShareUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutAuthorInput = {
@@ -1342,7 +1206,6 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   shares?: Prisma.ShareUncheckedUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutAuthorInput = {
@@ -1371,7 +1234,6 @@ export type PostUpdateWithoutSpecificToInput = {
   shares?: Prisma.ShareUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateWithoutSpecificToInput = {
@@ -1389,7 +1251,6 @@ export type PostUncheckedUpdateWithoutSpecificToInput = {
   shares?: Prisma.ShareUncheckedUpdateManyWithoutPostNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutPostNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutPostNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutPostNestedInput
 }
 
 export type PostUncheckedUpdateManyWithoutSpecificToInput = {
@@ -1416,7 +1277,6 @@ export type PostCountOutputType = {
   shares: number
   mentions: number
   notifications: number
-  reports: number
 }
 
 export type PostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1426,7 +1286,6 @@ export type PostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   shares?: boolean | PostCountOutputTypeCountSharesArgs
   mentions?: boolean | PostCountOutputTypeCountMentionsArgs
   notifications?: boolean | PostCountOutputTypeCountNotificationsArgs
-  reports?: boolean | PostCountOutputTypeCountReportsArgs
 }
 
 /**
@@ -1481,13 +1340,6 @@ export type PostCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.NotificationWhereInput
 }
 
-/**
- * PostCountOutputType without action
- */
-export type PostCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReportWhereInput
-}
-
 
 export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1506,7 +1358,6 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   shares?: boolean | Prisma.Post$sharesArgs<ExtArgs>
   mentions?: boolean | Prisma.Post$mentionsArgs<ExtArgs>
   notifications?: boolean | Prisma.Post$notificationsArgs<ExtArgs>
-  reports?: boolean | Prisma.Post$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
 
@@ -1557,7 +1408,6 @@ export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   shares?: boolean | Prisma.Post$sharesArgs<ExtArgs>
   mentions?: boolean | Prisma.Post$mentionsArgs<ExtArgs>
   notifications?: boolean | Prisma.Post$notificationsArgs<ExtArgs>
-  reports?: boolean | Prisma.Post$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1577,7 +1427,6 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     shares: Prisma.$SharePayload<ExtArgs>[]
     mentions: Prisma.$MentionPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
-    reports: Prisma.$ReportPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1990,7 +1839,6 @@ export interface Prisma__PostClient<T, Null = never, ExtArgs extends runtime.Typ
   shares<T extends Prisma.Post$sharesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$sharesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mentions<T extends Prisma.Post$mentionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$mentionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MentionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Post$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reports<T extends Prisma.Post$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2225,6 +2073,11 @@ export type PostFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Posts.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Posts.
+   */
   distinct?: Prisma.PostScalarFieldEnum | Prisma.PostScalarFieldEnum[]
 }
 
@@ -2566,30 +2419,6 @@ export type Post$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
-}
-
-/**
- * Post.reports
- */
-export type Post$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Report
-   */
-  select?: Prisma.ReportSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Report
-   */
-  omit?: Prisma.ReportOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ReportInclude<ExtArgs> | null
-  where?: Prisma.ReportWhereInput
-  orderBy?: Prisma.ReportOrderByWithRelationInput | Prisma.ReportOrderByWithRelationInput[]
-  cursor?: Prisma.ReportWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
 }
 
 /**

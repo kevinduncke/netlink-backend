@@ -83,7 +83,6 @@ model Post {
   shares          Share[]
   mentions        Mention[]
   notifications   Notification[]
-  reports         Report[]
 }
 
 model Like {
@@ -113,7 +112,6 @@ model Comment {
   postId    String
   
   notifications      Notification[]
-  reports            Report[]
 }
 
 model Share {
@@ -169,14 +167,8 @@ model Report {
   targetUserId  String?
   targetUser    User?     @relation("UserReport", fields: [targetUserId], references: [id], onDelete: Cascade)
 
-  postId        String?
-  post          Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  commentId     String?
-  comment       Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
-
-  messageId     String?
-  message       Message?  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  referenceId   String?
+  type          String?
 
   reason        String
   details       String?
@@ -256,7 +248,6 @@ model Message {
   senderId      String
 
   notifications   Notification[]
-  reports         Report[]
 }
 
 model Notification {
