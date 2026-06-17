@@ -110,6 +110,16 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     }
 }
 
+export async function getPost(req: Request, res: Response, next: NextFunction) {
+    try {
+        const currentUserId = (req as any).user?.id;
+        const postId = req.params.id;
+
+        
+    } catch (error) {
+        next(error);
+    }
+}
 export async function getMyPosts(req: Request, res: Response, next: NextFunction) {
     try {
         const currentUserId = (req as any).user.id;

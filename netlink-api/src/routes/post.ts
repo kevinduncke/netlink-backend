@@ -9,7 +9,8 @@ import {
     getUserPosts,
     getFollowingPosts,
     createRepost,
-    deleteRepost
+    deleteRepost,
+    getPost
 } from "../controllers/post.controller";
 import { authenticate } from "../middleware/auth.middleware";
 import { likePost, unlikePost } from "../controllers/like.controller";
@@ -22,6 +23,7 @@ router.get("/following", authenticate, getFollowingPosts);
 router.get("/all", authenticate, getAllPosts);
 router.get("/my-posts", authenticate, getMyPosts);
 router.get("/user/:id", authenticate, getUserPosts);
+router.get("/post/:id", authenticate, getPost);
 router.get("/:id", authenticate, searchPosts);
 router.post("/", authenticate, createPost);
 router.put("/update/:id", authenticate, updatePost);
