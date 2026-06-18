@@ -145,8 +145,8 @@ export async function getAllPostComments(req: Request, res: Response, next: Next
         const blockedComments = blockedIds.filter(id => id !== currentUserId);
 
         const comments = await prisma.comment.findMany({
-            where: { 
-                postId: resolvedPostId,                
+            where: {
+                postId: resolvedPostId,
                 authorId: { notIn: blockedComments }
             },
             include: {
