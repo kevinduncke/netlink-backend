@@ -158,7 +158,7 @@ export async function getPost(req: Request, res: Response, next: NextFunction) {
         });
 
         if (!post) {
-            return res.status(404).json({ error: 'Post not found' });
+            return res.status(404).json({ error: 'Post not found.' });
         }
 
         const follows = await prisma.follow.findMany({
@@ -228,52 +228,250 @@ export async function getPost(req: Request, res: Response, next: NextFunction) {
             }
         });
 
-        const mappedPost = {
-            id: post.id,
-            content: post.content,
-            location: post.location,
-            imageUrl: post.imageUrl,
-            hideLikes: post.hideLikes,
-            disableComments: post.disableComments,
-            createdAt: post.createdAt,
-            isRepost: false,
-            mentions: post.mentions.map(m => ({
-                id: m.user.id,
-                name: m.user.name,
-                username: m.user.username,
-            })),
-            _count: {
-                comments: post._count.comments,
-                likes: post._count.likes,
-                shares: post._count.shares
+        if (post) {
+            const mappedPost = {
+                id: post.id,
+                content: post.content,
+                location: post.location,
+                imageUrl: post.imageUrl,
+                hideLikes: post.hideLikes,
+                disableComments: post.disableComments,
+                createdAt: post.createdAt,
+                isRepost: false,
+                mentions: post.mentions.map(m => ({
+                    id: m.user.id,
+                    name: m.user.name,
+                    username: m.user.username,
+                })),
+                _count: {
+                    comments: post._count.comments,
+                    likes: post._count.likes,
+                    shares: post._count.shares
+                },
+                comments: comments.map(comment => ({
+                    id: comment.id,
+                    content: comment.content,
+                    createdAt: comment.createdAt,
+                    author: comment.author,
+                })),
+                likes: likes.map(like => ({
+                    id: like.id,
+                    user: like.user,
+                    createdAt: like.createdAt,
+                })),
+                shares: shares.map(share => ({
+                    id: share.id,
+                    user: share.user,
+                    createdAt: share.createdAt,
+                })),
+                author: {
+                    id: post.author.id,
+                    name: post.author.name,
+                    username: post.author.username,
+                    avatarUrl: post.author.avatarUrl,
+                    liked: likes.length > 0,
+                    isFollowedByMe: followingSet.has(post.author.id),
+                },
+            };
+
+            res.json(mappedPost);
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+export async function getShare(req: Request, res: Response, next: NextFunction) {
+    try {
+        const shareId = req.params.id;
+        const currentUserId = (req as any).user?.id;
+
+        if (!shareId || typeof shareId !== 'string') {
+            return res.status(400).json({ error: 'Valid share ID is required.' });
+        }
+
+        const share = await prisma.share.findUnique({
+            where: { id: shareId },
+            select: {
+                id: true,
+                userId: true,
+                postId: true,
+                createdAt: true,
+                post: {
+                    select: {
+                        id: true,
+                        content: true,
+                        location: true,
+                        imageUrl: true,
+                        hideLikes: true,
+                        disableComments: true,
+                        createdAt: true,
+                        mentions: {
+                            select: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                    }
+                                }
+                            }
+                        },
+                        _count: {
+                            select: {
+                                comments: true,
+                                likes: true,
+                                shares: true
+                            }
+                        },
+                        author: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                                avatarUrl: true
+                            }
+                        },
+                        comments: {
+                            orderBy: {
+                                createdAt: 'desc'
+                            },
+                            select: {
+                                id: true,
+                                content: true,
+                                createdAt: true,
+                                authorId: true,
+                                postId: true,
+                                author: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                        avatarUrl: true
+                                    }
+                                }
+                            }
+                        },
+                        likes: {
+                            select: {
+                                id: true,
+                                userId: true,
+                                postId: true,
+                                createdAt: true,
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                        avatarUrl: true
+                                    }
+                                }
+                            }
+                        },
+                        shares: {
+                            select: {
+                                id: true,
+                                createdAt: true,
+                                postId: true,
+                                userId: true,
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        username: true,
+                                        avatarUrl: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!share) {
+            return res.status(404).json({ error: 'Share not found.' });
+        }
+
+        const follows = await prisma.follow.findMany({
+            where: {
+                followerId: (req as any).user!.id,
+                followingId: share.post.author.id
             },
-            comments: comments.map(comment => ({
-                id: comment.id,
-                content: comment.content,
-                createdAt: comment.createdAt,
-                author: comment.author,
-            })),
-            likes: likes.map(like => ({
-                id: like.id,
-                user: like.user,
-                createdAt: like.createdAt,
-            })),
-            shares: shares.map(share => ({
-                id: share.id,
-                user: share.user,
-                createdAt: share.createdAt,
-            })),
-            author: {
-                id: post.author.id,
-                name: post.author.name,
-                username: post.author.username,
-                avatarUrl: post.author.avatarUrl,
-                liked: likes.length > 0,
-                isFollowedByMe: followingSet.has(post.author.id),
-            },
+            select: { followingId: true }
+        });
+
+        const followingSet = new Set(follows.map(f => f.followingId));
+
+        const mappedShare = {
+            id: share.id,
+            postId: share.postId,
+            userId: share.userId,
+            createdAt: share.createdAt,
+            post: {
+                id: share.post.id,
+                content: share.post.content,
+                location: share.post.location,
+                imageUrl: share.post.imageUrl,
+                hideLikes: share.post.hideLikes,
+                disableComments: share.post.disableComments,
+                createdAt: share.post.createdAt,
+                isRepost: true,
+                isRepostedByMe: share.userId === currentUserId,
+                mentions: share.post.mentions.map(m => ({
+                    id: m.user.id,
+                    name: m.user.name,
+                    username: m.user.username,
+                })),
+                _count: {
+                    comments: share.post._count.comments,
+                    likes: share.post._count.likes,
+                    shares: share.post._count.shares
+                },
+                author: {
+                    id: share.post.author.id,
+                    name: share.post.author.name,
+                    username: share.post.author.username,
+                    avatarUrl: share.post.author.avatarUrl,
+                    liked: share.post.likes.length > 0,
+                    isFollowedByMe: followingSet.has(share.post.author.id),
+                },
+                comments: share.post.comments.map(comment => ({
+                    id: comment.id,
+                    content: comment.content,
+                    createdAt: comment.createdAt,
+                    author: {
+                        id: comment.author.id,
+                        name: comment.author.name,
+                        username: comment.author.username,
+                        avatarUrl: comment.author.avatarUrl
+                    }
+                })),
+                likes: share.post.likes.map(like => ({
+                    id: like.id,
+                    createdAt: like.createdAt,
+                    postId: like.postId,
+                    user: {
+                        id: like.user.id,
+                        name: like.user.name,
+                        username: like.user.username,
+                        avatarUrl: like.user.avatarUrl
+                    }
+                })),
+                shares: share.post.shares.map(s => ({
+                    id: s.id,
+                    createdAt: s.createdAt,
+                    postId: s.postId,
+                    user: {
+                        id: s.user.id,
+                        name: s.user.name,
+                        username: s.user.username,
+                        avatarUrl: s.user.avatarUrl
+                    }
+                }))
+            }
         };
 
-        res.json(mappedPost);
+        res.json(mappedShare);
     } catch (error) {
         next(error);
     }
