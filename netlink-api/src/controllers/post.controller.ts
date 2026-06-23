@@ -114,8 +114,6 @@ export async function getPost(req: Request, res: Response, next: NextFunction) {
     try {
         const postId = req.params.id;
 
-        console.log('Fetching post with ID:', postId);
-
         if (!postId || typeof postId !== 'string') {
             return res.status(400).json({ error: 'Valid post ID is required.' });
         }
@@ -162,6 +160,16 @@ export async function getPost(req: Request, res: Response, next: NextFunction) {
         if (!post) {
             return res.status(404).json({ error: 'Post not found' });
         }
+
+        const follows = await prisma.follow.findMany({
+            where: {
+                followerId: (req as any).user!.id,
+                followingId: post.author.id
+            },
+            select: { followingId: true }
+        });
+
+        const followingSet = new Set(follows.map(f => f.followingId));
 
         const comments = await prisma.comment.findMany({
             where: {
@@ -261,7 +269,8 @@ export async function getPost(req: Request, res: Response, next: NextFunction) {
                 username: post.author.username,
                 avatarUrl: post.author.avatarUrl,
                 liked: likes.length > 0,
-            }
+                isFollowedByMe: followingSet.has(post.author.id),
+            },
         };
 
         res.json(mappedPost);
