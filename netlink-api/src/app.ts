@@ -19,7 +19,7 @@ export const createApp = () => {
         cors({
             origin: [
                 "http://localhost:5173",
-                "https://YOUR-NETLIFY-SITE.netlify.app"
+                "https://net1ink.netlify.app"
             ],
             credentials: true
         })
