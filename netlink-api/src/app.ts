@@ -1,4 +1,5 @@
 import express from 'express';
+import helmet from 'helmet';
 import { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -16,6 +17,29 @@ export const createApp = () => {
     const app = express();
 
     app.use(
+        helmet({
+            // HTTP STRICT TRANSPORT SECURITY (HSTS)
+            strictTransportSecurity: {
+                maxAge: 31536000, // 1 year in seconds
+                includeSubDomains: true,
+                preload: true
+            },
+            // CONTENT SECURITY POLICY (CSP)
+            contentSecurityPolicy: {
+                useDefaults: true,
+                directives: {
+                    "defaultSrc": ["'self'"],
+                    "scriptSrc": ["'self'", "'https://trusted-cdn.com'"],
+                    "styleSrc": ["'self'", "'unsafe-inline'"],                    
+                    "upgrade-insecure-requests": [],
+                    "block-all-mixed-content": []
+                }
+            },
+            // X-FRAME-OPTIONS
+            xFrameOptions: {
+                action: "deny"
+            }
+        }),
         cors({
             origin: [
                 "http://localhost:5173",
