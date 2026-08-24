@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { registerRoutes } from './routes';
 import { errorHandler } from './middleware/error';
+import { apiRateLimiter } from './middleware/rate-limit';
 
 // FOR TEST..
 import { prisma } from './config/prisma';
@@ -79,6 +80,7 @@ export const createApp = () => {
     });
 
     // REGISTER ROUTES
+    app.use(apiRateLimiter);
     registerRoutes(app);
 
     // 404 HANDLER (for unmatched routes)
