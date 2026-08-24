@@ -7,11 +7,6 @@ import { registerRoutes } from './routes';
 import { errorHandler } from './middleware/error';
 import { apiRateLimiter } from './middleware/rate-limit';
 
-// FOR TEST..
-import { prisma } from './config/prisma';
-import { signToken, verifyToken } from './services/jwt.service';
-import { authenticate } from './middleware/auth.middleware';
-
 dotenv.config();
 
 export const createApp = () => {
@@ -59,24 +54,6 @@ export const createApp = () => {
             message: 'APP SERVER CONNECTION SUCCESS',
             timestamp: new Date().toISOString()
         });
-    });
-
-    // DATABASE TEST ROUTE
-    app.get('/db-test', async (req: Request, res: Response) => {
-        const users = await prisma.user.findMany();
-        res.json({ count: users.length, users: users[0] });
-    });
-
-    // JSON WEB TOKEN TEST ROUTE
-    app.get('/jwt-test', (req: Request, res: Response) => {
-        const token = signToken({ id: '12', email: 'test' });
-        const decoded = verifyToken(token);
-        res.json({ token, decoded });
-    });
-
-    // AUTH MIDDLEWARE TEST ROUTE
-    app.get('/protected-test', authenticate, (req: Request, res: Response) => {
-        res.json({ ok: true, user: (req as any).user });
     });
 
     // REGISTER ROUTES
