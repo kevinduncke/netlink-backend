@@ -132,7 +132,7 @@ export async function getUserProfile(req: Request, res: Response, next: NextFunc
             hasRestrictedMe: restrictedUser?.mutedId === currentUserId && restrictedUser?.userId === userId,
         });
     } catch (error) {
-        next(`Error fetching user profile: ${error}`);
+        next(error);
     }
 }
 
@@ -220,7 +220,7 @@ export async function getMyProfile(req: Request, res: Response, next: NextFuncti
             posts: user.posts
         });
     } catch (error) {
-        next(`Error fetching user profile: ${error}`);
+        next(error);
     }
 }
 

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../services/jwt.service";
+import { UnauthorizedError } from "../utils/errors";
 
 // INTERFACE FOR AUTH REQUEST
 export interface AuthRequest extends Request {
@@ -7,7 +8,7 @@ export interface AuthRequest extends Request {
         id: string;
         email: string;
     };
-};
+}
 
 // AUTH MIDDLEWARE TO PROTECT ROUTES.
 export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -15,31 +16,29 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     const authHeader = req.headers.authorization;
 
     // CHECK FOR BEARER TOKEN IN THE AUTHORIZATION HEADER
-    if (!authHeader || !authHeader?.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Authorization Header Missing or Invalid.' });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return next(new UnauthorizedError('Authorization Header Missing or Invalid.'));
     }
 
     // EXTRACT TOKEN FROM HEADER.
     const token = authHeader.split(' ')[1];
 
-    try {
-        // CHECK IF THE TOKEN EXISTS.
-        if (!token) {
-            return res.status(401).json({ message: 'Authorization Token Invalid or Missing.' });
-        }
+    if (!token) {
+        return next(new UnauthorizedError('Authorization Token Invalid or Missing.'));
+    }
 
+    try {
         // VERIFY TOKEN AND ATTACH PAYLOAD TO REQ.USER
         const payload = verifyToken(token);
 
-        // ATTACH USER INFO TO REQUEST OBJECT FOR USE IN CONTROLLERS..
+        // ATTACH USER INFO TO REQUEST OBJECT FOR USE IN CONTROLLERS
         req.user = {
             id: payload.id,
             email: payload.email
-        }
+        };
 
         next();
     } catch (err) {
-        console.error(err);
-        return res.status(401).json({ message: 'Invalid or Expired Token.' });
+        return next(new UnauthorizedError('Invalid or Expired Token.'));
     }
 };
