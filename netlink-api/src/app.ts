@@ -1,11 +1,11 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
-import { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { registerRoutes } from './routes';
 import { errorHandler } from './middleware/error';
 import { apiRateLimiter } from './middleware/rate-limit';
+import { NotFoundError } from './utils/errors';
 
 dotenv.config();
 
@@ -48,7 +48,7 @@ export const createApp = () => {
     app.use(express.json());
 
     // EXPRESS TEST ROUTE
-    app.get('/health', (req, res) => {
+    app.get('/health', (req: Request, res: Response) => {
         res.json({
             status: 'OK',
             message: 'APP SERVER CONNECTION SUCCESS',
@@ -61,8 +61,8 @@ export const createApp = () => {
     registerRoutes(app);
 
     // 404 HANDLER (for unmatched routes)
-    app.use((req: Request, res: Response) => {
-        res.status(404).json({ error: 'Route not found' });
+    app.use((req: Request, res: Response, next: NextFunction) => {
+        next(new NotFoundError(`Cannot find ${req.method} ${req.originalUrl} on this server.`));
     });
 
     // ERROR HANDLER (must be after all routes and middleware)

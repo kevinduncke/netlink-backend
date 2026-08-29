@@ -7,6 +7,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc && prisma generate",
     "start": "node dist/src/server.js",
+    "test": "ts-node src/utils/test-error-handling.ts",
     "postinstall": "prisma generate"
   },
   "keywords": [],
