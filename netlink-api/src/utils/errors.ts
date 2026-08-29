@@ -19,8 +19,11 @@ export class AppError extends Error {
 /** [400] Bad Request **/
 /** Input validation fails, missing required fields, or malformed data.*/
 export class BadRequestError extends AppError {
-    constructor(message: string = 'Bad request.') {
+    public readonly details?: Array<{ field: string; message: string }> | undefined;
+
+    constructor(message: string = 'Bad request.', details?: Array<{ field: string; message: string }> | undefined) {
         super(message, 400);
+        this.details = details;
     }
 }
 

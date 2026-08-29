@@ -7,7 +7,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc && prisma generate",
     "start": "node dist/src/server.js",
-    "test": "ts-node src/utils/test-error-handling.ts",
+    "test": "ts-node src/utils/test-error-handling.ts && ts-node src/utils/test-validation.ts",
     "postinstall": "prisma generate"
   },
   "keywords": [],
@@ -28,7 +28,8 @@
     "jsonwebtoken": "^9.0.3",
     "express-rate-limit": "^8.6.2",
     "rate-limit-redis": "^6.0.1",
-    "redis": "^6.2.1"
+    "redis": "^6.2.1",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

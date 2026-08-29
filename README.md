@@ -4,6 +4,7 @@ REST API for the Netlink social platform. Built with Node.js, Express 5, TypeScr
 ## Tech Stack
 - Node.js & Express.js (v5)
 - TypeScript
+- Zod (Runtime Schema Validation)
 - Prisma ORM & PostgreSQL
 - JWT Authentication
 - Rate Limiting & Helmet Security Headers
@@ -14,13 +15,31 @@ netlink-api/
 ├── src/
 │   ├── config/          # Prisma client & database configuration
 │   ├── controllers/     # Route controllers & business orchestration
-│   ├── middleware/      # Auth, Rate limiting & Centralized Error Handler
+│   ├── middleware/      # Auth, Rate limit, Validation & Centralized Error Handler
 │   ├── routes/          # Express route definitions
+│   ├── schemas/         # Shared Zod validation schemas
 │   ├── services/        # Business logic, JWT & hashing services
-│   ├── utils/           # AppError class hierarchy & test runners
+│   ├── utils/           # AppError class hierarchy & test suites
 │   ├── app.ts           # Express application setup
 │   └── server.ts        # Server entry point
 ```
+
+## Request Validation Architecture (Zod)
+
+Netlink uses declarative **Zod schemas** and an Express validation middleware to validate, sanitize, and type-check incoming HTTP request bodies before they reach controllers.
+
+### 1. Core Schemas (Part 1)
+- **`registerSchema` (`src/schemas/auth.schema.ts`)**: Enforces valid email, name length/characters, and strict password complexity (min 8 chars, uppercase, lowercase, digits, symbols).
+- **`loginSchema` (`src/schemas/auth.schema.ts`)**: Validates presence and format of login credentials.
+- **`createPostSchema` (`src/schemas/post.schema.ts`)**: Validates post body, trim enforcement on non-empty content, allowed visibility states, and conditional follower requirements for `SPECIFIC` visibility via `.superRefine()`.
+
+### 2. Validation Middleware (`validateRequest`)
+Located at `src/middleware/validate.ts`:
+- Validates `req.body` using `schema.safeParse()`.
+- On success: Replaces `req.body` with parsed, trimmed, and default-applied data, then calls `next()`.
+- On failure: Extracts structured field-level errors (`{ field, message }`) and passes a `BadRequestError` (400) to the centralized error middleware.
+
+> **Note:** Route integration and inferred TypeScript type exports (`z.infer`) across all remaining endpoints are scheduled for **Part 2**.
 
 ## Error Handling Architecture
 
@@ -41,7 +60,13 @@ Netlink uses a **Centralized Error Handling Architecture** powered by a custom `
 ```json
 {
   "status": "fail",
-  "error": "Invalid login credentials."
+  "error": "Email: Invalid email address format.",
+  "details": [
+    {
+      "field": "email",
+      "message": "Invalid email address format."
+    }
+  ]
 }
 ```
 
@@ -64,7 +89,7 @@ npm install
 # Start development server with hot-reload
 npm run dev
 
-# Run error-handling and API tests
+# Run error-handling and validation test suites
 npm test
 
 # Build for production
