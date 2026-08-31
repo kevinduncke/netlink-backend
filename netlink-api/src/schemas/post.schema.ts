@@ -65,3 +65,6 @@ export const createPostSchema = z
             }
         }
     });
+
+
+export type CreatePostInput = z.infer<typeof createPostSchema>;
