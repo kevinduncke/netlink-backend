@@ -14,6 +14,8 @@ import {
     getShare
 } from "../controllers/post.controller";
 import { authenticate } from "../middleware/auth.middleware";
+import { validateRequest } from "../middleware/validate";
+import { createPostSchema } from "../schemas";
 import { likePost, unlikePost } from "../controllers/like.controller";
 import { createComment, deleteComment, getAllPostComments, updateComment } from "../controllers/comment.controller";
 
@@ -27,7 +29,7 @@ router.get("/user/:id", authenticate, getUserPosts);
 router.get("/p/:id", authenticate, getPost);
 router.get("/share/:id", authenticate, getShare);
 router.get("/:id", authenticate, searchPosts);
-router.post("/", authenticate, createPost);
+router.post("/", authenticate, validateRequest(createPostSchema), createPost);
 router.put("/update/:id", authenticate, updatePost);
 router.delete("/delete/:id", authenticate, deletePost);
 

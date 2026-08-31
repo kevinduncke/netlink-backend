@@ -53,7 +53,8 @@ function sendErrorProd(err: any, res: Response) {
     if (err.isOperational) {
         return res.status(statusCode).json({
             status,
-            error: err.message
+            error: err.message,
+            ...(err.details && { details: err.details })
         });
     }
 

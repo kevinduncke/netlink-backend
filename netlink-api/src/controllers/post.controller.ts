@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/prisma';
 import { encodeCursor, decodeCursor } from '../utils/cursor';
+import { CreatePostInput } from '../schemas';
 
 async function resolveRepostTarget(id: string) {
     const post = await prisma.post.findUnique({
@@ -34,19 +35,9 @@ export async function createPost(req: Request, res: Response, next: NextFunction
             hideLikes,
             disableComments,
             mentions,
-            specificFollowers // AN ARRAY OF USER IDS
-        } = req.body;
-
-        const visibility = req.body.visibility;
-
-        // CHECH IF CONTENT IS PROVIDED
-        if (!content || content.trim().length === 0) {
-            return res.status(400).json({ error: 'Content is required and cannot be empty.' });
-        }
-
-        if (location && typeof location !== 'string') {
-            return res.status(400).json({ error: 'Location must be a string.' });
-        }
+            specificFollowers,
+            visibility
+        } = req.body as CreatePostInput;
 
         // CREATE POST IN DB
         const post = await prisma.post.create({
@@ -62,9 +53,9 @@ export async function createPost(req: Request, res: Response, next: NextFunction
                 },
 
                 // ONLY CONNECT IF VISIBILITY IS SPECIFIC TO
-                ...(visibility === 'SPECIFIC' && {
+                ...(visibility === 'SPECIFIC' && specificFollowers && {
                     specificTo: {
-                        connect: specificFollowers.map((id: string) => (id))
+                        connect: specificFollowers.map((id: string) => ({ id }))
                     }
                 })
             },
